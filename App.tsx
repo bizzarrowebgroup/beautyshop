@@ -144,12 +144,10 @@ export default function App() {
     commercianti,
     foto
   };
-  // if (!isLoadingComplete) {
-  //   return null;
-  // }
   if (!isLoadingComplete || fetching) {
+  //if (true) {
     return (
-      <Loader color={Colors.light.arancio} size={"large"} animating={true} />
+      <Loader color={Colors.light.viola} size={"large"} animating={true} />
     )
   }
   return (
