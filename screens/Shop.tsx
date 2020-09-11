@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { Animated, ScrollView, Dimensions, SectionList, View, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
+import {
+  Animated,
+  ScrollView,
+  Dimensions,
+  SectionList,
+  View,
+  StyleSheet,
+  Image,
+  TouchableWithoutFeedback
+} from 'react-native';
 import Header from '../components/Header';
 import { RootStackParamList } from '../types';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -15,6 +24,27 @@ import moment from 'moment';
 import Spinner from '../components/Spinner';
 import BaseText from '../components/StyledText';
 import StarsReview from '../components/StarsReview';
+
+const DATA = [
+  {
+    title: "Main dishes",
+    data: [
+      {}
+    ]
+  },
+  {
+    title: "Sides",
+    data: ["French Fries", "Onion Rings", "Fried Shrimps"]
+  },
+  {
+    title: "Drinks",
+    data: ["Water", "Coke", "Beer"]
+  },
+  {
+    title: "Desserts",
+    data: ["Cheese Cake", "Ice Cream"]
+  }
+];
 
 const pieghe = [
   {
@@ -80,7 +110,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
   const [recensioni, setRecensioni] = React.useState(null);
   // const isFocused = useIsFocused();
   // const current = pieghe[index];
-  const [servizi, setServizi] = React.useState([]);
+  const [servizi, setServizi] = React.useState(undefined);
 
   const heightX = !bool ? 44 : 100;
   const status = true;
@@ -182,6 +212,31 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
     }
 
   }
+  const uniqueArray = (array) => {
+    var obj = {};
+    array.forEach((v) => {
+      obj[v.title] = (obj[v.title] || []).concat(v.data)
+    });
+
+    var result = Object.keys(obj).reduce((s, a) => {
+      s.push({ title: a, data: obj[a] });
+      return s;
+    }, []);
+
+    return result;
+  }
+
+  const getServizioTitle = (docId) => {
+    return db.collection('servizi').doc(docId)
+      .get({ source: "default" })
+      .then((docRef) => {
+        var jona = docRef.data();
+        return jona.label;
+      })
+      .catch((e) => {
+        console.log("error", e)
+      });
+  }
   // HHCFptUM91FqhMq2INjE id
   const getServizi = async (idCommerciante) => {
     const serviziFirebase = db.collection('servizicommercianti');
@@ -189,17 +244,22 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
     if (doc) {
       let finalServizi = [];
       doc.forEach(doc => {
-        let data = doc.data();
-        //console.log(doc.id, '=>', data);
+        let data = { ...doc.data(), id: doc.id };
         finalServizi.push({ data, "id": doc.id });
       });
       let finalServiziEdit = [];
-      finalServizi.forEach(doc => {
-        //console.log(doc, "odc");
-        finalServiziEdit.push({ "title": doc.servizi, ...doc });
-      })
-      //console.log(finalServiziEdit, "finalServiziEdit");
-      setServizi(finalServiziEdit);
+      finalServizi.forEach((doc) => {
+        let docId = doc.data['servizi'];
+        let doctitle = getServizioTitle(docId);
+        console.log(doctitle, "doctit");
+        finalServiziEdit.push({
+          title: doctitle,
+          data: [doc.data]
+        });
+      });
+      setServizi(uniqueArray(finalServiziEdit));
+    } else {
+      console.log("no-doc");
     }
   }
 
@@ -207,7 +267,6 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
     if (route.params?.id) {
       getServizi(route.params?.id);
       getCommerciante(route.params?.id);
-      console.log(servizi, "finalServizi");
       const date = moment();
       const day = date.day();
       setDay(day);
@@ -222,30 +281,101 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
 
   const serviziHeader = (servizi) => {
     console.log(servizi, "headerGot");
-    return(
+    return (
       <View>
       </View>
     );
   }
 
-  const renderItemServizio = (item) => {
-    console.log(item, "itemGot");
-    return(
-      <View>
-      </View>
-    );
-  }
+  const ItemService = ({ item }) => {
+    // "commerciante": "HHCFptUM91FqhMq2INjE",
+    // "cost": "14",
+    // "desc": "Spigolature, rotondità e proporzioni possono essere riequilibrate con il giusto taglio e una pettinatura adatta.",
+    // "enabled": true,
+    // "servizi": "wbHdoy9exAayRWitea5m",
+    // "titolo": "Taglio donna"
+    const { cost, desc, enabled, titolo, id } = item;
+    const dio = () => {
+      console.log(id, "itemIndexDio")
+      setIndex(id);
+    };
+    if (enabled) {
+      return (
+        <TouchableWithoutFeedback key={titolo} onPress={dio}>
+          <View style={{ marginVertical: 5 }}>
+            <View style={{
+              minHeight: 40,
+              borderTopLeftRadius: 5,
+              borderTopRightRadius: 5,
+              backgroundColor: Colors.light.grigio,
+            }}>
+              <Ionicons name={id === indexX ? "ios-checkbox" : "ios-checkbox-outline"} size={20} color={"#DE9182"} style={{
+                position: "absolute",
+                left: 10,
+                top: 10,
+                // width: 40,
+                // height: 40
+              }} />
+              <Ionicons name="ios-arrow-down" size={18} color="#6D6E95" style={{
+                position: "absolute",
+                right: 15,
+                top: 10,
+                // transform: [{ rotate: indexX === index ? '180deg' : '0deg' }]
+              }} />
+              <View style={{
+                flexDirection: "row",
+                flex: 1,
+                justifyContent: "space-between",
+                alignItems: "center",
+                alignContent: "center",
+                marginLeft: 40,
+                marginRight: 40
+              }}>
+                <BaseText size={13} styles={{
+                  color: "black",
+                }}>{titolo}</BaseText>
+                <BaseText size={13} weight={800} styles={{
+                  color: "black",
+                }}>{cost} €</BaseText>
+              </View>
+            </View>
+            {/* {indexX === index && <View style={{ */}
+            {id === indexX &&
+              <View style={{
+                backgroundColor: "white",
+                borderBottomRightRadius: 10,
+                borderBottomLeftRadius: 10,
+                padding: 15,
+                top: -5,
+                zIndex: -1
+              }}>
+                <BaseText styles={{
+                  color: "#828282",
+                  textAlign: "center",
+                  fontSize: 10,
+                }}>{desc}</BaseText>
+              </View>
+            }
+          </View>
+        </TouchableWithoutFeedback>
+      );
+    } else {
+      return (
+        <></>
+      );
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Header hasBack={true} title={data.title} onPress={() => { navigation.pop() }} />
       <ScrollView
         contentContainerStyle={{
-          paddingBottom: 100,
+          paddingBottom: 200
         }}
         showsVerticalScrollIndicator={false}
-      // decelerationRate="fast"
-      // scrollEventThrottle={1}
+        decelerationRate="fast"
+        scrollEventThrottle={1}
       >
         {/**
                  * mainINFO
@@ -415,13 +545,12 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
           </>
         )}
         {/**
-                 * Valutazioni e recensioni
-                 */}
+       * Valutazioni e recensioni
+       */}
         {recensioni !== null && recensioni.length > 0 && (
           <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginTop: 10 }}>
             <BaseText weight={300} styles={{
               fontSize: 13,
-              // fontFamily: "Montserrat_300Light",
               textTransform: "uppercase"
             }}>Valutazioni e recensioni</BaseText>
             <View style={{
@@ -437,7 +566,6 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
               }}>
                 <BaseText styles={{
                   fontSize: 40,
-                  // fontFamily: "Montserrat_400Regular",
                   textTransform: "uppercase"
                 }}>4,6</BaseText>
                 <Ionicons name="ios-star" size={30} color={Colors.light.giallo} />
@@ -464,7 +592,6 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
                   }}>
                     <BaseText styles={{
                       fontSize: 15,
-                      // fontFamily: "Montserrat_400Regular",
                     }}>{recensioni[0].user ? "NomeUtenteRecensione" : "Michela"}</BaseText>
                     <StarsReview />
                   </View>
@@ -472,7 +599,6 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
                     marginTop: 5,
                     marginHorizontal: 15,
                     fontSize: 15,
-                    // fontFamily: "Montserrat_300Light",
                     marginBottom: 15
                   }}>{recensioni[0].desc}</BaseText>
                 </View>
@@ -480,17 +606,28 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
             </View>
           </View>
         )}
+        {servizi !== undefined && <SectionList
+          sections={servizi}
+          style={{
+            marginTop: 20,
+            marginHorizontal: 20,
+            marginVertical: 10,
+          }}
+          renderItem={({ item }) => <ItemService item={item} />}
+          renderSectionHeader={({ section: { title } }) => (
+            <View>
+              <BaseText weight={300} styles={{
+                fontSize: 13,
+                textTransform: "uppercase"
+              }}>{title}</BaseText>
+            </View>
+          )}
+          keyExtractor={(item, index) => item.id}
+        />}
       </ScrollView>
-
       {/**
-                 * Servizi
-                 */}
-      {servizi.length > 0 && <SectionList
-        sections={servizi}
-        renderSectionHeader={serviziHeader}
-        renderItem={({ item }) => renderItemServizio(item)}
-        keyExtractor={(item, index) => index.toString()}
-      />}
+       * Servizi
+      */}
       {/* <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 10, }}>
                     <BaseText weight={300} styles={{
                         fontSize: 13,
