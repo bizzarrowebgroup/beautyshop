@@ -64,24 +64,33 @@ const Header = (props: HeaderProps) => {
           <View style={{ height: 190 }}>
             {props.loggedIn && (
               <View>
-                <TouchableOpacity style={{
-                  width: 30,
-                  height: 30,
-                  position: "absolute",
-                  right: 40,
-                  top: 15,
-                  zIndex: 2
-                }} onPress={() => {
-                  console.warn("hai premuto")
+                <View style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignContent: "center",
+                  alignItems: "center",
+                  paddingHorizontal: 30,
+                  paddingTop: 10
                 }}>
-                  <Ionicons name="ios-color-wand" size={30} color="black" />
-                </TouchableOpacity>
+                  <BaseText weight={700} styles={styles.titlo}>{"Il tuo profilo"}</BaseText>
+                  <TouchableOpacity style={{
+                    width: 30,
+                    height: 30,
+                    //position: "absolute",
+                    //right: 40,
+                    //top: 15,
+                    zIndex: 2
+                  }} onPress={() => {
+                    console.warn("Non ancora implementato 💀😪")
+                  }}>
+                    <Ionicons name="ios-color-wand" size={30} color="black" />
+                  </TouchableOpacity>
+                </View>
                 <Circle width="154" height="115" style={{
                   position: "absolute",
                   left: 30,
                   top: 50
                 }} />
-                <BaseText styles={styles.titlo}>{"Il tuo profilo"}</BaseText>
                 <Image source={{ uri: props.image }} style={{
                   width: 80,
                   height: 80,
@@ -172,7 +181,7 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   titlo: {
-    marginLeft: 10
+    marginLeft: 15
   },
   number: {
     fontSize: 30,

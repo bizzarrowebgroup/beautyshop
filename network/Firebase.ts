@@ -37,7 +37,7 @@ export const loginWithEmail = (email, password) =>
 
 export const registerFromNotFound = async (user, email, phone) => {
   let password = generatePassword();
-  let profileUrl = "https://eu.ui-avatars.com/api/?size=200&rounded=true&name=" + user + "&background=F4C36C&color=FFF";
+  let profileUrl = "https://eu.ui-avatars.com/api/?size=200&rounded=true&name=" + user + "&background=DF7865&color=FFF";
 
   console.log("---Newaccount---");
   console.log("---user---", user);
@@ -51,19 +51,29 @@ export const registerFromNotFound = async (user, email, phone) => {
       console.log(user, "---userCreated---");
       return user.uid;
     });
+    await auth.currentUser.updateProfile({
+      displayName: user,
+      photoURL: profileUrl
+    }).then((result) => {
+      console.log(result, "updatedProfile");
+    }).catch((error) => {
+      console.log(error, "updatedProfile-error");
+    });
+    let userToDB = {
+      userId,
+      phone: phone,
+      pwd: password,
+      loyalitypoints: 150, // when we register a new user we give him 150 points :D
+      notificationToken: "",
+      notificationsEnabled: false,
+    }
+    const res = await db.collection('utentiApp').add(userToDB);
+    console.log('Added user with doc ID: ', res.id);
     return userId;
   } catch (error) {
     console.warn("cannotRegisterCurrentUser");
     return null;
   }
-  //await auth.currentUser.updateProfile({
-  //  displayName: user,
-  //  photoURL: profileUrl
-  //}).then((result) => {
-  //  console.log(result, "updatedProfile");
-  //}).catch((error) => {
-  //  console.log(error, "updatedProfile-error");
-  //});
 }
 
 export const registerWithEmail = (email, password) =>

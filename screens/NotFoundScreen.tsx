@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   TouchableOpacity,
+  Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -156,6 +157,7 @@ export default function NotFoundScreen({
   // stato prenotazione servizio
   const [serviceId, setServiceId] = React.useState(undefined);
   const [daySelected, setDateSelected] = React.useState(undefined);
+  // blocco stato orari che prendo da db
   const [blocks, setBlocks] = React.useState(undefined);
   const [blockSelected, setBlockSelected] = React.useState(undefined);
   const [timeSelected, setTimeSelected] = React.useState(undefined);
@@ -202,21 +204,42 @@ export default function NotFoundScreen({
     navigation.replace('Root');
     // navigation.pop();
   }
+  const checkPrenotazioni = async () => {
+    let dbPren = await db.collection('prenotazioni').get();
+    if (!dbPren.empty) {
+      let finalpreno = [];
+      dbPren.forEach(item => {
+        let data = item.data();
+        //if (data.slot_date) {
+        //  console.log(moment(data.slot_date).isoWeekday(), "momentDateFromDB");
+        //}
+        finalpreno.push({ id: data.id, ...data });
+      })
+      return finalpreno;
+    } else {
+      console.log("non ci sono prenotazioi, proseguo con undefined");
+      return undefined;
+    }
+  }
 
   const workSlots = async (isoWeekday?, orariFb = undefined) => {
     let today = isoWeekday ? isoWeekday : moment().isoWeekday();
     let todayHours = [];
-    //console.log('---orari workSlots---')
-    //console.log('---' + JSON.stringify(orari) + '---')
-    //console.log('------')
+    let prenotazioni = await checkPrenotazioni();
+    console.log('---orari workSlots---')
+    console.log('---' + JSON.stringify(prenotazioni) + '---')
+    console.log('------')
+
     if (orari !== undefined) {
       orari.forEach(element => {
+        //console.log(element,"element-orari")
         if (element.day == today) {
           todayHours.push(element);
         }
       });
     } else if (orariFb !== undefined) {
       orariFb.forEach(element => {
+        //console.log(element,"element-orariFB")
         if (element.day == today) {
           todayHours.push(element);
         }
@@ -226,6 +249,7 @@ export default function NotFoundScreen({
       let open = todayHours[0].open.split(":");
       let openHours = open[0] ? open[0] : 0;
       let openMinutes = open[1] ? open[1] : 0;
+
       let close = todayHours[0].close.split(":");
       let closeHours = close[0] ? close[0] : 0;
       let closeMinutes = close[1] ? close[1] : 0;
@@ -243,6 +267,15 @@ export default function NotFoundScreen({
         cursor = step(cursor);
       }
       if (blocksSlots.length > 0) {
+        let jona = blocksSlots.filter((e, index) => {
+          return (!prenotazioni.some(d => {
+            console.log("--e--", moment(e).format("dddd DD MMMM"))
+            console.log("--d--", d)
+            console.log("--moment--", moment(d.slot_date).format("dddd DD MMMM"))
+            return moment(d.slot_date).isoWeekday == today && d.slot_time === e && d.slot_end_time === e
+          }))
+        });
+        console.log("jona----", jona)
         setBlocks(blocksSlots);
       } else {
         setBlocks(undefined);
@@ -304,6 +337,7 @@ export default function NotFoundScreen({
    * @param id 
    */
   const initPrenota = async (id) => {
+    setLoading(true);
     let serviceId = id;
     let commercianteId = await obtainCommercianteId(serviceId);
     setCommerciante(commercianteId);
@@ -321,10 +355,10 @@ export default function NotFoundScreen({
     setDateSelected(moment());
     // te li forzo porco dio
     workSlots(undefined, orariFb);
+    setLoading(false);
   }
 
   React.useEffect(() => {
-
     let serviceId = route.params?.serviceId;
 
     let serviceDuration = route.params?.serviceDuration;
@@ -348,7 +382,7 @@ export default function NotFoundScreen({
       setServiceTitle(serviceTitle);
       setServiceCustomer(serviceCustomer);
 
-      setParte(3);
+      setParte(3); // 5 o 3
       handleSnapPress(1);
     }
   }, [route.params]);
@@ -401,13 +435,18 @@ export default function NotFoundScreen({
       setLoading(true);
       try {
         let userId = await registerFromNotFound(user, email, phone).then(result => {
-          console.log(result,"result");
+          console.log(result, "result");
           return result;
         });
-        await handlePrenotazione(userId).then(() => {
-          setIsOn(true);
-          setParte(5);
-          setLoading(false);
+        await handlePrenotazione(userId).then(res => {
+          if (res) {
+            setIsOn(true);
+            setParte(5);
+            setLoading(false);
+          } else {
+            setLoading(false);
+            alert("Errore a db! Contattaci al più presto chiamando il nostro numero verde!");
+          }
         });
       } catch (error) {
         setLoading(false);
@@ -417,10 +456,15 @@ export default function NotFoundScreen({
     } else {
       setLoading(true);
       try {
-        await handlePrenotazione().then(() => {
-          setIsOn(true);
-          setParte(5);
-          setLoading(false);
+        await handlePrenotazione().then(res => {
+          if (res) {
+            setIsOn(true);
+            setParte(5);
+            setLoading(false);
+          } else {
+            setLoading(false);
+            alert("Errore a db! Contattaci al più presto chiamando il nostro numero verde!");
+          }
         });
       } catch (error) {
         setLoading(false);
@@ -431,10 +475,11 @@ export default function NotFoundScreen({
   }
 
   const handlePrenotazione = async (userId?) => {
+    console.log(daySelected, "moment(daySelected)")
     if (user !== null) {
       let prenotazione = {
         userId: user.uid,
-        slot_date: moment(daySelected).format("dddd DD MMMM"),
+        slot_date: daySelected.toString(),
         slot_time: moment(timeSelected).format("HH:mm"),
         slot_end_time: moment(timeSelected).add(serviceDuration * 10, 'minutes').format("HH:mm"),
         state: 0,
@@ -444,14 +489,17 @@ export default function NotFoundScreen({
       try {
         const res = await db.collection('prenotazioni').add(prenotazione);
         console.log('Added document with ID: ', res.id);
+        return true;
       } catch (error) {
         console.log(error, "handlePrenotazione");
+        return false;
       }
     } else {
-      if(userId) {
+      if (userId) {
         let prenotazione = {
           userId: userId,
-          slot_date: moment(daySelected).format("dddd DD MMMM"),
+          //slot_date: moment(daySelected).format("dddd DD MMMM"),
+          slot_date: daySelected.toString(),
           slot_time: moment(timeSelected).format("HH:mm"),
           slot_end_time: moment(timeSelected).add(serviceDuration * 10, 'minutes').format("HH:mm"),
           state: 0,
@@ -461,11 +509,14 @@ export default function NotFoundScreen({
         try {
           const res = await db.collection('prenotazioni').add(prenotazione);
           console.log('Added document with ID: ', res.id);
+          return true;
         } catch (error) {
           console.log(error, "handlePrenotazione");
+          return false;
         }
       } else {
         console.log('no user, wtf are you doing')
+        return false;
       }
     }
   }
@@ -1037,9 +1088,12 @@ export default function NotFoundScreen({
                     <View style={{ marginTop: 10 }}>
                       <Form
                         initialValues={{
-                          user: 'Jonathan Pergolo',
-                          email: 'dio@dio.it',
-                          phone: '3519032191'
+                          user: 'Bianca Canevese',
+                          email: 'bianca@bizzarro.org',
+                          phone: '041611532'
+                          //user: 'Jonathan Pergolo',
+                          //email: 'dio@dio.it',
+                          //phone: '3519032191'
                         }}
                         //validationSchema={validationSchema}
                         onSubmit={values => handleRegister(values)}
@@ -1109,8 +1163,19 @@ export default function NotFoundScreen({
                   <View style={{ marginBottom: 20 }}>
                     <BaseButton title={"Prenota"} onPress={() => {
                       //console.log("hai premuto prenota in parte 4");
-                      handleRegister(null, user)
-                      //setParte(5);
+                      Alert.alert(
+                        //title
+                        'Prenotazione',
+                        //body
+                        'Stai per mandare la richiesta al commerciante, ricordati che dovrai aspettare la sua conferma!',
+                        [
+                          { text: 'Ok', onPress: () => handleRegister(null, user) },
+                          { text: 'Annulla', style: 'cancel' },
+                        ],
+                        { cancelable: false }
+                        //clicking out side of alert will not cancel
+                      );
+
                     }} />
                   </View>
                 )}
@@ -1162,7 +1227,7 @@ export default function NotFoundScreen({
               </View>
             </View>
             <View style={{
-              backgroundColor: Colors.light.bianco,
+              backgroundColor: "white",
               //padding: 5,
               borderBottomLeftRadius: 5,
               borderBottomRightRadius: 5,
@@ -1172,6 +1237,17 @@ export default function NotFoundScreen({
               alignContent: "center"
             }}>
               <BaseText size={15} weight={600} styles={{ marginVertical: 10 }}>Prenotazione riuscita!</BaseText>
+              <View style={{
+                width: 65,
+                height: 14,
+                borderRadius: 5,
+                backgroundColor: "rgba(193, 133, 133, 0.4)",
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: 5,
+              }}>
+                <BaseText weight={700} styles={{ color: "#8f3700" }} size={8}>{"Richesta"}</BaseText>
+              </View>
               <BaseText size={13} weight={400} styles={{ textAlign: "center" }}>A breve ricevere una email di conferma del tuo appuntamento.</BaseText>
               <Image style={{ width: "100%", height: 268, resizeMode: "contain" }} source={require('../assets/images/conferma_prenotazione.png')} />
               <BaseText size={8} weight={300} italic color={"#181818"} styles={{ textAlign: "center", marginBottom: 10 }}>
