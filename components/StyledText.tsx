@@ -57,7 +57,7 @@ const BaseText = ({ ...props }) => {
           lineHeight: props.lineHeight,
           fontFamily: props.fontFamily || fontFamily,
           width: props.maxWidth,
-          height: props.maxHeight
+          height: props.maxHeight,
         }, props.styles]} {...props} />
     </View>
   );

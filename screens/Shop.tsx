@@ -1,13 +1,22 @@
 import * as React from 'react';
+/**
+ * remove this log when all the ScrollView is moved to a renderHeaderComponent of the SectionList !
+ */
+import { YellowBox } from "react-native";
+YellowBox.ignoreWarnings([
+  'VirtualizedLists should never be nested'
+]);
+
 import {
-  Animated,
+  //Animated,
   ScrollView,
   Dimensions,
   SectionList,
   View,
   StyleSheet,
   Image,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  TouchableOpacity
 } from 'react-native';
 import Header from '../components/Header';
 import { RootStackParamList } from '../types';
@@ -16,89 +25,76 @@ import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { db } from '../network/Firebase';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-// import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
 
-import Spinner from '../components/Spinner';
+//import Spinner from '../components/Spinner';
+import Loader from '../components/Loader';
 import BaseText from '../components/StyledText';
 import StarsReview from '../components/StarsReview';
 
-const DATA = [
-  {
-    title: "Main dishes",
-    data: [
-      {}
-    ]
-  },
-  {
-    title: "Sides",
-    data: ["French Fries", "Onion Rings", "Fried Shrimps"]
-  },
-  {
-    title: "Drinks",
-    data: ["Water", "Coke", "Beer"]
-  },
-  {
-    title: "Desserts",
-    data: ["Cheese Cake", "Ice Cream"]
-  }
-];
+import { useValue } from 'react-native-redash';
+import { useHeaderHeight } from '@react-navigation/stack';
+import Animated, {
+  interpolate,
+  concat,
+  Extrapolate,
+} from 'react-native-reanimated';
 
-const pieghe = [
-  {
-    title: "Piega corta",
-    desc: "Spigolature, rotondità e proporzioni possono essere riequilibrate con il giusto taglio e una pettinatura adatta.",
-    price: "25"
-  },
-  {
-    title: "Piega veloce",
-    desc: "Spigolature, rotondità e proporzioni possono essere riequilibrate con il giusto taglio e una pettinatura adatta.",
-    price: "14"
-  },
-  {
-    title: "Piega bigodini",
-    desc: "Spigolature, rotondità e proporzioni possono essere riequilibrate con il giusto taglio e una pettinatura adatta.",
-    price: "19"
-  },
-  {
-    title: "Piega veloce",
-    desc: "Spigolature, rotondità e proporzioni possono essere riequilibrate con il giusto taglio e una pettinatura adatta.",
-    price: "14"
-  },
-];
-
-const tagli = [
-  {
-    title: 'Taglio donna',
-    desc: 'Spigolature, rotondità e proporzioni possono essere riequilibrate con il giusto taglio e una pettinatura adatta.',
-    price: '25'
-  },
-  {
-    title: 'Taglio uomo',
-    desc: 'Spigolature, rotondità e proporzioni possono essere riequilibrate con il giusto taglio e una pettinatura adatta.',
-    price: '14'
-  },
-  {
-    title: 'Taglio completo',
-    desc: 'Spigolature, rotondità e proporzioni possono essere riequilibrate con il giusto taglio e una pettinatura adatta.',
-    price: '30'
-  }
-]
+//import { AppContext } from '../context/Appcontext';
+import BottomSheet, { useBottomSheet } from '@gorhom/bottom-sheet';
+import Handle from '../components/handle';
+import BaseButton from '../components/BaseButton';
 
 const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'>) => {
-  const [isShownTagli, diocanTagli] = React.useState(false);
-  const [indexX, setIndex] = React.useState(1);
-  const [indexTagli, setIndexTagli] = React.useState(1);
+  //  const {
+  //    //servizi,
+  //    //commercianti,
+  //    //foto
+  //  } = React.useContext(AppContext);
+
+  const bottomSheetRef = React.useRef<BottomSheet>(null);
+  const headerHeight = useHeaderHeight();
+
+  // variables
+  const snapPoints = React.useMemo(() => [0, 220, 320], []);
+  const position = useValue<number>(0);
+
+  // styles
+  const shadowOverlayStyle = React.useMemo(
+    () => ({
+      ...styles.shadowOverlay,
+      opacity: interpolate(position, {
+        inputRange: [0, 220, 300],
+        outputRange: [0, 0.4, 1],
+        extrapolate: Extrapolate.CLAMP,
+      }),
+    }),
+    []
+  );
+
+  // callbacks
+  const handleSheetChanges = React.useCallback((index: number) => {
+    console.log('handleSheetChanges', index);
+  }, []);
+
+  const handleSnapPress = React.useCallback(index => {
+    bottomSheetRef.current.snapTo(index);
+    console.log(index, "index--")
+  }, []);
+
+  //const handleClosePress = React.useCallback(() => {
+  //  bottomSheetRef.current?.close();
+  //}, []);
+
+  const [indexX, setIndex] = React.useState(0);
   const [data, setData] = React.useState(undefined);
 
   // TABELLA ORARIO
   const [bool, setBool] = React.useState(false);
   const [day, setDay] = React.useState(0);
-  const [isShown, diocan] = React.useState(false);
 
-  const [hours, setHours] = React.useState([]);
   const [lunedi, setLunedi] = React.useState({});
   const [martedi, setMartedi] = React.useState({});
   const [mercoledi, setMercoledi] = React.useState({});
@@ -108,9 +104,15 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
   const [domenica, setDomenica] = React.useState({});
   const [noOrari, setOrari] = React.useState(false);
   const [recensioni, setRecensioni] = React.useState(null);
-  // const isFocused = useIsFocused();
-  // const current = pieghe[index];
   const [servizi, setServizi] = React.useState(undefined);
+
+  const [indexChosenService, setChosenService] = React.useState(undefined);
+  const [durationChosenService, setDurationChosenService] = React.useState(undefined);
+  const [costChosenService, setCostChosenService] = React.useState(undefined);
+  const [descChosenService, setDescChosenService] = React.useState(undefined);
+  const [titleChosenService, setTitleChosenService] = React.useState(undefined);
+
+  //const [customerTitle, setCustomerTitle] = React.useState(undefined);
 
   const heightX = !bool ? 44 : 100;
   const status = true;
@@ -119,7 +121,6 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
     const commerciantiFirebase = db.collection('commercianti').doc(id);
     const doc = await commerciantiFirebase.get();
     if (!doc.exists) {
-      // console.log('No such document!');
       setOrari(true);
     } else {
       let final = { ...doc.data() };
@@ -129,7 +130,6 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
       const snapshot = await orariRef.where('commercianti', '==', doc.id).get();
       if (snapshot.empty) {
         setOrari(true)
-        // console.log('No matching orari with commercianti.');
       }
       let hours = [];
       snapshot.forEach(async (doc) => {
@@ -143,49 +143,49 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
         })
         hours.forEach(h => {
           switch (h.day) {
-            case 0:
+            case 1:
               if (h.open === "" || h.close === "") {
                 setLunedi({ closed: true })
               } else {
                 setLunedi({ start: h.open, end: h.close })
               }
               break;
-            case 1:
+            case 2:
               if (h.open === "" || h.close === "") {
                 setMartedi({ closed: true })
               } else {
                 setMartedi({ start: h.open, end: h.close })
               }
               break;
-            case 2:
+            case 3:
               if (h.open === "" || h.close === "") {
                 setMercoledi({ closed: true })
               } else {
                 setMercoledi({ start: h.open, end: h.close })
               }
               break;
-            case 3:
+            case 4:
               if (h.open === "" || h.close === "") {
                 setGiovedi({ closed: true })
               } else {
                 setGiovedi({ start: h.open, end: h.close })
               }
               break;
-            case 4:
+            case 5:
               if (h.open === "" || h.close === "") {
                 setVenerdi({ closed: true })
               } else {
                 setVenerdi({ start: h.open, end: h.close })
               }
               break;
-            case 5:
+            case 6:
               if (h.open === "" || h.close === "") {
                 setSabato({ closed: true })
               } else {
                 setSabato({ start: h.open, end: h.close })
               }
               break;
-            case 6:
+            case 7:
               if (h.open === "" || h.close === "") {
                 setDomenica({ closed: true })
               } else {
@@ -206,7 +206,6 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
             finalRecensioni.push(data);
           }
         });
-        // console.log(finalRecensioni,"finalRecensioni");
         setRecensioni(finalRecensioni)
       }
     }
@@ -226,16 +225,45 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
     return result;
   }
 
-  const getServizioTitle = (docId) => {
-    return db.collection('servizi').doc(docId)
-      .get({ source: "default" })
-      .then((docRef) => {
-        var jona = docRef.data();
-        return jona.label;
-      })
-      .catch((e) => {
-        console.log("error", e)
-      });
+  const getServizioTitle = async (docId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let servizio = db.collection('servizi').doc(docId);
+        let docs = await servizio.get();
+        if (docs) {
+          const data = docs.data();
+          resolve(data.label);
+        } else resolve(undefined)
+      } catch (error) {
+        console.warn(error, "getServizioTitle")
+      }
+    });
+  }
+  const iterateFinal = async (finalServizi) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let finalServiziEdit = [];
+        await Promise.all(finalServizi.map(async doc => {
+          let docId, doctitle;
+          docId = doc.data['servizi'];
+          doctitle = await getServizioTitle(docId).then((res) => {
+            return res;
+          });
+          finalServiziEdit.push({
+            title: doctitle !== undefined ? doctitle : 'Categoria non dichiarata',
+            data: [doc.data]
+          });
+        }))
+        //console.log(finalServiziEdit, "inside")
+        if (finalServiziEdit.length > 0) {
+          resolve(finalServiziEdit)
+        } else {
+          resolve(undefined)
+        }
+      } catch (error) {
+        console.warn(error, "iterateFinal");
+      }
+    });
   }
   // HHCFptUM91FqhMq2INjE id
   const getServizi = async (idCommerciante) => {
@@ -247,17 +275,9 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
         let data = { ...doc.data(), id: doc.id };
         finalServizi.push({ data, "id": doc.id });
       });
-      let finalServiziEdit = [];
-      finalServizi.forEach((doc) => {
-        let docId = doc.data['servizi'];
-        let doctitle = getServizioTitle(docId);
-        console.log(doctitle, "doctit");
-        finalServiziEdit.push({
-          title: doctitle,
-          data: [doc.data]
-        });
-      });
-      setServizi(uniqueArray(finalServiziEdit));
+      let finalServiziEdit = await iterateFinal(finalServizi);
+      //console.log(finalServiziEdit, "finalServiziEdit")
+      if (finalServiziEdit != undefined) setServizi(uniqueArray(finalServiziEdit));
     } else {
       console.log("no-doc");
     }
@@ -273,55 +293,96 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
     }
   }, [route.params?.id]);
 
+
   if (data === undefined) {
     return (
-      <Spinner />
+      //<Spinner />
+      <Loader color={Colors.light.arancioDes} size={"large"} animating={true} />
     )
   }
 
-  const serviziHeader = (servizi) => {
-    console.log(servizi, "headerGot");
+  const serviziHeader = (title) => {
     return (
-      <View>
+      <View style={{ marginVertical: 5 }}>
+        <BaseText weight={300} styles={{
+          fontSize: 13,
+          textTransform: "uppercase"
+        }}>{title}</BaseText>
       </View>
     );
   }
 
   const ItemService = ({ item }) => {
-    // "commerciante": "HHCFptUM91FqhMq2INjE",
-    // "cost": "14",
-    // "desc": "Spigolature, rotondità e proporzioni possono essere riequilibrate con il giusto taglio e una pettinatura adatta.",
-    // "enabled": true,
-    // "servizi": "wbHdoy9exAayRWitea5m",
-    // "titolo": "Taglio donna"
-    const { cost, desc, enabled, titolo, id } = item;
-    const dio = () => {
-      console.log(id, "itemIndexDio")
-      setIndex(id);
+    const { cost, desc, enabled, titolo, id, durata } = item;
+    const openService = () => {
+      if (indexX == id) {
+        setIndex(undefined);
+      } else {
+        setIndex(id);
+      }
     };
+    const chosenService = () => {
+      if (indexChosenService == id) {
+        setChosenService(undefined);
+        handleSnapPress(0);
+        //bottomSheetRef.current.snapTo(0);
+      } else {
+        setChosenService(id);
+        setDurationChosenService(durata);
+        setCostChosenService(cost);
+        setDescChosenService(desc);
+        setTitleChosenService(titolo)
+        handleSnapPress(1);
+        //bottomSheetRef.current.snapTo(1.5);
+      }
+    }
     if (enabled) {
       return (
-        <TouchableWithoutFeedback key={titolo} onPress={dio}>
-          <View style={{ marginVertical: 5 }}>
+        <TouchableWithoutFeedback onPress={openService}>
+          <View style={{ marginVertical: 5 }} key={titolo}>
             <View style={{
               minHeight: 40,
               borderTopLeftRadius: 5,
               borderTopRightRadius: 5,
-              backgroundColor: Colors.light.grigio,
+              borderRadius: id != indexX ? 5 : 0,
+              backgroundColor: Colors.light.bianco, // grigio
             }}>
-              <Ionicons name={id === indexX ? "ios-checkbox" : "ios-checkbox-outline"} size={20} color={"#DE9182"} style={{
+              <TouchableOpacity onPress={chosenService} style={{
                 position: "absolute",
                 left: 10,
                 top: 10,
-                // width: 40,
-                // height: 40
-              }} />
-              <Ionicons name="ios-arrow-down" size={18} color="#6D6E95" style={{
-                position: "absolute",
-                right: 15,
-                top: 10,
-                // transform: [{ rotate: indexX === index ? '180deg' : '0deg' }]
-              }} />
+              }}>
+                {id !== indexChosenService && <View style={{
+                  width: 20,
+                  height: 20,
+                  borderWidth: 1,
+                  borderRadius: 4,
+                  borderColor: "#DE9182"
+                }} />}
+                {id === indexChosenService && (
+                  <View style={{
+                    width: 20,
+                    height: 20,
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    borderColor: "#DE9182",
+                    backgroundColor: "#DE9182",
+                    alignContent: "center",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}>
+                    <Ionicons name={"ios-checkbox-outline"} size={15} color={"white"} />
+                  </View>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity onPress={openService}>
+                <Ionicons name="ios-arrow-down" size={18} color="#6D6E95" style={{
+                  position: "absolute",
+                  right: 15,
+                  top: 10,
+                  transform: [{ rotate: indexX === id ? '180deg' : '0deg' }]
+                }} />
+              </TouchableOpacity>
               <View style={{
                 flexDirection: "row",
                 flex: 1,
@@ -339,7 +400,6 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
                 }}>{cost} €</BaseText>
               </View>
             </View>
-            {/* {indexX === index && <View style={{ */}
             {id === indexX &&
               <View style={{
                 backgroundColor: "white",
@@ -368,10 +428,64 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
 
   return (
     <View style={styles.container}>
-      <Header hasBack={true} title={data.title} onPress={() => { navigation.pop() }} />
+      <Animated.View pointerEvents="none" style={shadowOverlayStyle} />
+      <BottomSheet
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        initialSnapIndex={0}
+        //handleComponent={() => <Handle />}
+        handleComponent={() => <Handle style={{ backgroundColor: Colors.light.arancio }} />}
+        topInset={headerHeight}
+        animatedPosition={position}
+        onChange={handleSheetChanges}
+      >
+        <View style={{
+          backgroundColor: Colors.light.arancio,
+          height: 320,
+          paddingHorizontal: 50
+        }}>
+          <View style={{
+            justifyContent: "space-between",
+            alignContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+            marginTop: 15,
+          }}>
+            <View>
+              <BaseText size={15} weight={700} styles={{ flexWrap: 'wrap' }}>Taglio donna</BaseText>
+              <BaseText size={10} weight={300} styles={{ flexWrap: 'wrap' }}>Lorem ipsum ....</BaseText>
+            </View>
+            <BaseText size={14} weight={700}>25 €</BaseText>
+          </View>
+          <View style={{ alignSelf: "center", marginTop: 15 }}>
+            <BaseText size={10} weight={600}>
+              NB:
+            </BaseText>
+            <BaseText size={8} weight={300} italic styles={{ flexWrap: 'wrap' }}>
+              Ricordati che devi ricevere una conferma dal gestore prima di poter avere la prenotazione!
+            </BaseText>
+          </View>
+          <View style={{ marginBottom: 20 }}>
+            <BaseButton title={"Avanti"} onPress={() => {
+              navigation.navigate("NotFound", {
+                serviceId: indexChosenService,
+                serviceDuration: durationChosenService,
+                serviceCost: costChosenService,
+                serviceDesc: descChosenService,
+                serviceTitle: titleChosenService,
+                serviceCustomer: data.title,
+              })
+            }} />
+          </View>
+        </View>
+      </BottomSheet>
+      <Header hasBack={true} title={data.title} onPress={() => { navigation.goBack() }} styles={{ zIndex: -1 }} />
       <ScrollView
         contentContainerStyle={{
           paddingBottom: 200
+        }}
+        style={{
+          zIndex: -1
         }}
         showsVerticalScrollIndicator={false}
         decelerationRate="fast"
@@ -414,13 +528,13 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
               </View>
             </View>
           </View>
-          {/* <View style={{ flexDirection: "row", }}>
-                        <Image style={{ width: 76, height: 61, borderRadius: 5 }} source={require('../assets/images/salon.jpeg')} />
-                        <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 9 }} source={require('../assets/images/salon.jpeg')} />
-                        <Image style={{ width: 76, height: 61, borderRadius: 5 }} source={require('../assets/images/salon.jpeg')} />
-                        <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 9 }} source={require('../assets/images/salon.jpeg')} />
-                    </View> */}
-          {!noOrari && <View style={styles.btn}>
+          <View style={{ flexDirection: "row", alignContent: "center", alignItems: "flex-start", justifyContent: "space-between", marginTop: 15 }}>
+            <Image style={{ width: 76, height: 61, borderRadius: 5, marginRight: 4 }} source={require('../assets/images/salon.jpeg')} />
+            <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
+            <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
+            <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
+          </View>
+          {!noOrari && <View style={[styles.btn, { backgroundColor: Colors.light.arancioDes, }]}>
             <BaseText weight={400} styles={{ fontSize: 15, textTransform: "uppercase" }}>Prenota</BaseText>
           </View>}
         </View>
@@ -433,117 +547,125 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
         {/**
                  * orario
                  */}
-        {!noOrari && (
-          <>
-            <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
-              <BaseText weight={300} styles={{
-                fontSize: 13,
-                textTransform: "uppercase"
-              }}>Orario</BaseText>
-            </View>
-            <TouchableWithoutFeedback onPress={() => setBool(!bool)} style={{}}>
-              <Animated.View style={{
-                width: width - 40,
-                height: heightX,
-                borderRadius: 5,
-                backgroundColor: "white",
-                alignSelf: "center",
-                justifyContent: bool ? "center" : "flex-start",
-                alignItems: "center",
-                flexDirection: "row"
-              }}>
-                <View style={{
-                  justifyContent: "space-between",
-                  alignContent: "space-between",
-                  alignItems: "flex-end"
+        {!noOrari &&
+          Object.keys(lunedi).length > 0 &&
+          Object.keys(martedi).length > 0 &&
+          Object.keys(mercoledi).length > 0 &&
+          Object.keys(giovedi).length > 0 &&
+          Object.keys(venerdi).length > 0 &&
+          Object.keys(sabato).length > 0 &&
+          Object.keys(domenica).length > 0 &&
+          (
+            <>
+              <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
+                <BaseText weight={300} styles={{
+                  fontSize: 13,
+                  textTransform: "uppercase"
+                }}>Orario</BaseText>
+              </View>
+              <TouchableWithoutFeedback onPress={() => setBool(!bool)} style={{}}>
+                <Animated.View style={{
+                  width: width - 40,
+                  height: heightX,
+                  borderRadius: 5,
+                  backgroundColor: "white",
+                  alignSelf: "center",
+                  justifyContent: bool ? "center" : "flex-start",
+                  alignItems: "center",
+                  flexDirection: "row"
                 }}>
-                  {day === 1 && !bool && (<BaseText weight={day === 1 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 1 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
-                  {day === 2 && !bool && (<BaseText weight={day === 2 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 2 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
-                  {day === 3 && !bool && (<BaseText weight={day === 3 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 3 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
-                  {day === 4 && !bool && (<BaseText weight={day === 4 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 4 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
-                </View>
-                {bool && (<View style={{ height: "80%", width: 1, backgroundColor: "#181818", marginHorizontal: 20 }} />)}
-                <View style={{
-                  alignItems: "flex-end",
-                  marginTop: !bool ? 0 : 20 //0
-                }}>
-                  {day === 5 && !bool && (<BaseText weight={day === 5 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
-                  {day === 6 && !bool && (<BaseText weight={day === 6 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
-                  {day === 0 && !bool && (<BaseText weight={day === 0 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 5 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 6 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 0 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    fontSize: 13,
-                    color: "#181818"
-                  }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
-                </View>
-                <Ionicons name="ios-arrow-down" size={24} color="#181818" style={{
-                  position: "absolute",
-                  right: 20,
-                  top: 10,
-                  transform: [{ rotate: bool ? '180deg' : '0deg' }]
-                }} />
-              </Animated.View>
-            </TouchableWithoutFeedback>
-          </>
-        )}
+                  <View style={{
+                    justifyContent: "space-between",
+                    alignContent: "space-between",
+                    alignItems: "flex-end"
+                  }}>
+                    {day === 1 && !bool && (<BaseText weight={day === 1 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
+                    {bool && (<BaseText weight={day === 1 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
+                    {day === 2 && !bool && (<BaseText weight={day === 2 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
+                    {bool && (<BaseText weight={day === 2 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
+                    {day === 3 && !bool && (<BaseText weight={day === 3 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
+                    {bool && (<BaseText weight={day === 3 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
+                    {day === 4 && !bool && (<BaseText weight={day === 4 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
+                    {bool && (<BaseText weight={day === 4 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
+                  </View>
+                  {bool && (<View style={{ height: "80%", width: 1, backgroundColor: "#181818", marginHorizontal: 20 }} />)}
+                  <View style={{
+                    alignItems: "flex-end",
+                    marginTop: !bool ? 0 : 20 //0
+                  }}>
+                    {day === 5 && !bool && (<BaseText weight={day === 5 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
+                    {day === 6 && !bool && (<BaseText weight={day === 6 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
+                    {day === 0 && !bool && (<BaseText weight={day === 0 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
+                    {bool && (<BaseText weight={day === 5 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
+                    {bool && (<BaseText weight={day === 6 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
+                    {bool && (<BaseText weight={day === 0 ? 700 : 400} styles={{
+                      marginLeft: !bool ? 20 : 0,
+                      fontSize: 13,
+                      color: "#181818"
+                    }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
+                  </View>
+                  <Ionicons name="ios-arrow-down" size={24} color="#181818" style={{
+                    position: "absolute",
+                    right: 20,
+                    top: 10,
+                    transform: [{ rotate: bool ? '180deg' : '0deg' }]
+                  }} />
+                </Animated.View>
+              </TouchableWithoutFeedback>
+            </>
+          )}
         {/**
        * Valutazioni e recensioni
        */}
@@ -572,7 +694,6 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
               </View>
               <TouchableWithoutFeedback onPress={() => navigation.navigate("Review")}>
                 <View style={{
-                  // height: 92,
                   backgroundColor: "#FBFBFB",
                   borderRadius: 5,
                   flex: 1,
@@ -609,161 +730,17 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
         {servizi !== undefined && <SectionList
           sections={servizi}
           style={{
-            marginTop: 20,
+            //marginTop: 20,
             marginHorizontal: 20,
-            marginVertical: 10,
           }}
+          //ListHeaderComponent={()=>}
           renderItem={({ item }) => <ItemService item={item} />}
-          renderSectionHeader={({ section: { title } }) => (
-            <View>
-              <BaseText weight={300} styles={{
-                fontSize: 13,
-                textTransform: "uppercase"
-              }}>{title}</BaseText>
-            </View>
-          )}
+          renderSectionHeader={({ section: { title } }) => serviziHeader(title)}
           keyExtractor={(item, index) => item.id}
         />}
       </ScrollView>
-      {/**
-       * Servizi
-      */}
-      {/* <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 10, }}>
-                    <BaseText weight={300} styles={{
-                        fontSize: 13,
-                        // fontFamily: "Montserrat_300Light",
-                        textTransform: "uppercase"
-                    }}>Pieghe</BaseText>
-                    {pieghe.map(({ title, desc, price }, index) => {
-                        const dio = () => {
-                            setIndex(index)
-                            diocan(!isShown)
-                        };
-                        return (
-                            <TouchableWithoutFeedback key={index} onPress={dio}>
-                                <View style={{ marginVertical: 5 }}>
-                                    <View style={{
-                                        minHeight: 40,
-                                        borderTopLeftRadius: 5,
-                                        borderTopRightRadius: 5,
-                                        backgroundColor: Colors.light.grigio,
-                                    }}>
-                                        <Ionicons name={index === 0 ? "ios-checkbox" : "ios-checkbox-outline"} size={20} color={"#DE9182"} style={{
-                                            position: "absolute",
-                                            left: 10,
-                                            top: 10,
-                                        }} />
-                                        <Ionicons name="ios-arrow-down" size={18} color="#6D6E95" style={{
-                                            position: "absolute",
-                                            right: 15,
-                                            top: 10,
-                                            transform: [{ rotate: indexX === index && isShown ? '180deg' : '0deg' }]
-                                        }} />
-                                        <View style={{
-                                            flexDirection: "row",
-                                            flex: 1,
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            alignContent: "center",
-                                            marginLeft: 40,
-                                            marginRight: 40
-                                        }}>
-                                            <BaseText size={13} styles={{
-                                                color: "black",
-                                            }}>{title}</BaseText>
-                                            <BaseText size={13} weight={700} styles={{
-                                                color: "black",
-                                            }}>{price} €</BaseText>
-                                        </View>
-                                    </View>
-                                    {indexX === index && isShown && <View style={{
-                                        backgroundColor: "white",
-                                        borderBottomRightRadius: 10,
-                                        borderBottomLeftRadius: 10,
-                                        padding: 15,
-                                        top: -5,
-                                        zIndex: -1
-                                    }}>
-                                        <BaseText styles={{
-                                            color: "#828282",
-                                            textAlign: "center",
-                                            fontSize: 10,
-                                        }}>{desc}</BaseText>
-                                    </View>}
-                                </View>
-                            </TouchableWithoutFeedback>
-                        );
-                    })}
-                </View>
-                <View style={{ backgroundColor: "transparent", marginHorizontal: 20, }}>
-                    <BaseText weight={300} styles={{
-                        fontSize: 13,
-                        // fontFamily: "Montserrat_300Light",
-                        textTransform: "uppercase"
-                    }}>Tagli</BaseText>
-                    {tagli.map(({ title, desc, price }, index) => {
-                        const dio = () => {
-                            setIndexTagli(index)
-                            diocanTagli(!isShownTagli)
-                        };
-                        return (
-                            <TouchableWithoutFeedback key={index} onPress={dio}>
-                                <View style={{ marginVertical: 5 }}>
-                                    <View style={{
-                                        minHeight: 40,
-                                        borderTopLeftRadius: 10,
-                                        borderTopRightRadius: 10,
-                                        backgroundColor: Colors.light.grigio,
-                                    }}>
-                                        <Ionicons name="ios-checkbox-outline" size={20} color={"#DE9182"} style={{
-                                            position: "absolute",
-                                            left: 10,
-                                            top: 10,
-                                        }} />
-                                        <Ionicons name="ios-arrow-down" size={18} color="#6D6E95" style={{
-                                            position: "absolute",
-                                            right: 15,
-                                            top: 10,
-                                            transform: [{ rotate: indexTagli === index && isShownTagli ? '180deg' : '0deg' }]
-                                        }} />
-                                        <View style={{
-                                            flexDirection: "row",
-                                            flex: 1,
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            alignContent: "center",
-                                            marginLeft: 40,
-                                            marginRight: 40
-                                        }}>
-                                            <BaseText size={13} styles={{
-                                                color: "black",
-                                            }}>{title}</BaseText>
-                                            <BaseText size={13} weight={700} styles={{
-                                                color: "black",
-                                            }}>{price} €</BaseText>
-                                        </View>
-                                    </View>
-                                    {indexTagli === index && isShownTagli && <View style={{
-                                        backgroundColor: "white",
-                                        borderBottomRightRadius: 10,
-                                        borderBottomLeftRadius: 10,
-                                        padding: 15,
-                                        top: -5,
-                                        zIndex: -1
-                                    }}>
-                                        <BaseText styles={{
-                                            color: "#828282",
-                                            textAlign: "center",
-                                            fontSize: 10,
-                                            // fontFamily: "Montserrat_400Regular",
-                                        }}>{desc}</BaseText>
-                                    </View>}
-                                </View>
-                            </TouchableWithoutFeedback>
-                        );
-                    })}
-                </View> */}
-    </View>
+
+    </View >
   );
 };
 
@@ -780,21 +757,16 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start"
   },
   text: {
-    // fontFamily: "Montserrat_400Regular"
   },
   textBold: {
-    // fontFamily: "Montserrat_700Bold",
   },
   btn: {
-    backgroundColor: "#DE9182",
     marginTop: 15,
-    height: 32,
+    height: 35,
     width: "100%",
-    // width: width - 40,
-    alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-    flex: 1,
+    alignContent: "center",
     // shadowColor: Colors.light.nero,
     // shadowOpacity: 0.25,
     // shadowOffset: {
@@ -803,5 +775,13 @@ const styles = StyleSheet.create({
     // },
     // shadowRadius: 4,
     borderRadius: 5
-  }
+  },
+  shadowOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
+  },
 });

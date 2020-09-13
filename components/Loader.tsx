@@ -39,14 +39,14 @@ const Loader = ({ color, size, style, animating }: LoaderProps) => {
   });
 
   return (
-    <View style={styles.containter}>
+    <View style={[styles.containter, { backgroundColor: color }]}>
       <Animated.Image
         source={require('../assets/images/logoBS.png')}
         style={[{ transform: [{ rotate: spin }] }, styles.image]}
       />
       <ActivityIndicator
         animating={animating}
-        color={color}
+        color={"black"}
         size={size}
         style={[style, { marginTop: 40 }]}
       />
@@ -63,11 +63,12 @@ const styles = StyleSheet.create({
     //alignSelf: "center",
     alignContent: "center",
     justifyContent: "center",
-    backgroundColor: "#F4C36C"
+    //backgroundColor: "#F4C36C"
   },
   image: {
     width: 50,
     height: 50,
-    paddingBottom: 40
+    paddingBottom: 40,
+    tintColor: "black"
   }
 });

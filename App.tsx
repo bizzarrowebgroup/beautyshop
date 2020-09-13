@@ -68,7 +68,6 @@ export default function App() {
       const tempDoc = commerciantiFirebase.docs.map((doc) => {
         return { id: doc.id, ...doc.data() }
       })
-      // console.log(tempDoc);
       // tempDoc.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
       setCommercianti(tempDoc);
       // setFetching(false);
@@ -126,7 +125,7 @@ export default function App() {
   //     unsubscribe();
   //   }
   // }, []);
-  const showToast = (header, message, type = 'error', pos = 'top', duration = 1500,) => {
+  const showToast = (header, message, type = 'error', pos = 'top', duration = 1500) => {
     errorToast.current.show({
       text1: header,
       text2: message,
@@ -147,14 +146,14 @@ export default function App() {
   if (!isLoadingComplete || fetching) {
   //if (true) {
     return (
-      <Loader color={Colors.light.viola} size={"large"} animating={true} />
+      <Loader color={Colors.light.arancioDes} size={"large"} animating={true} />
     )
   }
   return (
     <SafeAreaProvider>
       <AppContext.Provider value={context}>
         <StatusBar
-          animated
+          //animated
           style="dark"
           translucent={true}
           hideTransitionAnimation="fade"

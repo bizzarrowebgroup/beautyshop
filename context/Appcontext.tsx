@@ -4,12 +4,12 @@ interface User {
     id: number,
 }
 
-interface Booking {
-    id: number,
-    make: string,
-    year: number,
-    color: string,
-}
+//interface Booking {
+//    id: number,
+//    make: string,
+//    year: number,
+//    color: string,
+//}
 
 interface servizi {
     id: string,

@@ -40,6 +40,7 @@ export default function BottomTabNavigator() {
     // onAuthStateChanged returns an unsubscriber
     const unsubscribeAuth = auth.onAuthStateChanged(async authUser => {
       try {
+        console.log(authUser, "authUser")
         await (authUser ? setUser(authUser) : setUser(null));
         setIsLoading(false);
       } catch (error) {
@@ -80,44 +81,44 @@ export default function BottomTabNavigator() {
         name="Esplora"
         component={TabOneNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-search" color={color} size={30} style={{ marginBottom: -3 }} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="ios-search" color={color} size={18} style={{ marginBottom: -3 }} />,
         }}
       />
       <BottomTab.Screen
         name="Preferiti"
         component={PreferitiNav}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-heart-empty" color={color} size={30} style={{ marginBottom: -3 }} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="ios-heart-empty" color={color} size={18} style={{ marginBottom: -3 }} />,
         }}
       />
       <BottomTab.Screen
         name="Add"
         component={TabTwoNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-add" color={color} size={40} style={{
+          tabBarIcon: ({ color }) => <TabBarIcon name="ios-add" color={color} size={18} style={{
           }} brd={Colors.light.arancioDes} />,
-          tabBarLabel: () => <></>
+          tabBarLabel: () => <></>,
         }}
       />
       <BottomTab.Screen
         name="Prenotazioni"
         component={PrenotazioniNav}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-calendar" color={color} size={30} style={{ marginBottom: -3 }} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="ios-calendar" color={color} size={18} style={{ marginBottom: -3 }} />,
         }}
       />
       <BottomTab.Screen
         name="Profilo"
         component={user ? ProfiloNav : AuthNav}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-people" color={color} size={30} style={{ marginBottom: -3 }} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="ios-people" color={color} size={18} style={{ marginBottom: -3 }} />,
         }}
       />
     </BottomTab.Navigator>
   );
 }
 
-function TabBarIcon(props: { name: string; color: string, size: number | 30, style: any, brd?: any }) {
+function TabBarIcon(props: { name: string; color: string, size: number | 18, style: any, brd?: any }) {
   if (props.name === "ios-add") {
     return (
       <View style={{
@@ -130,7 +131,7 @@ function TabBarIcon(props: { name: string; color: string, size: number | 30, sty
         // borderBottomRightRadius: 80,
         width: 80,
         height: 80,
-        backgroundColor: Colors.light.bg,
+        //backgroundColor: Colors.light.bg,
         // backgroundColor: "transparent",
         justifyContent: "center",
         alignItems: "center",
@@ -138,7 +139,7 @@ function TabBarIcon(props: { name: string; color: string, size: number | 30, sty
         // top: -20,
         borderRadius: 40,
         position: "absolute",
-        bottom: 0
+        bottom: 10
       }}>
         <View style={[props.style, {
           borderRadius: 30,
@@ -205,9 +206,9 @@ function TabTwoNavigator() {
       <TabTwoStack.Screen
         name="Book"
         component={Book}
-        // options={{
-        //   cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
-        // }}
+      // options={{
+      //   cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
+      // }}
       />
     </TabTwoStack.Navigator>
   );
