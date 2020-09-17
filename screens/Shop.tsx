@@ -46,6 +46,7 @@ import Animated, {
 import BottomSheet, { useBottomSheet } from '@gorhom/bottom-sheet';
 import Handle from '../components/handle';
 import BaseButton from '../components/BaseButton';
+import { User } from '../models/User';
 
 const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'>) => {
   //  const {
@@ -283,6 +284,15 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
     }
   }
 
+  const setPreferito = async(idPreferito) => {
+    let preferito = {
+      //idUser: User.
+      preferito: idPreferito,
+      //user: 
+    };
+    const preferitiFB = db.collection('preferitiApp').add(preferito);
+  }
+
   React.useEffect(() => {
     if (route.params?.id) {
       getServizi(route.params?.id);
@@ -452,19 +462,19 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
             marginTop: 15,
           }}>
             <View>
-              <BaseText size={15} weight={700} styles={{ flexWrap: 'wrap' }}>Taglio donna</BaseText>
-              <BaseText size={10} weight={300} styles={{ flexWrap: 'wrap' }}>Lorem ipsum ....</BaseText>
+              <BaseText size={15} weight={700} styles={{ flexWrap: 'wrap' }}>{titleChosenService}</BaseText>
+              <BaseText size={10} weight={300} styles={{ flexWrap: 'wrap',maxWidth: 250 }}>{descChosenService}</BaseText>
             </View>
-            <BaseText size={14} weight={700}>25 €</BaseText>
+            <BaseText size={14} weight={700} >{costChosenService} €</BaseText>
           </View>
-          <View style={{ alignSelf: "center", marginTop: 15 }}>
+          {/*<View style={{ alignSelf: "center", marginTop: 15 }}>
             <BaseText size={10} weight={600}>
               NB:
             </BaseText>
             <BaseText size={8} weight={300} italic styles={{ flexWrap: 'wrap' }}>
               Ricordati che devi ricevere una conferma dal gestore prima di poter avere la prenotazione!
             </BaseText>
-          </View>
+          </View>*/}
           <View style={{ marginBottom: 20 }}>
             <BaseButton title={"Avanti"} onPress={() => {
               navigation.navigate("NotFound", {

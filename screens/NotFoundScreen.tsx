@@ -226,10 +226,11 @@ export default function NotFoundScreen({
     let today = isoWeekday ? isoWeekday : moment().isoWeekday();
     let todayHours = [];
     let prenotazioni = await checkPrenotazioni();
+
     console.log('---orari workSlots---')
     console.log('---' + JSON.stringify(prenotazioni) + '---')
     console.log('------')
-
+    // check if i recive or force the render of timeslots
     if (orari !== undefined) {
       orari.forEach(element => {
         //console.log(element,"element-orari")
@@ -281,6 +282,7 @@ export default function NotFoundScreen({
         setBlocks(undefined);
       }
     }
+
   }
 
   function obtainCommercianteId(id) {

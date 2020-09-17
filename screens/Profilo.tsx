@@ -93,8 +93,6 @@ const Profilo = ({
     });
   }
 
-
-
   React.useEffect(() => {
     if (user != null) {
       setName(user.displayName);
