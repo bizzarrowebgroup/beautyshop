@@ -14,7 +14,7 @@ interface BottomIconProps {
 
 };
 
-export default function BottomIcon({ style, size, type, color = "#181818" }: BottomIconProps) {
+export default function BottomIcon({ style, size, type, color }: BottomIconProps) {
   let icon = "";
   let width = size;
   let height = size;

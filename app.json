@@ -24,7 +24,8 @@
       "versionCode": 1
     },
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
+      "usesAppleSignIn": true,
       "bundleIdentifier": "it.bizzarro.beautyshop",
       "buildNumber": "1.0"
     },
@@ -44,6 +45,16 @@
             "authToken": "31088345a3224ee780bc2c69f3346725f1e48f080f684381b03b5c28aa63fc76"
           }
         }
+      ]
+    },
+    "packagerOpts": {
+      "config": "metro.config.js",
+      "sourceExts": [
+        "js",
+        "jsx",
+        "svg",
+        "ts",
+        "tsx"
       ]
     }
   }
