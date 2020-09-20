@@ -17,6 +17,8 @@ import { ParamListBase } from "@react-navigation/native";
 import { AuthUserContext } from '../navigation/AuthUserProvider';
 import BaseText from '../components/StyledText';
 
+import Constants from "expo-constants";
+
 // import { TextInput } from 'react-native-gesture-handler';
 // import { getDateNow } from "../constants/Utils";
 //import * as firebase from 'firebase';
@@ -247,7 +249,7 @@ const Profilo = ({
             <BaseText size={14} weight={300}>Esci dal tuo account</BaseText>
           </TouchableOpacity>
           <View style={{ alignContent: "center", alignItems: "center", justifyContent: "center", marginVertical: 20 }}>
-            <BaseText size={9} weight={700}>{"Versione App 1.0 (1.0)"}</BaseText>
+            <BaseText size={9} weight={700}>{`Versione App ${Constants.manifest.version} (${Constants.platform.ios.buildNumber || 0})`}</BaseText>
           </View>
         </View>
       </ScrollView>
