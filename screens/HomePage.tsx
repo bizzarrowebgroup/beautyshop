@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 import { AppContext } from '../context/Appcontext';
+import { AuthUserContext } from '../navigation/AuthUserProvider';
 
 import { Ionicons } from '@expo/vector-icons';
 import Desk from '../components/svg/Desk';
@@ -27,6 +28,8 @@ import { StackScreenProps } from '@react-navigation/stack';
 // import useColorScheme from '../hooks/useColorScheme';
 import { RootStackParamList } from '../types';
 import BaseText from '../components/StyledText';
+import { db, dbVal } from '../network/Firebase';
+import Loader from '../components/Loader';
 // import LottieView from 'lottie-react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -41,11 +44,79 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
   const [parrucchieri, setPar] = React.useState([]);
   // const colorScheme = useColorScheme();
   // const lottieHert = React.useRef(null);
+  const { user, setUser } = React.useContext(AuthUserContext);
+  const [userDocId, setUserDocId] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [favoritesFB, setFavorites] = React.useState(undefined);
+  const getUserId = async () => {
+    //get a unique key
+    //console.log("---getUserId[called]---")
+    if (user !== null) {
+      //console.log("---getUserId[user-present]---")
+      var databaseRef = await db.collection('utentiApp').where("userId", "==", user.uid).get();
+      if (!databaseRef.empty) {
+        //console.log("---getUserId[databaseRef-notEmpty]---")
+        databaseRef.forEach(doc => {
+          //console.log("---getUserId[databaseRef-forEach]---", doc.data());
+          //console.log("---getUserId[docID]---", doc.id);
+          setUserDocId(doc.id);
+        });
+      };
+    }
+  }
+
+  const getFavorites = async () => {
+    try {
+      console.log("sono dentro getFavorites")
+      setIsLoading(true);
+      var databaseRefReal = db.collection('utentiApp').doc(userDocId);
+      const doc = await databaseRefReal.get();
+      let favoritesToSearch = [];
+      if (doc.exists) {
+        let favorites = doc.data()?.favorites;
+        if (favorites && favorites.length > 0) {
+          favoritesToSearch.push(favorites);
+        } else {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+        setFavorites(undefined);
+        return;
+      }
+      const favoritesDb = db.collection('commercianti');
+      const snapshot = await favoritesDb.get();
+      let finalFavorites = [];
+      favoritesToSearch.forEach((favDoc) => {
+        let sfavDoc = favDoc;
+        sfavDoc.forEach(item => {
+          let itemId = item.id;
+          snapshot.forEach(snapDoc => {
+            const snapDocData = snapDoc.data();
+            const snapDocID = snapDoc.id;
+            if (itemId === snapDocID) {
+              finalFavorites.push(snapDocID)
+            }
+          });
+        });
+      });
+      if (finalFavorites.length > 0) {
+        setFavorites(finalFavorites);
+      } else {
+        setFavorites(undefined);
+      }
+      console.log("---finalFavorites---", finalFavorites);
+      setIsLoading(false);
+    } catch (error) {
+      console.log("---[getFavorites]ERROR---", error)
+    }
+  }
 
   React.useEffect(() => {
     // setTimeout(() => {
     //     setModal(!modalShow);
     // }, 5000);
+    getUserId();
     let parrucchieri = [];
     if (commercianti && foto) {
       const comFin = commercianti.map(com => ({
@@ -68,7 +139,26 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
       })
       setPar(parrucchieri);
     }
-  }, []);
+    if (user !== null && userDocId !== null) {
+      getFavorites();
+    }
+  }, [user, userDocId]);
+
+  //React.useEffect(() => {
+  //  navigation.addListener('focus', () => {
+  //    if (user !== undefined && userDocId !== null) {
+  //      getUserId();
+  //      getFavorites();
+  //    }
+  //  });
+  //}, [user, userDocId]);
+
+  if (isLoading) {
+    return (
+      <Loader color={Colors.light.arancioDes} size={"large"} animating={true} />
+    )
+  }
+
   return (
     <View style={styles.container}>
       {/**
@@ -220,10 +310,73 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
               if (title.length > 23) {
                 title = title.slice(0, 23) + "";
               }
+              let isFavorite = false;
+              if (favoritesFB !== undefined) {
+                isFavorite = favoritesFB.includes(id);
+                //console.log(isFavorite, "---isFAV---")
+                //console.log(favoritesFB, "---favoritesFB---")
+                //console.log(id, "---id---")
+              }
+              const setFavorite = async () => {
+                if (user !== null && userDocId !== null) {
+                  console.log("---hoPremuto---", id)
+                  try {
+                    var databaseRefReal = await db.collection('utentiApp').doc(userDocId);
+                    await db.runTransaction(async (t) => {
+                      const doc = await t.get(databaseRefReal);
+                      //console.log("---favoritesOnDB---", doc.data()?.favorites)
+                      let favorites = doc.data().favorites;
+                      // DOC: se ho preferiti entro per capire come rimuoverlo
+                      if (favorites && favorites !== undefined) {
+                        favorites.forEach((element) => {
+                          if (element.id === id) {
+                            // DOC SE HO GIA LO STESSO PREFERITO PREMUTO LO RIMUOVO
+                            var deletedList = favorites.filter(x => {
+                              return x.id != id;
+                            })
+                            //console.log("---deletedList[FAVORITES]---", deletedList);
+                            if (deletedList.length <= 0) {
+                              // rimuovo la lista completa
+                              //isFavorite = false;
+                              t.update(databaseRefReal, { favorites: dbVal.FieldValue.delete() });
+                            } else {
+                              // rimuovo il commerciante
+                              //isFavorite = false;
+                              t.update(databaseRefReal, { favorites: deletedList });
+                            }
+                          } else {
+                            // aggiungo il commerciante
+                            let newFavorites = [...favorites, { id }];
+                            var list = newFavorites.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
+                            //isFavorite = true;
+                            t.update(databaseRefReal, {
+                              favorites: list
+                            });
+                          }
+                        });
+                      } else {
+                        // aggiungo il commerciante per la prima volta
+                        //isFavorite = true;
+                        t.update(databaseRefReal, {
+                          favorites: [
+                            { id }
+                          ]
+                        });
+                      }
+                    });
+                    getFavorites();
+                  } catch (error) {
+                    console.log("---setFavorite[Error]", error);
+                  }
+                } else {
+                  console.warn("non ho un utente per aggiugnere questo commerciante ai preferiti");
+                }
+              }
+
               return (
                 <TouchableWithoutFeedback key={index} onPress={() => {
                   navigation.navigate("Shop", { id: id });
-                }} >
+                }}>
                   <View style={{
                     width: 342,
                     marginHorizontal: 10,
@@ -255,7 +408,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
                       <View style={{ marginTop: 5 }}>
                         <BaseText size={8} maxHeight={20}>{desc}</BaseText>
                       </View>
-                      <View style={{ flexDirection: "row", alignContent:"center", alignItems: "center", justifyContent: "flex-start" }}>
+                      <View style={{ flexDirection: "row", alignContent: "center", alignItems: "center", justifyContent: "flex-start" }}>
                         <Ionicons name="ios-pin" size={25} color={Colors.light.violaDes} style={{ marginRight: 5 }} />
                         <BaseText size={8} maxWidth={160} color={"#616161"}>{via}</BaseText>
                       </View>
@@ -300,11 +453,13 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
                       <BaseText weight={700} color={Colors.light.nero} size={9}>{"DETTAGLI"}</BaseText>
                       <RightIcon width={19} height={19} style={{ marginLeft: 2 }} />
                     </View>
-                    <Ionicons name="ios-heart-empty" size={20} color={Colors.light.arancioDes} style={{
+                    {user !== null && <TouchableOpacity onPress={setFavorite} style={{
                       position: "absolute",
                       right: 15,
                       top: 10
-                    }} />
+                    }}>
+                      <Ionicons name={isFavorite ? "ios-heart" : "ios-heart-empty"} size={20} color={Colors.light.arancioDes} />
+                    </TouchableOpacity>}
                   </View>
                 </TouchableWithoutFeedback>
               )
@@ -346,28 +501,26 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 5,
     marginHorizontal: 15,
-    height: 45,
-    bottom: 55,
+    height: 40,
+    bottom: 45,
     justifyContent: "center"
   },
   headerText: {
     fontSize: 25,
     color: "#181818",
-    marginTop: 13,
+    marginTop: 15,
     marginBottom: 10,
     marginLeft: 35,
-    // fontFamily: 'Montserrat_700Bold'
   },
   headerSub: {
     width: 183,
     height: 106,
     fontSize: 16,
-    // fontFamily: 'Montserrat_400Regular',
     color: "#181818",
     marginLeft: 35,
   },
   header: {
-    backgroundColor: Colors.light.arancioDes,
+    backgroundColor: Colors.light.arancio,
     width: "100%",
     height: 215,
     borderBottomLeftRadius: 15

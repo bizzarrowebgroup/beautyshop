@@ -1,7 +1,7 @@
 import * as firebase from 'firebase';
 import 'firebase/auth';
 import 'firebase/firestore';
-import { resolvePlugin } from '@babel/core';
+//import { resolvePlugin } from '@babel/core';
 
 // import firebaseConfig from './firebaseConfig';
 
@@ -39,39 +39,47 @@ export const registerFromNotFound = async (user, email, phone) => {
   let password = generatePassword();
   let profileUrl = "https://eu.ui-avatars.com/api/?size=200&rounded=true&name=" + user + "&background=DF7865&color=FFF";
 
-  console.log("---Newaccount---");
-  console.log("---user---", user);
-  console.log("---phone---", phone);
-  console.log("---email---", email);
-  console.log("---pass---", password);
-  console.log("---photoURL---", profileUrl);
+  //console.log("---Newaccount---");
+  //console.log("---user---", user);
+  //console.log("---phone---", phone);
+  //console.log("---email---", email);
+  //console.log("---pass---", password);
+  //console.log("---photoURL---", profileUrl);
   try {
     let userId = await auth.createUserWithEmailAndPassword(email, password).then(result => {
       var user = result.user;
-      console.log(user, "---userCreated---");
-      return user.uid;
+      if (user) {
+        return user.uid;
+      } else {
+        return undefined;
+      }
+      //console.log(user, "---userCreated---");
     });
-    await auth.currentUser.updateProfile({
-      displayName: user,
-      photoURL: profileUrl
-    }).then((result) => {
-      console.log(result, "updatedProfile");
-    }).catch((error) => {
-      console.log(error, "updatedProfile-error");
-    });
-    let userToDB = {
-      userId,
-      phone: phone,
-      pwd: password,
-      loyalitypoints: 150, // when we register a new user we give him 150 points :D
-      notificationToken: "",
-      notificationsEnabled: false,
+    if (userId !== undefined) {
+      await auth.currentUser.updateProfile({
+        displayName: user,
+        photoURL: profileUrl
+      }).then((result) => {
+        console.log(result, "updatedProfile");
+      }).catch((error) => {
+        console.log("---updatedProfile-error---", error);
+      });
+      let userToDB = {
+        userId,
+        phone: phone,
+        pwd: password,
+        loyalitypoints: 150, // when we register a new user we give him 150 points :D
+        notificationToken: "",
+        notificationsEnabled: false,
+      }
+      const res = await db.collection('utentiApp').add(userToDB);
+      console.log("---utentiAppID---", res.id);
+      return userId;
+    } else {
+      console.log("---noUserId---")
     }
-    const res = await db.collection('utentiApp').add(userToDB);
-    console.log('Added user with doc ID: ', res.id);
-    return userId;
   } catch (error) {
-    console.warn("cannotRegisterCurrentUser");
+    console.warn("---cannotRegisterCurrentUser---", error);
     return null;
   }
 }
@@ -84,3 +92,4 @@ export const logout = () => auth.signOut();
 export const passwordReset = email => auth.sendPasswordResetEmail(email);
 
 export const db = firebase.firestore();
+export const dbVal = firebase.firestore;

@@ -35,18 +35,6 @@
     "experiments": {
       "redesignedLogBox": true
     },
-    "hooks": {
-      "postPublish": [
-        {
-          "file": "sentry-expo/upload-sourcemaps",
-          "config": {
-            "organization": "bizzarrowebgroup",
-            "project": "bizzarrowebgroup",
-            "authToken": "31088345a3224ee780bc2c69f3346725f1e48f080f684381b03b5c28aa63fc76"
-          }
-        }
-      ]
-    },
     "packagerOpts": {
       "config": "metro.config.js",
       "sourceExts": [

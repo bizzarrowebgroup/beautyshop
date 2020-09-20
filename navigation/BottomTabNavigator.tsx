@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator, TransitionPresets, CardStyleInterpolators } from '@react-navigation/stack';
 
 import * as React from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Image } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -19,9 +19,6 @@ import Login from '../screens/Login';
 import Register from '../screens/Register';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 
-//import TabOneScreen from '../screens/TabOneScreen';
-//import TabTwoScreen from '../screens/TabTwoScreen';
-
 import { BottomTabParamList, TabOneParamList, TabTwoParamList } from '../types';
 
 import Spinner from '../components/Spinner';
@@ -31,26 +28,33 @@ import BottomIcon from '../components/svg/BottomIcon';
 import BaseText from '../components/StyledText';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
-//import { SvgXml } from 'react-native-svg';
 import Subtract from '../assets/svg/Subtract.svg';
 import Layout from '../constants/Layout';
 
 const TabBar = ({ state, descriptors, navigation, }) => {
+  let width = Math.floor(Layout.window.width / state.routes.length);
+  //console.log("---TabWidth", width)
   return (
-    <>
-      <Subtract width={Layout.window.width} height={88} style={{
-        position: "absolute",
-        bottom: 0,
-        //backgroundColor: "blue",
-        //padding: 20,
-        //alignSelf: "center",
-      }} />
+    <View style={{
+      position: 'absolute',
+      bottom: 0,
+      backgroundColor: 'transparent',
+      right: 0,
+      left: 0,
+    }}>
       <View style={{
         flexDirection: "row",
         alignContent: "center",
         alignItems: "center",
         justifyContent: "center",
-        bottom: 5,
+        //backgroundColor: Colors.light.arancio,
+        backgroundColor: Colors.light.arancioDes,
+        borderTopLeftRadius: 40,
+        borderTopRightRadius: 40,
+        borderTopWidth: 3,
+        borderLeftWidth: 3,
+        borderRightWidth: 3,
+        borderColor: Colors.light.bianco
       }}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
@@ -83,6 +87,7 @@ const TabBar = ({ state, descriptors, navigation, }) => {
 
           return (
             <TouchableOpacity
+              key={index}
               accessibilityRole="button"
               accessibilityLabel={options.tabBarAccessibilityLabel}
               testID={options.tabBarTestID}
@@ -94,25 +99,34 @@ const TabBar = ({ state, descriptors, navigation, }) => {
                 alignItems: "center",
                 alignContent: "center",
                 justifyContent: "center",
-                //marginHorizontal: 5,
-                width: 80,
-                height: 80
+                width: width,
+                height: width
               }}
             >
-              {options.tabBarIcon !== undefined && options.tabBarIcon(isFocused ? Colors["light"].tint : Colors["light"].tabIconDefault)}
-              <BaseText size={10} styles={{
-                color: isFocused ? '#673ab7' : '#222',
-                marginTop: 10,
+              {options.tabBarIcon !== undefined && options.tabBarIcon(isFocused ? Colors.light.viola : Colors.light.bianco, isFocused)}
+              {/*<BaseText size={7.5} weight={!isFocused ? 600 : 900} styles={{
+                color: isFocused ? Colors.light.viola : Colors.light.bianco,
+                marginTop: 2,
               }}>
-                {label}
-              </BaseText>
+                {label ?
+                  isFocused ? label.toString().toUpperCase() : label
+                  : ""}
+              </BaseText>*/}
+              {isFocused && <View style={{ marginTop: 0, height: 5 }} />}
+              {!isFocused && <BaseText size={7.5} weight={900} styles={{
+                color: isFocused ? Colors.light.viola : Colors.light.bianco,
+                marginTop: 2,
+              }}>
+                {label ?
+                  label.toString().toUpperCase()
+                  : ""}
+              </BaseText>}
             </TouchableOpacity>
           );
         })
         }
       </View>
-      {/*<View style={{ backgroundColor: "white", width: "100%", height: 10 }} />*/}
-    </>
+    </View>
   )
 }
 
@@ -143,46 +157,30 @@ export default function BottomTabNavigator() {
   return (
     <BottomTab.Navigator
       initialRouteName="Esplora"
-      tabBarOptions={{
-        activeTintColor: Colors[colorScheme].tint,
-        inactiveTintColor: Colors[colorScheme].tabIconDefault,
-        allowFontScaling: true,
-        labelStyle: {
-          fontSize: 12,
-          fontFamily: "Montserrat_400Regular",
-          paddingTop: 5
-        },
-        tabStyle: {
-          paddingTop: 5
-        },
-        style: {
-          position: 'absolute',
-          backgroundColor: 'rgba(255, 255, 255, 1)',
-          borderTopLeftRadius: 15,
-          borderTopRightRadius: 15,
-        },
-      }}
       tabBar={TabBar}
+      tabBarOptions={{
+        allowFontScaling: true,
+      }}
     >
       <BottomTab.Screen
         name="Esplora"
         component={TabOneNavigator}
         options={{
-          tabBarIcon: (color) => <TabBarIcon name="ios-search" color={color} size={22} style={{ marginBottom: -3 }} />,
+          tabBarIcon: (color, focused) => <TabBarIcon name="ios-search" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
         }}
       />
       <BottomTab.Screen
         name="Preferiti"
         component={PreferitiNav}
         options={{
-          tabBarIcon: (color) => <TabBarIcon name="ios-heart-empty" color={color} size={22} style={{ marginBottom: -3 }} />,
+          tabBarIcon: (color, focused) => <TabBarIcon name="ios-heart-empty" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
         }}
       />
       <BottomTab.Screen
         name="Add"
         component={TabTwoNavigator}
         options={{
-          tabBarIcon: (color) => <TabBarIcon name="ios-add" color={color} size={22} style={{
+          tabBarIcon: (color, focused) => <TabBarIcon name="ios-add" color={color} size={focused ? 30 : 25} style={{
           }} brd={Colors.light.arancioDes} />,
           tabBarLabel: null,
         }}
@@ -191,14 +189,14 @@ export default function BottomTabNavigator() {
         name="Prenotazioni"
         component={PrenotazioniNav}
         options={{
-          tabBarIcon: (color) => <TabBarIcon name="ios-calendar" color={color} size={22} style={{ marginBottom: -3 }} />,
+          tabBarIcon: (color, focused) => <TabBarIcon name="ios-calendar" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
         }}
       />
       <BottomTab.Screen
         name="Profilo"
         component={user ? ProfiloNav : AuthNav}
         options={{
-          tabBarIcon: (color) => <TabBarIcon name="ios-people" color={color} size={22} style={{ marginBottom: -3 }} />,
+          tabBarIcon: (color, focused) => <TabBarIcon name="ios-people" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
         }}
       />
     </BottomTab.Navigator>
@@ -206,33 +204,36 @@ export default function BottomTabNavigator() {
 }
 
 function TabBarIcon(props: { name: string; color: any, size: number | 18, style: any, brd?: any }) {
-  console.log(props.color, "props.color")
+  //console.log(props.color, "props.color")
   if (props.name === "ios-add") {
     return (
       <View style={[props.style, {
-        borderRadius: 30,
-        width: 60,
-        height: 60,
+        borderRadius: 75 / 2,
+        width: 75,
+        height: 75,
         bottom: 15,
         justifyContent: "center",
         alignItems: "center",
         alignContent: "center",
-        backgroundColor: props.brd,
-        //zIndex: -10
+        backgroundColor: "white",
+        borderWidth: 3,
+        borderColor: Colors.light.bianco,
       }]}>
-        <BottomIcon type={props.name} color={props.color} size={props.size} />
+        <Image source={require('../assets/images/logoBS.png')} style={{
+          width: 70,
+          height: 70,
+          borderRadius: 70 / 2,
+          borderWidth: 3,
+          borderColor: Colors.light.viola,
+          resizeMode: "center"
+        }} />
+        {/*<BottomIcon type={props.name} color={props.color} size={props.size} />*/}
       </View>
     );
   }
   return (
-    <View style={{
-      //backgroundColor: "red",
-      //height: 20,
-      //width: Layout.window.width
-    }}>
-      <View style={[props.style, { backgroundColor: "transparent" }]}>
-        <BottomIcon type={props.name} color={props.color} size={props.size} />
-      </View>
+    <View style={[props.style, { backgroundColor: "transparent" }]}>
+      <BottomIcon type={props.name} color={props.color} size={props.size} />
     </View>
   );
 }

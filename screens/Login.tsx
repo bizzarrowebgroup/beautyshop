@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, Text, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, ScrollView, View } from 'react-native';
 import * as Yup from 'yup';
 import Colors from '../constants/Colors';
 import Form from '../components/Form/Form';
@@ -59,82 +59,84 @@ const Login = ({ navigation }) => {
   }
   return (
     <View style={styles.container}>
-      <View style={[{ marginTop: 80, marginHorizontal: 30, }, styles.shadowBtn]}>
-        <BaseText size={24} lineHeight={29} color="white">{"Accedi\nal tuo profilo ora"}</BaseText>
-        <View style={{
-          backgroundColor: "white",
-          marginTop: 40,
-          borderRadius: 5,
-          padding: 10,
-          paddingHorizontal: 25,
-        }}>
-          <Form
-            initialValues={{ email: '', password: '' }}
-            validationSchema={validationSchema}
-            onSubmit={values => handleOnLogin(values)}
-          >
-            <BaseText size={10} color={Colors.light.violaDes}>Indirizzo Email</BaseText>
-            <FormField
-              name="email"
-              leftIcon="email"
-              placeholder="mario.rossi@beautyshop.it"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              textContentType="emailAddress"
-              autoFocus={false}
-            />
-            <BaseText size={10} color={Colors.light.violaDes}>Password</BaseText>
-            <FormField
-              name="password"
-              leftIcon="lock"
-              placeholder="********"
-              autoCapitalize="none"
-              autoCorrect={false}
-              secureTextEntry={passwordVisibility}
-              textContentType="password"
-              rightIcon={rightIcon}
-              handlePasswordVisibility={handlePasswordVisibility}
-            />
-            <FormButton title={'Accedi'} color={Colors.light.arancioDes} />
-            {<FormErrorMessage error={loginError} visible={true} />}
-          </Form>
-          <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.btn}>
-            <BaseText color={Colors.light.nero} size={15} weight={400}>REGISTRATI</BaseText>
-          </TouchableOpacity>
+      <ScrollView>
+        <View style={[{ marginTop: 80, marginHorizontal: 30, }, styles.shadowBtn]}>
+          <BaseText size={24} lineHeight={29} color="white">{"Accedi\nal tuo profilo ora"}</BaseText>
           <View style={{
-            marginTop: 20,
-            width: 145,
-            height: 2,
-            backgroundColor: Colors.light.nero,
-            alignSelf: "center"
-          }} />
-          <BaseText size={20} weight={400} styles={{ alignSelf: "center", marginVertical: 20 }}>oppure accedi con</BaseText>
-          <View style={{ flexDirection: "row", alignItems: "center", alignContent: "center", justifyContent: "center" }}>
-            <TouchableOpacity style={[styles.shadowBtn, { width: 87, height: 58, backgroundColor: "white", borderRadius: 5, justifyContent: "center", }]}>
-              <IconFooterSocial type="google" width={24} height={24} style={{ alignSelf: "center", }} />
+            backgroundColor: "white",
+            marginTop: 40,
+            borderRadius: 5,
+            padding: 10,
+            paddingHorizontal: 25,
+          }}>
+            <Form
+              initialValues={{ email: '', password: '' }}
+              validationSchema={validationSchema}
+              onSubmit={values => handleOnLogin(values)}
+            >
+              <BaseText size={10} color={Colors.light.violaDes}>Indirizzo Email</BaseText>
+              <FormField
+                name="email"
+                leftIcon="email"
+                placeholder="mario.rossi@beautyshop.it"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                textContentType="emailAddress"
+                autoFocus={false}
+              />
+              <BaseText size={10} color={Colors.light.violaDes}>Password</BaseText>
+              <FormField
+                name="password"
+                leftIcon="lock"
+                placeholder="********"
+                autoCapitalize="none"
+                autoCorrect={false}
+                secureTextEntry={passwordVisibility}
+                textContentType="password"
+                rightIcon={rightIcon}
+                handlePasswordVisibility={handlePasswordVisibility}
+              />
+              <FormButton title={'Accedi'} color={Colors.light.arancioDes} />
+              {<FormErrorMessage error={loginError} visible={true} />}
+            </Form>
+            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.btn}>
+              <BaseText color={Colors.light.nero} size={15} weight={400}>REGISTRATI</BaseText>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.shadowBtn, { width: 87, height: 58, backgroundColor: "white", borderRadius: 5, marginHorizontal: 12, justifyContent: "center" }]}>
-              <IconFooterSocial type="facebook" width={24} height={24} style={{ alignSelf: "center", }} />
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.shadowBtn, { width: 87, height: 58, backgroundColor: "white", borderRadius: 5, justifyContent: "center" }]}>
-              <IconFooterSocial type="apple" width={24} height={24} style={{ alignSelf: "center", }} />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.footerButtonContainer}>
-            {/* <View style={{ flexDirection: "row", alignItems: "center", alignContent: "center", marginBottom: 5 }}>
-                            <BaseText color={Colors.light.nero} size={14} weight={400}>
-                                Hai già un account?
-                            </BaseText>
-                            <BaseText size={14} weight={700} color={Colors.light.arancioDes} styles={{ textDecorationLine: "underline", marginLeft: 10 }}>Accedi</BaseText>
-                        </View> */}
-            <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-              <BaseText color={Colors.light.nero} size={14} weight={300} styles={{ textDecorationLine: "underline" }}>
-                Password dimenticata?
-                            </BaseText>
-            </TouchableOpacity>
+            <View style={{
+              marginTop: 20,
+              width: 145,
+              height: 2,
+              backgroundColor: Colors.light.nero,
+              alignSelf: "center"
+            }} />
+            <BaseText size={20} weight={400} styles={{ alignSelf: "center", marginVertical: 20 }}>oppure accedi con</BaseText>
+            <View style={{ flexDirection: "row", alignItems: "center", alignContent: "center", justifyContent: "center" }}>
+              <TouchableOpacity style={[styles.shadowBtn, { width: 87, height: 58, backgroundColor: "white", borderRadius: 5, justifyContent: "center", }]}>
+                <IconFooterSocial type="google" width={24} height={24} style={{ alignSelf: "center", }} />
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.shadowBtn, { width: 87, height: 58, backgroundColor: "white", borderRadius: 5, marginHorizontal: 12, justifyContent: "center" }]}>
+                <IconFooterSocial type="facebook" width={24} height={24} style={{ alignSelf: "center", }} />
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.shadowBtn, { width: 87, height: 58, backgroundColor: "white", borderRadius: 5, justifyContent: "center" }]}>
+                <IconFooterSocial type="apple" width={24} height={24} style={{ alignSelf: "center", }} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.footerButtonContainer}>
+              {/* <View style={{ flexDirection: "row", alignItems: "center", alignContent: "center", marginBottom: 5 }}>
+                              <BaseText color={Colors.light.nero} size={14} weight={400}>
+                                  Hai già un account?
+                              </BaseText>
+                              <BaseText size={14} weight={700} color={Colors.light.arancioDes} styles={{ textDecorationLine: "underline", marginLeft: 10 }}>Accedi</BaseText>
+                          </View> */}
+              <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                <BaseText color={Colors.light.nero} size={14} weight={300} styles={{ textDecorationLine: "underline" }}>
+                  Password dimenticata?
+                              </BaseText>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   )
 }

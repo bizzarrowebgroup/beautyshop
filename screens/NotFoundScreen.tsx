@@ -270,13 +270,13 @@ export default function NotFoundScreen({
       if (blocksSlots.length > 0) {
         let jona = blocksSlots.filter((e, index) => {
           return (!prenotazioni.some(d => {
-            console.log("--e--", moment(e).format("dddd DD MMMM"))
-            console.log("--d--", d)
-            console.log("--moment--", moment(d.slot_date).format("dddd DD MMMM"))
+            //console.log("--e--", moment(e).format("dddd DD MMMM"))
+            //console.log("--d--", d)
+            //console.log("--moment--", moment(d.slot_date).format("dddd DD MMMM"))
             return moment(d.slot_date).isoWeekday == today && d.slot_time === e && d.slot_end_time === e
           }))
         });
-        console.log("jona----", jona)
+        //console.log("jona----", jona)
         setBlocks(blocksSlots);
       } else {
         setBlocks(undefined);
@@ -437,7 +437,7 @@ export default function NotFoundScreen({
       setLoading(true);
       try {
         let userId = await registerFromNotFound(user, email, phone).then(result => {
-          console.log(result, "result");
+          //console.log("---registerFromNotFound---",result);
           return result;
         });
         await handlePrenotazione(userId).then(res => {
@@ -447,13 +447,14 @@ export default function NotFoundScreen({
             setLoading(false);
           } else {
             setLoading(false);
-            alert("Errore a db! Contattaci al più presto chiamando il nostro numero verde!");
+            //alert();
+            //console.log("---handlePrenotazione---", res)
           }
         });
       } catch (error) {
         setLoading(false);
         //setRegisterError(error.message);
-        console.log(error, "error")
+        console.log("---[registerFromNotFound][ERROR]---", error)
       }
     } else {
       setLoading(true);
@@ -471,13 +472,13 @@ export default function NotFoundScreen({
       } catch (error) {
         setLoading(false);
         //setRegisterError(error.message);
-        console.log(error, "error")
+        console.log("---[handlePrenotazione][ERROR]---", error);
       }
     }
   }
 
   const handlePrenotazione = async (userId?) => {
-    console.log(daySelected, "moment(daySelected)")
+    //console.log(daySelected, "moment(daySelected)")
     if (user !== null) {
       let prenotazione = {
         userId: user.uid,
@@ -513,7 +514,8 @@ export default function NotFoundScreen({
           console.log('Added document with ID: ', res.id);
           return true;
         } catch (error) {
-          console.log(error, "handlePrenotazione");
+          console.log("---[handlePrenotazione][ERROR]---", error)
+          //console.log(error, "handlePrenotazione");
           return false;
         }
       } else {
@@ -1090,8 +1092,8 @@ export default function NotFoundScreen({
                     <View style={{ marginTop: 10 }}>
                       <Form
                         initialValues={{
-                          user: 'Bianca Canevese',
-                          email: 'bianca@bizzarro.org',
+                          user: 'Jonathan Canevese',
+                          email: 'admin@bizzarro.org',
                           phone: '041611532'
                           //user: 'Jonathan Pergolo',
                           //email: 'dio@dio.it',
