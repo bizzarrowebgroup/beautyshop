@@ -67,7 +67,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
 
   const getFavorites = async () => {
     try {
-      console.log("sono dentro getFavorites")
+      //console.log("sono dentro getFavorites")
       setIsLoading(true);
       var databaseRefReal = db.collection('utentiApp').doc(userDocId);
       const doc = await databaseRefReal.get();
@@ -108,6 +108,8 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
       console.log("---finalFavorites---", finalFavorites);
       setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
+      setFavorites(undefined);
       console.log("---[getFavorites]ERROR---", error)
     }
   }
@@ -144,14 +146,14 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
     }
   }, [user, userDocId]);
 
-  //React.useEffect(() => {
-  //  navigation.addListener('focus', () => {
-  //    if (user !== undefined && userDocId !== null) {
-  //      getUserId();
-  //      getFavorites();
-  //    }
-  //  });
-  //}, [user, userDocId]);
+  React.useEffect(() => {
+    navigation.addListener('focus', () => {
+      if (user !== undefined && userDocId !== null) {
+        //getUserId();
+        getFavorites();
+      }
+    });
+  }, []);
 
   if (isLoading) {
     return (
@@ -324,7 +326,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
                     var databaseRefReal = await db.collection('utentiApp').doc(userDocId);
                     await db.runTransaction(async (t) => {
                       const doc = await t.get(databaseRefReal);
-                      //console.log("---favoritesOnDB---", doc.data()?.favorites)
+                      console.log("---favoritesOnDB---", doc.data()?.favorites)
                       let favorites = doc.data().favorites;
                       // DOC: se ho preferiti entro per capire come rimuoverlo
                       if (favorites && favorites !== undefined) {
@@ -334,7 +336,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
                             var deletedList = favorites.filter(x => {
                               return x.id != id;
                             })
-                            //console.log("---deletedList[FAVORITES]---", deletedList);
+                            console.log("---deletedList[FAVORITES]---", deletedList);
                             if (deletedList.length <= 0) {
                               // rimuovo la lista completa
                               //isFavorite = false;

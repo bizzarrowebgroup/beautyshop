@@ -246,6 +246,9 @@ const Profilo = ({
           }}>
             <BaseText size={14} weight={300}>Esci dal tuo account</BaseText>
           </TouchableOpacity>
+          <View style={{ alignContent: "center", alignItems: "center", justifyContent: "center", marginVertical: 20 }}>
+            <BaseText size={9} weight={700}>{"Versione App 1.0 (1.0)"}</BaseText>
+          </View>
         </View>
       </ScrollView>
     </View>

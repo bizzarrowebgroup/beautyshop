@@ -29,7 +29,7 @@ const Preferiti = (props: PreferitiProps) => {
   const { showToast } = useContext(AppContext);
   const { user, setUser } = React.useContext(AuthUserContext);
   const [commercianti, setCommercianti] = React.useState(undefined);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const [userDocId, setUserDocId] = React.useState(null);
   const getUserId = async () => {
@@ -51,6 +51,7 @@ const Preferiti = (props: PreferitiProps) => {
 
   const getFavorites = async () => {
     if (user !== null && userDocId !== null) {
+      setIsLoading(true);
       //console.log("sono dentro getFavorites")
       var databaseRefReal = db.collection('utentiApp').doc(userDocId);
       const doc = await databaseRefReal.get();
@@ -97,35 +98,26 @@ const Preferiti = (props: PreferitiProps) => {
       }
       //console.log("---finalFavorites---", finalFavorites);
       setIsLoading(false);
-    } else {
-      setIsLoading(false);
     }
   }
-  //const removeFavorites = async () => {
-
-  //}
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       getUserId();
       getFavorites();
-      setIsLoading(false);
     });
   });
 
   useEffect(() => {
     getUserId();
     getFavorites();
-
     // showToast("we have got", "success dio cane", "success", "bottom")
   }, [userDocId, user]);
-  //console.log("---isLoading---", isLoading)
-  //console.log("---commercianti---", commercianti)
+
   if (isLoading) {
     return (
       <Loader color={Colors.light.arancioDes} size={"large"} animating={true} />
     )
   }
-
   return (
     <View style={styles.container}>
       <Header hasBack={false} title="Preferiti" />

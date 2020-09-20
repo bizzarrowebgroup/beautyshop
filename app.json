@@ -27,7 +27,7 @@
       "supportsTablet": false,
       "usesAppleSignIn": true,
       "bundleIdentifier": "it.bizzarro.beautyshop",
-      "buildNumber": "1.0"
+      "buildNumber": "2"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
