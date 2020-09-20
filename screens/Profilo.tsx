@@ -132,7 +132,7 @@ const Profilo = ({
         zIndex: -2,
         height: 0
       }}>
-        <View style={{ backgroundColor: Colors.light.arancioDes, height: 50, width: "10%" }} />
+        <View style={{ backgroundColor: Colors.light.arancio, height: 50, width: "10%" }} />
         <View style={{ backgroundColor: Colors.light.bg, height: 50, width: "20%", borderTopLeftRadius: 30, top: -50 }} />
       </View>
       <ScrollView style={{
@@ -142,7 +142,7 @@ const Profilo = ({
         paddingBottom: 200,
       }}>
         <View style={{ marginLeft: 20 }}>
-          <Text style={[styles.text, { fontSize: 13, textTransform: "uppercase" }]}>Tessera fedeltà</Text>
+          <BaseText size={10}>{"Tessera fedeltà".toUpperCase()}</BaseText>
           <View style={{
             backgroundColor: Colors.light.giallo,
             height: 191,
@@ -186,7 +186,7 @@ const Profilo = ({
               </View>
             </View>
           </View>
-          <BaseText style={[styles.text, { fontSize: 12, color: "#333333", marginRight: 20, textAlign: "center" }]}>{"Spiegazione tessere, come accumulare punti etc.\nAmet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet."}</BaseText>
+          <BaseText size={10} color={"#333333"} styles={{ marginRight: 20, textAlign: "center" }}>{"Spiegazione tessere, come accumulare punti etc.\nAmet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet."}</BaseText>
         </View>
         <View style={{ marginHorizontal: 40, marginVertical: 20, height: 1, backgroundColor: "#A6A6A6" }} />
         <View style={{
@@ -197,7 +197,7 @@ const Profilo = ({
           alignContent: "center",
           flexDirection: "row",
         }}>
-          <Text style={[styles.text, { fontSize: 16, marginLeft: 20 }]}>Notifiche</Text>
+          <BaseText size={13} styles={{ marginLeft: 20 }}>Notifiche</BaseText>
           <TouchableOpacity
             activeOpacity={0.5}
             style={{
@@ -222,7 +222,7 @@ const Profilo = ({
           </TouchableOpacity>
         </View>
         <View style={{ marginTop: 5, marginHorizontal: 20, marginBottom: 10 }}>
-          <Text style={[styles.text, { color: "#696969", fontSize: 12 }]}>Le notifiche sono relative alle prenotazioni ed eventuali promozioni specifiche</Text>
+          <BaseText size={9} color={"#696969"}>Le notifiche sono relative alle prenotazioni ed eventuali promozioni specifiche</BaseText>
         </View>
         <TouchableOpacity style={{
           backgroundColor: Colors.light.bianco,
@@ -231,12 +231,16 @@ const Profilo = ({
           justifyContent: "space-between",
           alignContent: "center",
           flexDirection: "row"
-        }} >
-          <Text style={[styles.text, { fontSize: 16, marginLeft: 20 }]}>Le tue recensioni</Text>
-          <Ionicons name="ios-return-right" size={30} color={Colors.light.arancioDes} style={{
+        }}>
+          <BaseText size={13} styles={{ marginLeft: 20 }}>Le tue recensioni</BaseText>
+          <Ionicons name="ios-return-right" size={30} color={Colors.light.arancio} style={{
             marginRight: 20
           }} />
         </TouchableOpacity>
+        <View style={{ marginTop: 5, marginHorizontal: 20 }}>
+          <BaseText size={9} color={"#696969"}>Qui troverai la raccolta di tutte le tue recensioni inviate a seguito di una prenotazine!</BaseText>
+        </View>
+        {/*<View style={{ marginHorizontal: 40, marginVertical: 20, height: 1, backgroundColor: "#A6A6A6" }} />*/}
         <TouchableOpacity onPress={handleSignOut} style={{
           backgroundColor: Colors.light.arancio,
           borderRadius: 10,
@@ -245,9 +249,9 @@ const Profilo = ({
           justifyContent: "center",
           alignItems: "center",
           alignContent: "center",
-          height: 40
+          height: 60
         }}>
-          <BaseText size={14} weight={300}>Esci dal tuo account</BaseText>
+          <BaseText size={14} weight={600} color={Colors.light.bianco}>{"Esci".toUpperCase()}</BaseText>
         </TouchableOpacity>
         <View style={{ alignContent: "center", alignItems: "center", justifyContent: "center", marginVertical: 20 }}>
           <BaseText size={9} weight={700}>{`Versione App ${Constants.manifest.version} (${Constants.platform.ios.buildNumber || 0})`}</BaseText>

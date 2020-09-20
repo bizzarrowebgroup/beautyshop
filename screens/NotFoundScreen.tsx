@@ -101,21 +101,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   first: {
-    color: Colors.light.bianco,
-    fontSize: 10,
     marginLeft: 15
   },
   text: {
-    // fontFamily: "Montserrat_400Regular"
   },
   textBold: {
-    // fontFamily: "Montserrat_700Bold",
   },
   btn: {
     backgroundColor: '#E0E0E0',
     justifyContent: 'center',
     height: 45,
-    marginTop: 120,
     marginHorizontal: 50,
     shadowColor: Colors.light.nero,
     shadowOpacity: 0.25,
@@ -153,6 +148,9 @@ export default function NotFoundScreen({
 
   // use This only when necessary
   const [isOnModal, setIsOn] = React.useState(false);
+
+  const [searchValue, setSearchValue] = React.useState(undefined);
+  const [salonValue, setSalonValue] = React.useState(undefined);
 
   // stato prenotazione servizio
   const [serviceId, setServiceId] = React.useState(undefined);
@@ -620,14 +618,16 @@ export default function NotFoundScreen({
         </View>
       </View>
       {parte === 1 && (<View>
-        <BaseText style={[styles.text, styles.first]}>SCEGLI IL SERVIZIO</BaseText>
+        <BaseText styles={styles.first} size={10} color={Colors.light.bianco}>SCEGLI IL SERVIZIO</BaseText>
         {/* <Animate.View animation="slideInDown" duration={5000} */}
         <View
           style={styles.searchBar}>
           <TextInput
-            placeholderTextColor={Colors.light.nero}
+            onChangeText={(t) => setSearchValue(t)}
+            style={{ fontSize: 15, paddingLeft: 10, fontFamily: searchValue ? "WorkSans_600SemiBold_Italic" : "WorkSans_600SemiBold" }}
+            placeholderTextColor={"grey"}
             placeholder="Cosa vorresti fare?"
-            style={[styles.text, { fontSize: 15, paddingLeft: 10 }]} />
+          />
           <Ionicons
             name="ios-search"
             style={{ fontSize: 20, position: "absolute", right: 10 }} />
@@ -645,7 +645,7 @@ export default function NotFoundScreen({
               borderTopLeftRadius: 5,
               borderBottomLeftRadius: 5,
             }}>
-              <BaseText style={[styles.text, { fontSize: 13, color: selectedType ? "#FBFBFB" : "#6B6B6B" }]}>Parruchiere</BaseText>
+              <BaseText color={selectedType ? "#FBFBFB" : "#6B6B6B"} size={13}>Parruchiere</BaseText>
             </View>
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback onPress={() => setselectedType(!selectedType)}>
@@ -659,7 +659,7 @@ export default function NotFoundScreen({
               borderTopRightRadius: 5,
               borderBottomRightRadius: 5,
             }}>
-              <BaseText style={[styles.text, { fontSize: 13, color: selectedType ? "#6B6B6B" : "#FBFBFB" }]}>Centro estetico</BaseText>
+              <BaseText color={!selectedType ? "#FBFBFB" : "#6B6B6B"} size={13}>Centro estetico</BaseText>
             </View>
           </TouchableWithoutFeedback>
         </View>
@@ -672,11 +672,12 @@ export default function NotFoundScreen({
           marginVertical: 20
         }}>
           {servizi.map(({ label }, index) => (
-            <View key={index} style={{
+            <TouchableOpacity key={index} style={{
               width: 100,
               marginHorizontal: 3,
               justifyContent: "center",
               alignItems: "center",
+              alignContent: "center",
               backgroundColor: "transparent",
               marginBottom: 20
             }}>
@@ -696,42 +697,41 @@ export default function NotFoundScreen({
               }}>
                 <Ionicons name="ios-star-outline" size={30} color={Colors.light.arancioDes} />
               </View>
-              <BaseText style={{
-                marginTop: 5,
-                fontSize: 15,
-                // fontFamily: "Montserrat_300Light",
-                textAlign: "center",
-                color: Colors.light.grigio
-              }}>{label}</BaseText>
-            </View>
+              <View style={{ marginTop: 5, height: 20, width: 100 }}>
+                <BaseText size={12} color={Colors.light.grigio} styles={{
+                  textAlign: "center"
+                }}>{label}</BaseText>
+              </View>
+            </TouchableOpacity>
           ))}
         </View>
         <TouchableWithoutFeedback onPress={() => { setParte(parte + 1) }}>
-          <View style={styles.btn}>
-            <BaseText style={{
+          <View style={[styles.btn, { marginTop: 120 }]}>
+            <BaseText size={15} styles={{
               alignSelf: 'center',
-              fontSize: 15,
-              // fontFamily: "Montserrat_700Bold",
               textTransform: "uppercase"
-            }}>Avanti</BaseText>
+            }}>{"Avanti"}</BaseText>
           </View>
         </TouchableWithoutFeedback>
       </View>)}
       {parte === 2 && (<View style={{ flex: 1 }}>
-        <BaseText style={[styles.text, styles.first]}>SCEGLI IL SALONE</BaseText>
+        <BaseText styles={styles.first} size={10} color={Colors.light.bianco}>{"SCEGLI IL SALONE"}</BaseText>
         {/* <Animate.View animation="slideInDown" duration={300} */}
         <View style={styles.searchBar}>
           <TextInput
+            onChangeText={(t) => setSalonValue(t)}
             placeholder="In quale salone?"
-            placeholderTextColor={Colors.light.nero}
-            style={[styles.text, { fontSize: 15, paddingLeft: 10 }]} />
+            placeholderTextColor={"grey"}
+            style={{ fontSize: 15, paddingLeft: 10, fontFamily: salonValue ? "WorkSans_600SemiBold_Italic" : "WorkSans_600SemiBold" }}
+          />
           <Ionicons
             name="ios-search"
             style={{ fontSize: 20, position: "absolute", right: 10 }} />
           {/* </Animate.View> */}
         </View>
         <ScrollView contentContainerStyle={{
-          flex: 1
+          flex: 1,
+          paddingBottom: 300
         }}>
           <View style={{
             backgroundColor: Colors.light.bianco,
@@ -745,7 +745,7 @@ export default function NotFoundScreen({
               <View style={{
                 marginLeft: 10
               }}>
-                <BaseText style={[styles.text, { fontSize: 17 }]}>Salone l'Araba Fenice</BaseText>
+                <BaseText size={14} weight={500}>{"Salone l'Araba Fenice"}</BaseText>
                 <View style={{
                   flexDirection: "row",
                   alignContent: "center",
@@ -756,7 +756,7 @@ export default function NotFoundScreen({
                   <Ionicons name="ios-star" size={15} color={Colors.light.giallo} />
                   <Ionicons name="ios-star" size={15} color={Colors.light.giallo} />
                   <Ionicons name="ios-star" size={15} color={Colors.light.giallo} />
-                  <BaseText style={[styles.text, { fontSize: 10 }]}>(50)</BaseText>
+                  <BaseText size={10}>{"(50)"}</BaseText>
                 </View>
               </View>
             </View>
@@ -787,12 +787,8 @@ export default function NotFoundScreen({
                           marginLeft: 40,
                           marginRight: 10
                         }}>
-                          <BaseText style={{
-                            color: "black",
-                          }}>{title}</BaseText>
-                          <BaseText style={{
-                            color: "black",
-                          }}>{price} €</BaseText>
+                          <BaseText size={13}>{title}</BaseText>
+                          <BaseText size={12} weight={700}>{price} €</BaseText>
                         </View>
                       </View>
                     </View>
@@ -807,12 +803,9 @@ export default function NotFoundScreen({
               right: 10,
               bottom: 5
             }}>
-              <BaseText style={{
-                color: Colors.light.nero,
-                fontSize: 13,
-                // fontFamily: "Montserrat_700Bold",
+              <BaseText weight={700} size={9} italic styles={{
                 marginRight: 5,
-              }}>DETTAGLI</BaseText>
+              }}>{"DETTAGLI"}</BaseText>
               <Ionicons name="md-return-right" size={20} color={Colors.light.arancioDes} />
             </View>
           </View>
@@ -828,7 +821,7 @@ export default function NotFoundScreen({
               <View style={{
                 marginLeft: 10
               }}>
-                <BaseText style={[styles.text, { fontSize: 17 }]}>Salone Le Noir</BaseText>
+                <BaseText size={14} weight={500}>{"Salone Le Noir"}</BaseText>
                 <View style={{
                   flexDirection: "row",
                   alignContent: "center",
@@ -839,16 +832,16 @@ export default function NotFoundScreen({
                   <Ionicons name="ios-star" size={15} color={Colors.light.giallo} />
                   <Ionicons name="ios-star" size={15} color={Colors.light.giallo} />
                   <Ionicons name="ios-star" size={15} color={Colors.light.giallo} />
-                  <BaseText style={[styles.text, { fontSize: 10 }]}>(50)</BaseText>
+                  <BaseText size={10}>{"(50)"}</BaseText>
                 </View>
               </View>
             </View>
             <View style={{ paddingBottom: 20, marginTop: 10 }}>
               {tagli.map(({ title, desc, price }, index) => {
-                const dio = () => {
-                };
+                //const dio = () => {
+                //};
                 return (
-                  <TouchableWithoutFeedback key={index} onPress={dio}>
+                  <TouchableWithoutFeedback key={index} >
                     <View style={{ marginVertical: 5 }}>
                       <View style={{
                         minHeight: 40,
@@ -869,14 +862,8 @@ export default function NotFoundScreen({
                           marginLeft: 40,
                           marginRight: 10
                         }}>
-                          <BaseText style={{
-                            color: "black",
-                            // fontFamily: "Montserrat_400Regular",
-                          }}>{title}</BaseText>
-                          <BaseText style={{
-                            color: "black",
-                            // fontFamily: "Montserrat_700Bold",
-                          }}>{price} €</BaseText>
+                          <BaseText size={13}>{title}</BaseText>
+                          <BaseText size={12} weight={700}>{price} €</BaseText>
                         </View>
                       </View>
                     </View>
@@ -891,29 +878,25 @@ export default function NotFoundScreen({
               right: 10,
               bottom: 5
             }}>
-              <BaseText style={{
-                color: Colors.light.nero,
-                fontSize: 13,
-                // fontFamily: "Montserrat_700Bold",
+              <BaseText weight={700} size={9} italic styles={{
                 marginRight: 5,
-              }}>DETTAGLI</BaseText>
+              }}>{"DETTAGLI"}</BaseText>
               <Ionicons name="md-return-right" size={20} color={Colors.light.arancioDes} />
             </View>
           </View>
         </ScrollView>
-        {/* <View style={styles.btn}>
-                    <Text style={{
-                        alignSelf: 'center',
-                        fontSize: 15,
-                        fontFamily: "Montserrat_700Bold",
-                        textTransform: "uppercase"
-                    }}>Avanti</Text>
-                </View> */}
+        <View style={[styles.btn, { marginTop: 20 }]}>
+          <BaseText styles={{
+            alignSelf: 'center',
+            textTransform: "uppercase"
+          }}>{"Avanti"}</BaseText>
+        </View>
       </View>)
       }
       {parte === 3 && (
         <>
-          <BaseText style={[styles.text, styles.first, { marginBottom: 10 }]}>PRENOTA GIORNO E ORA</BaseText>
+          <BaseText styles={[styles.first, { marginBottom: 10, textTransform: "uppercase" }]} size={10} color={Colors.light.bianco}>Prenota giorno e ora</BaseText>
+          {/*<BaseText style={[styles.text, styles.first, { marginBottom: 10 }]}>PRENOTA GIORNO E ORA</BaseText>*/}
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={{ zIndex: -1 }}
@@ -1037,9 +1020,12 @@ export default function NotFoundScreen({
       {parte === 4 && (
         <>
           <View>
-            <BaseText style={[styles.text, styles.first, { marginBottom: 10, textTransform: "uppercase" }]}>
+            <BaseText styles={[styles.first, { marginBottom: 10, textTransform: "uppercase" }]} size={10} color={Colors.light.bianco}>
               {user == null ? "registrazione" : "conferma dati prenotazione"}
             </BaseText>
+            {/*<BaseText style={[styles.text, styles.first, { marginBottom: 10, textTransform: "uppercase" }]}>*/}
+            {/*{user == null ? "registrazione" : "conferma dati prenotazione"}*/}
+            {/*</BaseText>*/}
             <View style={{
               marginHorizontal: 30,
             }}>
@@ -1190,9 +1176,12 @@ export default function NotFoundScreen({
       )}
       {parte === 5 && (
         <>
-          <BaseText style={[styles.text, styles.first, { marginBottom: 10, textTransform: "uppercase" }]}>
+          <BaseText styles={[styles.first, { marginBottom: 10, textTransform: "uppercase" }]} size={10} color={Colors.light.bianco}>
             {"Prenotazione riuscita"}
           </BaseText>
+          {/*<BaseText style={[styles.text, styles.first, { marginBottom: 10, textTransform: "uppercase" }]}>
+            {"Prenotazione riuscita"}
+          </BaseText>*/}
           <View style={{
             marginHorizontal: 30,
           }}>

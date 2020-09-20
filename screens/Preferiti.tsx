@@ -4,7 +4,7 @@ import {
   TouchableWithoutFeedback,
   View,
   StyleSheet,
-  ScrollView
+  ScrollView, TouchableOpacity
 } from 'react-native';
 
 // CONTEXT
@@ -17,7 +17,7 @@ import BaseText from '../components/StyledText';
 import NoFavorites from '../components/svg/NoFavorites';
 import { db } from '../network/Firebase';
 import Loader from '../components/Loader';
-
+import { NavigationActions } from '@react-navigation/compat';
 // import * as firebase from "firebase";
 // import "firebase/database";
 
@@ -85,7 +85,7 @@ const Preferiti = (props: PreferitiProps) => {
             //console.log("---snapDocData---", snapDocData)
             //console.log("---snapDocID---", snapDoc.id)
             if (itemId === snapDocID) {
-              finalFavorites.push(snapDocData)
+              finalFavorites.push({ ...snapDocData, id: snapDocID })
             }
           });
         });
@@ -128,7 +128,7 @@ const Preferiti = (props: PreferitiProps) => {
             marginHorizontal: 20,
             flex: 1,
           }}>
-            {commercianti == undefined && <View style={{
+            {/*{commercianti == undefined && <View style={{
               marginVertical: 20,
               marginHorizontal: 20,
               flex: 1,
@@ -137,9 +137,27 @@ const Preferiti = (props: PreferitiProps) => {
                 marginTop: 80,
 
               }}>
-                <BaseText textAlign="center" weight={400} size={15}>{"Non ci sono tuoi preferiti qui 😞.\nPotrai trovare tutti i tuoi preferiti.\n\nPer aggiungere un nuovo preferito premi il (♥︎) del menu."}</BaseText>
+                <BaseText textAlign="center" weight={400} size={15}></BaseText>
               </View>
-            </View>}
+            </View>}*/}
+            {commercianti == undefined && (
+              <View style={{
+                marginVertical: 20,
+                marginHorizontal: 20,
+                alignContent: "center",
+                alignItems: "center",
+                justifyContent: "center"
+              }}>
+                <View style={{
+                  marginTop: 100,
+                  width: "100%",
+                  height: 300
+                }}>
+                  <BaseText textAlign="center" weight={400} size={15}>{"Non ci sono tuoi preferiti qui 😞.\nPotrai trovare tutti i tuoi preferiti.\n\nPer aggiungere un nuovo preferito premi il (♥︎) del menu."}</BaseText>
+                  <NoFavorites style={{ bottom: 0 }} />
+                </View>
+              </View>
+            )}
             {commercianti !== undefined && <View>
               {commercianti.map(({ title, stars, via, desc, mainPhoto, economy, id }, index) => {
                 let economyColor = "rgba(133, 194, 170, 0.4)", economyTitle = "€", economyTColor = "#008D56";
@@ -163,9 +181,14 @@ const Preferiti = (props: PreferitiProps) => {
                 if (title.length > 23) {
                   title = title.slice(0, 23) + "";
                 }
+                let commId = id;
                 return (
-                  <TouchableWithoutFeedback key={index} onPress={() => {
-                    props.navigation.navigate("Shop", { id: id });
+                  <TouchableOpacity key={index} onPress={() => {
+                    //console.log("---commID---", commId)
+                    props.navigation.navigate('Esplora', {
+                      screen: 'Shop',
+                      params: { id: commId }
+                    });
                   }} >
                     <View style={{
                       width: 342,
@@ -252,7 +275,7 @@ const Preferiti = (props: PreferitiProps) => {
                         }} />
                       </TouchableWithoutFeedback>}*/}
                     </View>
-                  </TouchableWithoutFeedback>
+                  </TouchableOpacity>
                 )
               })}
             </View>}
@@ -284,7 +307,7 @@ const Preferiti = (props: PreferitiProps) => {
           </View>
         )
       }
-    </View>
+    </View >
   );
 };
 export default Preferiti;

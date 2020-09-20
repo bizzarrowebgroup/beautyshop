@@ -15,82 +15,82 @@ import NoFavorites from '../components/svg/NoFavorites';
 import BaseText from '../components/StyledText';
 
 interface PrenotazioniProps {
-    navigation?: any;
+  navigation?: any;
 }
 
 const Prenotazioni = (props: PrenotazioniProps) => {
-    const [selectedType, setselectedType] = React.useState(true);
-    const [selectedStartDate, setStartDate] = React.useState(null);
-    const { user, setUser } = React.useContext(AuthUserContext);
-    const onDateChange = (date) => {
-        setStartDate(date);
-    }
-    React.useEffect(() => {
-        moment.updateLocale('it', localization);
-    }, [])
-    let today = null, day = "", day1 = null, customDatesStyles = [], disabledDates = [], prenotazioniFatte = [];
-    if (user) {
-        today = moment();
-        day = today.clone();
-        day1 = today.clone().startOf('month');
+  const [selectedType, setselectedType] = React.useState(true);
+  const [selectedStartDate, setStartDate] = React.useState(null);
+  const { user, setUser } = React.useContext(AuthUserContext);
+  const onDateChange = (date) => {
+    setStartDate(date);
+  }
+  React.useEffect(() => {
+    moment.updateLocale('it', localization);
+  }, [])
+  let today = null, day = "", day1 = null, customDatesStyles = [], disabledDates = [], prenotazioniFatte = [];
+  if (user) {
+    today = moment();
+    day = today.clone();
+    day1 = today.clone().startOf('month');
 
-        customDatesStyles.push(
-            {
-                date: moment().add(3, 'day'),
-                style: { backgroundColor: Colors.light.arancioDes },
-                textStyle: { color: Colors.light.nero },
-                containerStyle: [],
-            },
-            {
-                date: moment().add(4, 'day'),
-                style: { backgroundColor: Colors.light.arancioDes },
-                textStyle: { color: Colors.light.nero },
-                containerStyle: [],
-            }
-        );
+    customDatesStyles.push(
+      {
+        date: moment().add(3, 'day'),
+        style: { backgroundColor: Colors.light.arancioDes },
+        textStyle: { color: Colors.light.nero },
+        containerStyle: [],
+      },
+      {
+        date: moment().add(4, 'day'),
+        style: { backgroundColor: Colors.light.arancioDes },
+        textStyle: { color: Colors.light.nero },
+        containerStyle: [],
+      }
+    );
 
-        while (day1.add(1, 'day').isSame(today, 'month')) {
-            if (day1.day() == 0) {
-                // sabato & domenica
-                // if (day1.day() == 6 || day1.day() == 0) {
-                disabledDates.push(
-                    {
-                        date: day1.date(),
-                        style: { backgroundColor: Colors.light.arancioDes },
-                        textStyle: { color: Colors.light.nero },
-                        containerStyle: [],
-                    }
-                )
-            }
+    while (day1.add(1, 'day').isSame(today, 'month')) {
+      if (day1.day() == 0) {
+        // sabato & domenica
+        // if (day1.day() == 6 || day1.day() == 0) {
+        disabledDates.push(
+          {
+            date: day1.date(),
+            style: { backgroundColor: Colors.light.arancioDes },
+            textStyle: { color: Colors.light.nero },
+            containerStyle: [],
+          }
+        )
+      }
 
-        }
-
-        prenotazioniFatte = [
-            {
-                data: moment().add(3, 'day').format("LLLL"),
-                oraInizio: moment().add(3, 'day').format("LT"),
-                oraFine: moment().add(3, 'day').add(30, 'm').format("LT"),
-                servizio: "Lavaggio + Taglio + Piega",
-                oper: "Marika",
-                salon: "Salone Le Noir",
-                inRitardo: false
-            },
-            {
-                data: moment().add(4, 'day').format("LLLL"),
-                oraInizio: moment().add(4, 'day').add(60, 'm').format("LT"),
-                oraFine: moment().add(4, 'day').add(120, 'm').format("LT"),
-                servizio: "Manicure",
-                oper: "Giovanna",
-                salon: "Salone L'Araba Fenice",
-                inRitardo: false
-            }
-        ];
     }
 
-    return (
-        <View style={styles.container}>
-            <Header hasBack={false} title="Prenotazioni" />
-            {user && (<ScrollView
+    prenotazioniFatte = [
+      {
+        data: moment().add(3, 'day').format("LLLL"),
+        oraInizio: moment().add(3, 'day').format("LT"),
+        oraFine: moment().add(3, 'day').add(30, 'm').format("LT"),
+        servizio: "Lavaggio + Taglio + Piega",
+        oper: "Marika",
+        salon: "Salone Le Noir",
+        inRitardo: false
+      },
+      {
+        data: moment().add(4, 'day').format("LLLL"),
+        oraInizio: moment().add(4, 'day').add(60, 'm').format("LT"),
+        oraFine: moment().add(4, 'day').add(120, 'm').format("LT"),
+        servizio: "Manicure",
+        oper: "Giovanna",
+        salon: "Salone L'Araba Fenice",
+        inRitardo: false
+      }
+    ];
+  }
+
+  return (
+    <View style={styles.container}>
+      <Header hasBack={false} title="Prenotazioni" />
+      {/*{user && (<ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 100 }}>
                 <View style={styles.switchBox}>
@@ -260,48 +260,52 @@ const Prenotazioni = (props: PrenotazioniProps) => {
                         </View>
                     </View>
                 ))}
-            </ScrollView>)}
-            {!user && (
-                <View style={{
-                    marginVertical: 20,
-                    marginHorizontal: 20,
-                    flex: 1,
-                }}>
-                    <View style={{
-                        marginTop: 80,
-
-                    }}>
-                        <BaseText textAlign="center" weight={400} size={15}>{"Non ci sono nuove prenotazioni.\nQui puoi trovare tutte le prenotazioni che sono state confermate dai gestori ed eventuali comunicazioni.\n\nPer aggiungere una nuova prenotazione fai tap sul (+) del menu."}</BaseText>
-                    </View>
-                    <NoFavorites style={{ position: "absolute", bottom: 0 }} />
-                </View>
-            )}
-        </View>
-    );
+            </ScrollView>)}*/}
+      {true && (
+        //{!user && (
+        <ScrollView contentContainerStyle={{
+          marginVertical: 20,
+          marginHorizontal: 20,
+          alignContent: "center",
+          alignItems: "center",
+          justifyContent: "center"
+        }}>
+          <View style={{
+            marginTop: 100,
+            width: "100%",
+            height: 300
+          }}>
+            <BaseText textAlign="center" weight={400} size={15}>{"Non ci sono nuove prenotazioni.\nQui puoi trovare tutte le prenotazioni che sono state confermate dai gestori ed eventuali comunicazioni.\n\nPer aggiungere una nuova prenotazione fai logo di BeautyShop dal menu."}</BaseText>
+            <NoFavorites style={{ bottom: 0 }} />
+          </View>
+        </ScrollView>
+      )}
+    </View>
+  );
 };
 
 export default Prenotazioni;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.light.bg
-    },
-    switchBox: {
-        flexDirection: "row",
-        alignItems: "center",
-        alignContent: "center",
-        justifyContent: 'center',
-        marginHorizontal: 40,
-        marginTop: 20
-    },
-    light: {
-        fontFamily: "Montserrat_300Light"
-    },
-    text: {
-        fontFamily: "Montserrat_400Regular"
-    },
-    bold: {
-        fontFamily: "Montserrat_700Bold",
-    },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.light.bg
+  },
+  switchBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignContent: "center",
+    justifyContent: 'center',
+    marginHorizontal: 40,
+    marginTop: 20
+  },
+  light: {
+    fontFamily: "Montserrat_300Light"
+  },
+  text: {
+    fontFamily: "Montserrat_400Regular"
+  },
+  bold: {
+    fontFamily: "Montserrat_700Bold",
+  },
 });

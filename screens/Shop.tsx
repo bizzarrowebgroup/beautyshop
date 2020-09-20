@@ -284,7 +284,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
     }
   }
 
-  const setPreferito = async(idPreferito) => {
+  const setPreferito = async (idPreferito) => {
     let preferito = {
       //idUser: User.
       preferito: idPreferito,
@@ -295,6 +295,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
 
   React.useEffect(() => {
     if (route.params?.id) {
+      console.log("--idONSHOP", route.params?.id)
       getServizi(route.params?.id);
       getCommerciante(route.params?.id);
       const date = moment();
@@ -463,7 +464,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
           }}>
             <View>
               <BaseText size={15} weight={700} styles={{ flexWrap: 'wrap' }}>{titleChosenService}</BaseText>
-              <BaseText size={10} weight={300} styles={{ flexWrap: 'wrap',maxWidth: 250 }}>{descChosenService}</BaseText>
+              <BaseText size={10} weight={300} styles={{ flexWrap: 'wrap', maxWidth: 250 }}>{descChosenService}</BaseText>
             </View>
             <BaseText size={14} weight={700} >{costChosenService} €</BaseText>
           </View>

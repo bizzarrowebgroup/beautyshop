@@ -58,7 +58,7 @@ const Header = (props: HeaderProps) => {
       return (
         <View style={{
           paddingTop: Constants.statusBarHeight,
-          backgroundColor: Colors.light.arancioDes,
+          backgroundColor: Colors.light.arancio,
           borderBottomRightRadius: 20
         }}>
           <View style={{ height: 190 }}>
@@ -72,7 +72,7 @@ const Header = (props: HeaderProps) => {
                   paddingHorizontal: 30,
                   paddingTop: 10
                 }}>
-                  <BaseText weight={700} styles={styles.titlo}>{"Il tuo profilo"}</BaseText>
+                  <BaseText weight={400} size={18} styles={{ marginLeft: 0 }}>{"Il tuo profilo"}</BaseText>
                   <TouchableOpacity style={{
                     width: 30,
                     height: 30,
@@ -102,25 +102,22 @@ const Header = (props: HeaderProps) => {
                 }} />
                 <View style={{
                   position: "absolute",
-                  right: 80,
+                  right: 40,
                   top: 75,
                   flexDirection: "column",
                   alignItems: "flex-start",
                 }}>
-                  <BaseText weight={700} styles={[styles.bold, {
-                    fontSize: 20,
+                  <BaseText size={18 - 2} weight={700} styles={{
                     marginBottom: 10
-                  }]}>{props.username}</BaseText>
-                  <BaseText styles={[styles.text, {
-                    fontSize: 15,
+                  }}>{props.username}</BaseText>
+                  <BaseText size={13 - 2} styles={{
                     lineHeight: 20,
                     textAlign: "left"
-                  }]}>{props.email}</BaseText>
-                  <BaseText styles={[styles.text, {
-                    fontSize: 15,
+                  }}>{props.email}</BaseText>
+                  <BaseText size={13 - 2} styles={{
                     lineHeight: 20,
                     textAlign: "left"
-                  }]}>{props.phonenumber}</BaseText>
+                  }}>{props.phonenumber}</BaseText>
                 </View>
               </View>
             )}
@@ -139,7 +136,7 @@ const Header = (props: HeaderProps) => {
       );
     } else {
       return (
-        <View style={[{ paddingTop: Constants.statusBarHeight, backgroundColor: Colors.light.arancioDes }, props.styles]}>
+        <View style={[{ paddingTop: Constants.statusBarHeight, backgroundColor: Colors.light.arancio }, props.styles]}>
           <View style={[styles.container, {
             justifyContent: "flex-start",
             alignItems: "center",
@@ -149,7 +146,7 @@ const Header = (props: HeaderProps) => {
             {props.hasBack &&
               <BackIcon width={20} height={20} style={styles.icona} onPress={props.onPress} />
             }
-            <BaseText styles={styles.titlo} size={12}>{props.title ? props.title : ""}</BaseText>
+            <BaseText styles={styles.titlo} size={15} weight={400}>{props.title ? props.title : ""}</BaseText>
           </View>
         </View>
       );

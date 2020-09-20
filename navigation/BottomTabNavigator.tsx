@@ -113,9 +113,10 @@ const TabBar = ({ state, descriptors, navigation, }) => {
                   : ""}
               </BaseText>*/}
               {isFocused && <View style={{ marginTop: 0, height: 5 }} />}
-              {!isFocused && <BaseText size={7.5} weight={900} styles={{
+              {!isFocused && <BaseText size={7.5} weight={400} styles={{
                 color: isFocused ? Colors.light.viola : Colors.light.bianco,
                 marginTop: 2,
+                letterSpacing: 0.5,
               }}>
                 {label ?
                   label.toString().toUpperCase()
