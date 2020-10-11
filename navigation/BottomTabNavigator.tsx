@@ -1,5 +1,5 @@
 //import { Ionicons } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator, BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { createStackNavigator, TransitionPresets, CardStyleInterpolators } from '@react-navigation/stack';
 
 import * as React from 'react';
@@ -28,111 +28,111 @@ import BottomIcon from '../components/svg/BottomIcon';
 import BaseText from '../components/StyledText';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
-import Subtract from '../assets/svg/Subtract.svg';
-import Layout from '../constants/Layout';
+//import Subtract from '../assets/svg/Subtract.svg';
+//import Layout from '../constants/Layout';
 
-const TabBar = ({ state, descriptors, navigation, }) => {
-  let width = Math.floor(Layout.window.width / state.routes.length);
-  //console.log("---TabWidth", width)
-  return (
-    <View style={{
-      position: 'absolute',
-      bottom: 0,
-      backgroundColor: 'transparent',
-      right: 0,
-      left: 0,
-    }}>
-      <View style={{
-        flexDirection: "row",
-        alignContent: "center",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: Colors.light.arancio,
-        //backgroundColor: Colors.light.arancioDes,
-        borderTopLeftRadius: 40,
-        borderTopRightRadius: 40,
-        borderTopWidth: 3,
-        borderLeftWidth: 3,
-        borderRightWidth: 3,
-        borderColor: Colors.light.bianco
-      }}>
-        {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
-          const label =
-            options.tabBarLabel !== undefined
-              ? options.tabBarLabel
-              : options.title !== undefined
-                ? options.title
-                : route.name;
+import { TabBar } from './TabBar';
+//const TabBar = ({ state, descriptors, navigation, }) => {
+//  let width = Math.floor(Layout.window.width / state.routes.length);
+//  //console.log("---TabWidth", width)
+//  return (
+//    <View style={{
+//      position: 'absolute',
+//      bottom: 0,
+//      backgroundColor: 'transparent',
+//      right: 0,
+//      left: 0,
+//    }}>
+//      <View style={{
+//        flexDirection: "row",
+//        alignContent: "center",
+//        alignItems: "center",
+//        justifyContent: "center",
+//        backgroundColor: Colors.light.arancio,
+//        borderTopLeftRadius: 40,
+//        borderTopRightRadius: 40,
+//        borderTopWidth: 3,
+//        borderLeftWidth: 3,
+//        borderRightWidth: 3,
+//        borderColor: Colors.light.bianco
+//      }}>
+//        {state.routes.map((route, index) => {
+//          const { options } = descriptors[route.key];
+//          const label =
+//            options.tabBarLabel !== undefined
+//              ? options.tabBarLabel
+//              : options.title !== undefined
+//                ? options.title
+//                : route.name;
 
-          const isFocused = state.index === index;
+//          const isFocused = state.index === index;
 
-          const onPress = () => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-            });
+//          const onPress = () => {
+//            const event = navigation.emit({
+//              type: 'tabPress',
+//              target: route.key,
+//            });
 
-            if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name);
-            }
-          };
+//            if (!isFocused && !event.defaultPrevented) {
+//              navigation.navigate(route.name);
+//            }
+//          };
 
-          const onLongPress = () => {
-            navigation.emit({
-              type: 'tabLongPress',
-              target: route.key,
-            });
-          };
+//          const onLongPress = () => {
+//            navigation.emit({
+//              type: 'tabLongPress',
+//              target: route.key,
+//            });
+//          };
 
-          return (
-            <TouchableOpacity
-              key={index}
-              accessibilityRole="button"
-              accessibilityLabel={options.tabBarAccessibilityLabel}
-              testID={options.tabBarTestID}
-              onPress={onPress}
-              onLongPress={onLongPress}
-              style={{
-                flexDirection: "column",
-                backgroundColor: "transparent",
-                alignItems: "center",
-                alignContent: "center",
-                justifyContent: "center",
-                width: width,
-                height: width
-              }}
-            >
-              {options.tabBarIcon !== undefined && options.tabBarIcon(isFocused ? Colors.light.viola : Colors.light.bianco, isFocused)}
-              {/*<BaseText size={7.5} weight={!isFocused ? 600 : 900} styles={{
-                color: isFocused ? Colors.light.viola : Colors.light.bianco,
-                marginTop: 2,
-              }}>
-                {label ?
-                  isFocused ? label.toString().toUpperCase() : label
-                  : ""}
-              </BaseText>*/}
-              {isFocused && <View style={{ marginTop: 0, height: 5 }} />}
-              {!isFocused && <BaseText size={7.5} weight={400} styles={{
-                color: isFocused ? Colors.light.viola : Colors.light.bianco,
-                marginTop: 2,
-                letterSpacing: 0.5,
-              }}>
-                {label ?
-                  label.toString().toUpperCase()
-                  : ""}
-              </BaseText>}
-            </TouchableOpacity>
-          );
-        })
-        }
-      </View>
-    </View>
-  )
-}
+//          return (
+//            <TouchableOpacity
+//              key={index}
+//              accessibilityRole="button"
+//              accessibilityLabel={options.tabBarAccessibilityLabel}
+//              testID={options.tabBarTestID}
+//              onPress={onPress}
+//              onLongPress={onLongPress}
+//              style={{
+//                flexDirection: "column",
+//                backgroundColor: "transparent",
+//                alignItems: "center",
+//                alignContent: "center",
+//                justifyContent: "center",
+//                width: width,
+//                height: width
+//              }}
+//            >
+//              {options.tabBarIcon !== undefined && options.tabBarIcon(isFocused ? Colors.light.viola : Colors.light.bianco, isFocused)}
+//              {/*<BaseText size={7.5} weight={!isFocused ? 600 : 900} styles={{
+//                color: isFocused ? Colors.light.viola : Colors.light.bianco,
+//                marginTop: 2,
+//              }}>
+//                {label ?
+//                  isFocused ? label.toString().toUpperCase() : label
+//                  : ""}
+//              </BaseText>*/}
+//              {isFocused && <View style={{ marginTop: 0, height: 5 }} />}
+//              {!isFocused && <BaseText size={7.5} weight={400} styles={{
+//                color: isFocused ? Colors.light.viola : Colors.light.bianco,
+//                marginTop: 2,
+//                letterSpacing: 0.5,
+//              }}>
+//                {label ?
+//                  label.toString().toUpperCase()
+//                  : ""}
+//              </BaseText>}
+//            </TouchableOpacity>
+//          );
+//        })
+//        }
+//      </View>
+//    </View>
+//  )
+//}
 
 export default function BottomTabNavigator() {
-  const colorScheme = useColorScheme();
+  //const colorScheme = useColorScheme();
   const { user, setUser } = React.useContext(AuthUserContext);
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -158,47 +158,57 @@ export default function BottomTabNavigator() {
   return (
     <BottomTab.Navigator
       initialRouteName="Esplora"
-      tabBar={TabBar}
-      tabBarOptions={{
-        allowFontScaling: true,
-      }}
+      tabBar={(props: BottomTabBarProps) => <TabBar {...props} />}
+    //tabBar={TabBar}
+    //tabBarOptions={{
+    //  allowFontScaling: true,
+    //  showLabel: true, // hide labels
+    //  activeTintColor: '#F8F8F8', // active icon color
+    //  inactiveTintColor: '#586589',  // inactive icon color
+    //  style: {
+    //    backgroundColor: '#43377B', // TabBar background
+    //    elevation: 0, // remove shadow on Android
+    //    shadowOpacity: 0, // remove shadow on iOS,
+    //    borderWidth: 0,
+    //  }
+    //}}
     >
       <BottomTab.Screen
         name="Esplora"
         component={TabOneNavigator}
-        options={{
-          tabBarIcon: (color, focused) => <TabBarIcon name="ios-search" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
-        }}
+      //options={{
+      //  tabBarIcon: (color, focused, size) => <TabBarIcon name="ios-search" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
+      //}}
       />
-      <BottomTab.Screen
+      {/*<BottomTab.Screen
         name="Preferiti"
         component={PreferitiNav}
-        options={{
-          tabBarIcon: (color, focused) => <TabBarIcon name="ios-heart-empty" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
-        }}
+        //options={{
+        //  tabBarIcon: (color, focused) => <TabBarIcon name="ios-heart-empty" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
+        //}}
       />
       <BottomTab.Screen
         name="Add"
         component={TabTwoNavigator}
-        options={{
-          tabBarIcon: (color, focused) => <TabBarIcon name="ios-add" color={color} size={focused ? 30 : 25} style={{
-          }} brd={Colors.light.arancioDes} />,
-          tabBarLabel: null,
-        }}
+        //options={{
+        //  tabBarIcon: (color, focused) => <TabBarIcon name="ios-add" color={color} size={focused ? 30 : 25} style={{
+        //  }} brd={Colors.light.arancioDes} />,
+        //  tabBarLabel: null,
+        //}}
       />
       <BottomTab.Screen
         name="Prenotazioni"
         component={PrenotazioniNav}
-        options={{
-          tabBarIcon: (color, focused) => <TabBarIcon name="ios-calendar" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
-        }}
-      />
+        //options={{
+        //  tabBarIcon: (color, focused) => <TabBarIcon name="ios-calendar" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
+        //}}
+      />*/}
       <BottomTab.Screen
         name="Profilo"
         component={user ? ProfiloNav : AuthNav}
-        options={{
-          tabBarIcon: (color, focused) => <TabBarIcon name="ios-people" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
-        }}
+      //options={{
+      //  tabBarIcon: (color, focused) => <TabBarIcon name="ios-people" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
+      //}}
       />
     </BottomTab.Navigator>
   );

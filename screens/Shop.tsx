@@ -295,7 +295,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
 
   React.useEffect(() => {
     if (route.params?.id) {
-      console.log("--idONSHOP", route.params?.id)
+      //console.log("--idONSHOP", route.params?.id)
       getServizi(route.params?.id);
       getCommerciante(route.params?.id);
       const date = moment();
@@ -308,7 +308,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
   if (data === undefined) {
     return (
       //<Spinner />
-      <Loader color={Colors.light.arancioDes} size={"large"} animating={true} />
+      <Loader color={Colors.light.bianco} size={"large"} animating={true} />
     )
   }
 

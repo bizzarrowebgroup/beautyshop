@@ -3,13 +3,14 @@ import { ImageStyle, StyleSheetProperties, ViewStyle } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
 interface DeskProps {
-    style?: ViewStyle | ImageStyle;
-    width?: string | number;
-    height?: string | number;
+  style?: ViewStyle | ImageStyle;
+  width?: string | number;
+  height?: string | number;
+  color?: string;
 };
 
-export default function Desk({ style, width, height }: DeskProps) {
-    const desk = `<svg width="210" height="243" viewBox="0 0 210 243" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+export default function Desk({ style, width, height, color }: DeskProps) {
+  const desk = `<svg width="210" height="243" viewBox="0 0 210 243" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <rect y="-15" width="262" height="258" fill="url(#pattern0)"/>
     <defs>
     <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -19,5 +20,5 @@ export default function Desk({ style, width, height }: DeskProps) {
     </defs>
     </svg>
     `;
-    return <SvgXml style={style} xml={desk} width={width} height={height} />;
+  return <SvgXml style={style} xml={desk} width={width} height={height} fill={color} />;
 }

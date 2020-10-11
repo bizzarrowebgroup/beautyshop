@@ -19,7 +19,8 @@ export default {
     bianco: '#FBFBFB',
     nero: '#181818',
     bg: '#E5E5E5',
-    rosso: 'red'
+    rosso: 'red',
+    newviola: "#43377B",
   },
   dark: {
     text: '#fff',

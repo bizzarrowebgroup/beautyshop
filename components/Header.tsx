@@ -58,66 +58,72 @@ const Header = (props: HeaderProps) => {
       return (
         <View style={{
           paddingTop: Constants.statusBarHeight,
-          backgroundColor: Colors.light.arancio,
+          backgroundColor: Colors.light.newviola,
           borderBottomRightRadius: 20
         }}>
           <View style={{ height: 190 }}>
             {props.loggedIn && (
-              <View>
+              <View style={{ justifyContent: "space-between", alignItems: "stretch", alignContent: "center" }}>
                 <View style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignContent: "center",
                   alignItems: "center",
-                  paddingHorizontal: 30,
-                  paddingTop: 10
+                  paddingHorizontal: 20,
+                  //paddingTop: 10
                 }}>
-                  <BaseText weight={400} size={18} styles={{ marginLeft: 0 }}>{"Il tuo profilo"}</BaseText>
+                  <BaseText weight={400} size={18} styles={{ color: Colors.light.bianco }}>{"Il tuo profilo"}</BaseText>
                   <TouchableOpacity style={{
                     width: 30,
                     height: 30,
-                    //position: "absolute",
-                    //right: 40,
-                    //top: 15,
-                    zIndex: 2
                   }} onPress={() => {
                     console.warn("Non ancora implementato 💀😪")
                   }}>
-                    <Ionicons name="ios-color-wand" size={30} color="black" />
+                    <Ionicons name="ios-color-wand" size={30} color="white" />
                   </TouchableOpacity>
                 </View>
-                <Circle width="154" height="115" style={{
-                  position: "absolute",
-                  left: 30,
-                  top: 50
-                }} />
-                <Image source={{ uri: props.image }} style={{
-                  width: 80,
-                  height: 80,
-                  borderRadius: 40,
-                  position: "absolute",
-                  left: 50,
-                  top: 75,
-                  zIndex: 1
-                }} />
                 <View style={{
-                  position: "absolute",
-                  right: 40,
-                  top: 75,
-                  flexDirection: "column",
-                  alignItems: "flex-start",
+                  flexDirection: "row",
+                  justifyContent: "space-around",
+                  //alignContent: "center",
+                  //alignItems: "center"
                 }}>
-                  <BaseText size={18 - 2} weight={700} styles={{
-                    marginBottom: 10
-                  }}>{props.username}</BaseText>
-                  <BaseText size={13 - 2} styles={{
-                    lineHeight: 20,
-                    textAlign: "left"
-                  }}>{props.email}</BaseText>
-                  <BaseText size={13 - 2} styles={{
-                    lineHeight: 20,
-                    textAlign: "left"
-                  }}>{props.phonenumber}</BaseText>
+                  <View style={{
+                  }}>
+                    <Circle width="154" height="115" style={{
+                      position: "absolute",
+                      left: -5,
+                      top: 10
+                    }} />
+                    <Image source={{ uri: props.image }} style={{
+                      width: 80,
+                      height: 80,
+                      borderRadius: 40,
+                      left: 30,
+                      top: 25,
+                      zIndex: 1
+                    }} />
+                  </View>
+                  <View style={{
+                    top: 30,
+                    flexDirection: "column",
+                    alignItems: "flex-end",
+                  }}>
+                    <BaseText size={18 - 2} weight={700} styles={{
+                      marginBottom: 10,
+                      color: Colors.light.bianco
+                    }}>{props.username}</BaseText>
+                    <BaseText size={13 - 2} styles={{
+                      lineHeight: 20,
+                      //textAlign: "left",
+                      color: Colors.light.bianco
+                    }}>{props.email}</BaseText>
+                    <BaseText size={13 - 2} styles={{
+                      lineHeight: 20,
+                      //textAlign: "left",
+                      color: Colors.light.bianco
+                    }}>{props.phonenumber}</BaseText>
+                  </View>
                 </View>
               </View>
             )}
@@ -136,7 +142,7 @@ const Header = (props: HeaderProps) => {
       );
     } else {
       return (
-        <View style={[{ paddingTop: Constants.statusBarHeight, backgroundColor: Colors.light.arancio }, props.styles]}>
+        <View style={[{ paddingTop: Constants.statusBarHeight, backgroundColor: Colors.light.newviola }, props.styles]}>
           <View style={[styles.container, {
             justifyContent: "flex-start",
             alignItems: "center",
@@ -144,9 +150,9 @@ const Header = (props: HeaderProps) => {
             flexDirection: "row"
           }]}>
             {props.hasBack &&
-              <BackIcon width={20} height={20} style={styles.icona} onPress={props.onPress} />
+              <BackIcon width={20} height={20} style={styles.icona} onPress={props.onPress} color={Colors.light.bianco}/>
             }
-            <BaseText styles={styles.titlo} size={15} weight={400}>{props.title ? props.title : ""}</BaseText>
+            <BaseText styles={styles.titlo} size={15} weight={400} color={Colors.light.bianco}>{props.title ? props.title : ""}</BaseText>
           </View>
         </View>
       );

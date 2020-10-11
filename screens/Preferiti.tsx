@@ -115,7 +115,7 @@ const Preferiti = (props: PreferitiProps) => {
 
   if (isLoading) {
     return (
-      <Loader color={Colors.light.arancioDes} size={"large"} animating={true} />
+      <Loader color={Colors.light.bianco} size={"large"} animating={true} />
     )
   }
   return (

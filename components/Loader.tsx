@@ -60,10 +60,8 @@ const styles = StyleSheet.create({
   containter: {
     flex: 1,
     alignItems: "center",
-    //alignSelf: "center",
     alignContent: "center",
     justifyContent: "center",
-    //backgroundColor: "#F4C36C"
   },
   image: {
     width: 50,

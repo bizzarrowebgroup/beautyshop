@@ -146,7 +146,7 @@ export default function App() {
   if (!isLoadingComplete || fetching) {
   //if (true) {
     return (
-      <Loader color={Colors.light.arancioDes} size={"large"} animating={true} />
+      <Loader color={Colors.light.bianco} size={"large"} animating={true} />
     )
   }
   return (

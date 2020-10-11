@@ -261,8 +261,10 @@ export default function NotFoundScreen({
       let closeHours = close[0] ? close[0] : 0;
       let closeMinutes = close[1] ? close[1] : 0;
       //console.log("---realDate---", realDate)
-      let start = moment(realDate).hours(openHours).minute(openMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
-      let end = moment(realDate).hours(closeHours).minute(closeMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+      //let start = moment(realDate).hours(openHours).minute(openMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+      //let end = moment(realDate).hours(closeHours).minute(closeMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+      let start = moment(realDate).hours(openHours).minute(openMinutes).second(0).millisecond(0);
+      let end = moment(realDate).hours(closeHours).minute(closeMinutes).second(0).millisecond(0);
       //console.log("--ORARIO APERTURA--", start)
       //console.log("--ORARIO CHIUSURA--", end)
       const step = (x) => {
@@ -275,55 +277,56 @@ export default function NotFoundScreen({
         cursor = step(cursor);
       }
       if (blocksSlots.length > 0 && prenotazioni !== undefined) {
-        let jona = blocksSlots.filter((e, index) => {
-          return prenotazioni.some(d => {
-            if (d.serviceId == serviceId) {
+        //let jona = blocksSlots.filter((e, index) => {
+        //  return prenotazioni.some(d => {
+        //    if (d.serviceId == serviceId) {
 
-              let realMonth = moment(e).month();
-              let slotMonth = moment(d.slot_date).month();
-              let realDay = moment(e).format('DD');
-              let slotDay = moment(d.slot_date).format('DD');
-              //console.log({
-              //  realMonth,
-              //  realDay,
-              //  slotMonth,
-              //  slotDay
-              //})
-              // old moment(d.slot_date).isoWeekday() == today
-              if (realMonth == slotMonth && realDay == slotDay) {
+        //      let realMonth = moment(e).month();
+        //      let slotMonth = moment(d.slot_date).month();
+        //      let realDay = moment(e).format('DD');
+        //      let slotDay = moment(d.slot_date).format('DD');
+        //      //console.log({
+        //      //  realMonth,
+        //      //  realDay,
+        //      //  slotMonth,
+        //      //  slotDay
+        //      //})
+        //      // old moment(d.slot_date).isoWeekday() == today
+        //      if (realMonth == slotMonth && realDay == slotDay) {
 
-                //console.log("--blocksSlot--", e)
-                let open = d.slot_time.split(":");
-                let openHours = open[0] ? open[0] : 0;
-                let openMinutes = open[1] ? open[1] : 0;
+        //        //console.log("--blocksSlot--", e)
+        //        let open = d.slot_time.split(":");
+        //        let openHours = open[0] ? open[0] : 0;
+        //        let openMinutes = open[1] ? open[1] : 0;
 
-                let close = d.slot_end_time.split(":");
-                let closeHours = close[0] ? close[0] : 0;
-                let closeMinutes = close[1] ? close[1] : 0;
+        //        let close = d.slot_end_time.split(":");
+        //        let closeHours = close[0] ? close[0] : 0;
+        //        let closeMinutes = close[1] ? close[1] : 0;
 
-                let realDataOpen = moment(d.slot_date).hours(openHours).minutes(openMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
-                let realDataClose = moment(d.slot_date).hours(closeHours).minutes(closeMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+        //        let realDataOpen = moment(d.slot_date).hours(openHours).minutes(openMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+        //        let realDataClose = moment(d.slot_date).hours(closeHours).minutes(closeMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
 
-                //console.log("---DATA FORMATTATA REALE APERTURA PRENOTAZIONE---", realDataOpen);
-                //console.log("---DATA FORMATTATA REALE CHIUSURA PRENOTAZIONE---", realDataClose);
-                //console.log("--ITS MINORE--", moment(e).format('x') < moment(realDataOpen).format('x'))
-                //console.log("--ITS MAGGIORE--", moment(e).format('x') > moment(realDataClose).format('x'))
-                let minore = moment(e).format('x') < moment(realDataOpen).format('x');
-                let maggiore = moment(e).format('x') >= moment(realDataClose).format('x');
-                if (minore || maggiore) return true;
-                else return false;
-              } else {
-                return false;
-              }
-            } else {
-              return false;
-            }
-          });
-        });
-        console.log("jona----", jona);
-        if (jona != undefined && jona.length > 0) {
-          setBlocks(jona);
-        } else setBlocks(blocksSlots);
+        //        //console.log("---DATA FORMATTATA REALE APERTURA PRENOTAZIONE---", realDataOpen);
+        //        //console.log("---DATA FORMATTATA REALE CHIUSURA PRENOTAZIONE---", realDataClose);
+        //        //console.log("--ITS MINORE--", moment(e).format('x') < moment(realDataOpen).format('x'))
+        //        //console.log("--ITS MAGGIORE--", moment(e).format('x') > moment(realDataClose).format('x'))
+        //        let minore = moment(e).format('x') < moment(realDataOpen).format('x');
+        //        let maggiore = moment(e).format('x') >= moment(realDataClose).format('x');
+        //        if (minore || maggiore) return true;
+        //        else return false;
+        //      } else {
+        //        return false;
+        //      }
+        //    } else {
+        //      return false;
+        //    }
+        //  });
+        //});
+        //console.log("jona----", jona);
+        //if (jona != undefined && jona.length > 0) {
+        //setBlocks(jona);
+        //} else setBlocks(blocksSlots);
+        setBlocks(blocksSlots);
       } else {
         setBlocks(undefined);
       }
@@ -466,7 +469,7 @@ export default function NotFoundScreen({
   }
   const onDateChange = (date) => {
     //setTimeout(() => {
-    console.log("DATA PREMUTA PORCO DO", date)
+    //console.log("DATA PREMUTA PORCO DO", date)
     setDateSelected(date);
     let today = moment(date).isoWeekday();
     workSlots(today, undefined, date);
@@ -581,7 +584,7 @@ export default function NotFoundScreen({
 
   if (isLoading) {
     return (
-      <Loader color={Colors.light.arancioDes} size={"large"} animating={true} />
+      <Loader color={Colors.light.bianco} size={"large"} animating={true} />
     )
   }
 
@@ -1064,7 +1067,8 @@ export default function NotFoundScreen({
                           marginHorizontal: 10
                         }}>
                           <BaseText size={12} weight={400}>
-                            {slot.utc().utcOffset("-02:00", true).format("HH:mm")}
+                            {/*{slot.utc().utcOffset("-02:00", true).format("HH:mm")}*/}
+                            {slot.format("HH:mm")}
                           </BaseText>
                         </TouchableOpacity>
                       )

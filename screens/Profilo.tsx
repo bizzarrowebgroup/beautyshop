@@ -3,9 +3,10 @@ import {
   Image,
   Text,
   View,
+  StatusBar,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView, SafeAreaView
 } from 'react-native';
 import Header from '../components/Header';
 import Colors from '../constants/Colors';
@@ -119,155 +120,161 @@ const Profilo = ({
     }
   }
   return (
-    <View style={styles.container}>
-      <Header
-        profile={true}
-        loggedIn={true}
-        image={photoUrl ? photoUrl : "https://api.adorable.io/avatars/100/abott@adorable.png"}
-        username={name ? name : "Nome undefined"}
-        email={email ? email : "email undefined"}
-        phonenumber={phone ? phone : "phone undefined"}
-      />
-      <View style={{
-        zIndex: -2,
-        height: 0
-      }}>
-        <View style={{ backgroundColor: Colors.light.arancio, height: 50, width: "10%" }} />
-        <View style={{ backgroundColor: Colors.light.bg, height: 50, width: "20%", borderTopLeftRadius: 30, top: -50 }} />
-      </View>
-      <ScrollView style={{
-        zIndex: 1,
-      }} contentContainerStyle={{
-        paddingTop: 20,
-        paddingBottom: 200,
-      }}>
-        <View style={{ marginLeft: 20 }}>
-          <BaseText size={10}>{"Tessera fedeltà".toUpperCase()}</BaseText>
+    <React.Fragment>
+      <SafeAreaView style={{ flex: 0, backgroundColor: Colors.light.newviola, }} />
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.light.newviola, }}>
+        <StatusBar barStyle="light-content" />
+        <View style={styles.mainContainer}>
+          <Header
+            profile={true}
+            loggedIn={true}
+            image={photoUrl ? photoUrl : "https://api.adorable.io/avatars/100/abott@adorable.png"}
+            username={name ? name : "Nome undefined"}
+            email={email ? email : "email undefined"}
+            phonenumber={phone ? phone : "phone undefined"}
+          />
           <View style={{
-            backgroundColor: Colors.light.giallo,
-            height: 191,
-            borderRadius: 10,
-            marginLeft: 10,
-            marginRight: 40,
-            marginTop: 10,
-            marginBottom: 20
+            zIndex: -2,
+            height: 0
           }}>
-            <View style={{ marginHorizontal: 40, marginTop: 10 }}>
-              <Image source={{ uri: "http://barcodes4.me/barcode/c39/" + uid + ".png?resolution=1&margin=0&height=70&IsReverseColor=0" }} style={{
-                width: "100%",
-                height: 70,
-                backgroundColor: 'transparent',
-                borderRadius: 10,
-                resizeMode: "cover"
-              }} />
-              <BaseText styles={[styles.text, { marginTop: 5, fontSize: 12, color: Colors.light.nero, textAlign: "center" }]}>Scade il 15/07/2021</BaseText>
-            </View>
-            <View style={{
-              flexDirection: "row",
-              alignContent: "center",
-              alignItems: "center",
-              justifyContent: "space-around",
-              marginHorizontal: 40
-            }}>
-              <Image source={require('../assets/images/logoBS.png')} style={{
-                width: 102,
-                height: 92,
-              }} />
+            <View style={{ backgroundColor: Colors.light.newviola, height: 50, width: "10%" }} />
+            <View style={{ backgroundColor: Colors.light.bianco, height: 50, width: "20%", borderTopLeftRadius: 30, top: -50 }} />
+          </View>
+          <ScrollView style={{
+            zIndex: 1,
+          }} contentContainerStyle={{
+            paddingTop: 20,
+            paddingBottom: 200,
+          }}>
+            <View style={{ marginLeft: 20 }}>
+              <BaseText size={10}>{"Tessera fedeltà".toUpperCase()}</BaseText>
               <View style={{
-                justifyContent: "center",
-                alignContent: "center",
-                alignItems: "flex-end"
+                backgroundColor: Colors.light.giallo,
+                height: 191,
+                borderRadius: 10,
+                marginLeft: 10,
+                marginRight: 40,
+                marginTop: 10,
+                marginBottom: 20
               }}>
-                <BaseText weight={700} styles={{ fontSize: 12 }}>{name}</BaseText>
-                <View style={{ flexDirection: "row", alignItems: "center", alignContent: "center", justifyContent: "center" }}>
-                  <BaseText styles={{ fontSize: 13, marginRight: 5 }}>{"Punti:"}</BaseText>
-                  <BaseText weight={700} styles={{ fontSize: 20 }}>150</BaseText>
+                <View style={{ marginHorizontal: 40, marginTop: 10 }}>
+                  <Image source={{ uri: "http://barcodes4.me/barcode/c39/" + uid + ".png?resolution=1&margin=0&height=70&IsReverseColor=0" }} style={{
+                    width: "100%",
+                    height: 70,
+                    backgroundColor: 'transparent',
+                    borderRadius: 10,
+                    resizeMode: "cover"
+                  }} />
+                  <BaseText styles={[styles.text, { marginTop: 5, fontSize: 12, color: Colors.light.nero, textAlign: "center" }]}>Scade il 15/07/2021</BaseText>
+                </View>
+                <View style={{
+                  flexDirection: "row",
+                  alignContent: "center",
+                  alignItems: "center",
+                  justifyContent: "space-around",
+                  marginHorizontal: 40
+                }}>
+                  <Image source={require('../assets/images/logoBS.png')} style={{
+                    width: 102,
+                    height: 92,
+                  }} />
+                  <View style={{
+                    justifyContent: "center",
+                    alignContent: "center",
+                    alignItems: "flex-end"
+                  }}>
+                    <BaseText weight={700} styles={{ fontSize: 12 }}>{name}</BaseText>
+                    <View style={{ flexDirection: "row", alignItems: "center", alignContent: "center", justifyContent: "center" }}>
+                      <BaseText styles={{ fontSize: 13, marginRight: 5 }}>{"Punti:"}</BaseText>
+                      <BaseText weight={700} styles={{ fontSize: 20 }}>150</BaseText>
+                    </View>
+                  </View>
                 </View>
               </View>
+              <BaseText size={10} color={"#333333"} styles={{ marginRight: 20, textAlign: "center" }}>{"Spiegazione tessere, come accumulare punti etc.\nAmet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet."}</BaseText>
             </View>
-          </View>
-          <BaseText size={10} color={"#333333"} styles={{ marginRight: 20, textAlign: "center" }}>{"Spiegazione tessere, come accumulare punti etc.\nAmet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet."}</BaseText>
-        </View>
-        <View style={{ marginHorizontal: 40, marginVertical: 20, height: 1, backgroundColor: "#A6A6A6" }} />
-        <View style={{
-          backgroundColor: Colors.light.bianco,
-          height: 45,
-          alignItems: "center",
-          justifyContent: "space-between",
-          alignContent: "center",
-          flexDirection: "row",
-        }}>
-          <BaseText size={13} styles={{ marginLeft: 20 }}>Notifiche</BaseText>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            style={{
-              width: 64,
-              height: 32,
-              borderRadius: 32,
-              padding: 4,
-              backgroundColor: isOn
-                ? Colors.light.arancioDes
-                : Colors.light.grigio,
-              marginRight: 20
-            }}
-            onPress={toggleHandle}
-          >
+            <View style={{ marginHorizontal: 40, marginVertical: 20, height: 1, backgroundColor: "#A6A6A6" }} />
             <View style={{
-              width: 24,
-              height: 24,
-              borderRadius: 32,
               backgroundColor: Colors.light.bianco,
-              left: isOn ? 32 : 0,
-            }} />
-          </TouchableOpacity>
+              height: 45,
+              alignItems: "center",
+              justifyContent: "space-between",
+              alignContent: "center",
+              flexDirection: "row",
+            }}>
+              <BaseText size={13} styles={{ marginLeft: 20 }}>Notifiche</BaseText>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                style={{
+                  width: 64,
+                  height: 32,
+                  borderRadius: 32,
+                  padding: 4,
+                  backgroundColor: isOn
+                    ? Colors.light.arancioDes
+                    : Colors.light.grigio,
+                  marginRight: 20
+                }}
+                onPress={toggleHandle}
+              >
+                <View style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: 32,
+                  backgroundColor: Colors.light.bianco,
+                  left: isOn ? 32 : 0,
+                }} />
+              </TouchableOpacity>
+            </View>
+            <View style={{ marginTop: 5, marginHorizontal: 20, marginBottom: 10 }}>
+              <BaseText size={9} color={"#696969"}>Le notifiche sono relative alle prenotazioni ed eventuali promozioni specifiche</BaseText>
+            </View>
+            <TouchableOpacity style={{
+              backgroundColor: Colors.light.bianco,
+              height: 45,
+              alignItems: "center",
+              justifyContent: "space-between",
+              alignContent: "center",
+              flexDirection: "row"
+            }}>
+              <BaseText size={13} styles={{ marginLeft: 20 }}>Le tue recensioni</BaseText>
+              <Ionicons name="ios-return-right" size={30} color={Colors.light.arancioDes} style={{
+                marginRight: 20
+              }} />
+            </TouchableOpacity>
+            <View style={{ marginTop: 5, marginHorizontal: 20 }}>
+              <BaseText size={9} color={"#696969"}>Qui troverai la raccolta di tutte le tue recensioni inviate a seguito di una prenotazine!</BaseText>
+            </View>
+            {/*<View style={{ marginHorizontal: 40, marginVertical: 20, height: 1, backgroundColor: "#A6A6A6" }} />*/}
+            <TouchableOpacity onPress={handleSignOut} style={{
+              backgroundColor: Colors.light.arancioDes,
+              borderRadius: 10,
+              marginHorizontal: 20,
+              marginTop: 20,
+              justifyContent: "center",
+              alignItems: "center",
+              alignContent: "center",
+              height: 60
+            }}>
+              <BaseText size={14} weight={600} color={Colors.light.bianco}>{"Esci".toUpperCase()}</BaseText>
+            </TouchableOpacity>
+            <View style={{ alignContent: "center", alignItems: "center", justifyContent: "center", marginVertical: 20 }}>
+              <BaseText size={9} weight={700}>{`Versione App ${Constants.manifest.version} (${Constants.platform.ios.buildNumber || 0})`}</BaseText>
+            </View>
+          </ScrollView>
         </View>
-        <View style={{ marginTop: 5, marginHorizontal: 20, marginBottom: 10 }}>
-          <BaseText size={9} color={"#696969"}>Le notifiche sono relative alle prenotazioni ed eventuali promozioni specifiche</BaseText>
-        </View>
-        <TouchableOpacity style={{
-          backgroundColor: Colors.light.bianco,
-          height: 45,
-          alignItems: "center",
-          justifyContent: "space-between",
-          alignContent: "center",
-          flexDirection: "row"
-        }}>
-          <BaseText size={13} styles={{ marginLeft: 20 }}>Le tue recensioni</BaseText>
-          <Ionicons name="ios-return-right" size={30} color={Colors.light.arancio} style={{
-            marginRight: 20
-          }} />
-        </TouchableOpacity>
-        <View style={{ marginTop: 5, marginHorizontal: 20 }}>
-          <BaseText size={9} color={"#696969"}>Qui troverai la raccolta di tutte le tue recensioni inviate a seguito di una prenotazine!</BaseText>
-        </View>
-        {/*<View style={{ marginHorizontal: 40, marginVertical: 20, height: 1, backgroundColor: "#A6A6A6" }} />*/}
-        <TouchableOpacity onPress={handleSignOut} style={{
-          backgroundColor: Colors.light.arancio,
-          borderRadius: 10,
-          marginHorizontal: 20,
-          marginTop: 20,
-          justifyContent: "center",
-          alignItems: "center",
-          alignContent: "center",
-          height: 60
-        }}>
-          <BaseText size={14} weight={600} color={Colors.light.bianco}>{"Esci".toUpperCase()}</BaseText>
-        </TouchableOpacity>
-        <View style={{ alignContent: "center", alignItems: "center", justifyContent: "center", marginVertical: 20 }}>
-          <BaseText size={9} weight={700}>{`Versione App ${Constants.manifest.version} (${Constants.platform.ios.buildNumber || 0})`}</BaseText>
-        </View>
-      </ScrollView>
-    </View>
+      </SafeAreaView>
+    </React.Fragment>
+
   );
-  // }
 };
 
 export default Profilo;
 
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
-    backgroundColor: Colors.light.bg
+    backgroundColor: Colors.light.bianco
   },
   input: {
     height: 40,
@@ -301,3 +308,4 @@ const styles = StyleSheet.create({
     // shadowRadius: 4,
   },
 });
+

@@ -2,13 +2,14 @@ import React, { useContext } from 'react';
 import {
   TouchableWithoutFeedback,
   Image,
+  ImageBackground,
   Dimensions,
   Modal,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity, FlatList
 } from 'react-native';
 
 import { AppContext } from '../context/Appcontext';
@@ -30,6 +31,7 @@ import { RootStackParamList } from '../types';
 import BaseText from '../components/StyledText';
 import { db, dbVal } from '../network/Firebase';
 import Loader from '../components/Loader';
+import { Vibration } from '../constants';
 // import LottieView from 'lottie-react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -41,7 +43,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
     foto
   } = useContext(AppContext);
   // const [modalShow, setModal] = React.useState(false);
-  const [parrucchieri, setPar] = React.useState([]);
+  const [parrucchieri, setPar] = React.useState(undefined);
   // const colorScheme = useColorScheme();
   // const lottieHert = React.useRef(null);
   const { user, setUser } = React.useContext(AuthUserContext);
@@ -77,7 +79,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
         if (favorites && favorites.length > 0) {
           favoritesToSearch.push(favorites);
         } else {
-          setIsLoading(false);
+          //setIsLoading(false);
         }
       } else {
         setIsLoading(false);
@@ -155,9 +157,365 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
     });
   }, []);
 
+  const renderCards = (item, index) => {
+    //console.log("item", item)
+    //console.log("index", index)
+    //console.log("\n")
+    let { title, stars, via, desc, mainPhoto, economy, id } = item;
+    let economyColor = "rgba(133, 194, 170, 0.4)", economyTitle = "€", economyTColor = "#008D56";
+    if (economy) {
+      switch (economy) {
+        case 1:
+          economyColor = "rgba(244, 195, 108, 0.4)";
+          economyTitle = "€€";
+          economyTColor = "#CB860B";
+          break;
+        case 2:
+          economyColor = "rgba(244, 195, 108, 0.4)";
+          economyTitle = "€€€";
+          economyTColor = "#CB860B";
+          break;
+      }
+    }
+    if (desc.length > 25) {
+      desc = desc.slice(0, 25) + " ...";
+    }
+    //if (title.length > 23) {
+    //  title = title.slice(0, 23) + "";
+    //}
+    let isFavorite = false;
+    if (favoritesFB !== undefined) {
+      isFavorite = favoritesFB.includes(id);
+      //console.log(isFavorite, "---isFAV---")
+      //console.log(favoritesFB, "---favoritesFB---")
+      //console.log(id, "---id---")
+    }
+    const setFavorite = async () => {
+      if (user !== null && userDocId !== null) {
+        console.log("---hoPremuto---", id)
+        try {
+          var databaseRefReal = await db.collection('utentiApp').doc(userDocId);
+          await db.runTransaction(async (t) => {
+            const doc = await t.get(databaseRefReal);
+            console.log("---favoritesOnDB---", doc.data()?.favorites)
+            let favorites = doc.data().favorites;
+            // DOC: se ho preferiti entro per capire come rimuoverlo
+            if (favorites && favorites !== undefined) {
+              favorites.forEach((element) => {
+                if (element.id === id) {
+                  // DOC SE HO GIA LO STESSO PREFERITO PREMUTO LO RIMUOVO
+                  var deletedList = favorites.filter(x => {
+                    return x.id != id;
+                  })
+                  console.log("---deletedList[FAVORITES]---", deletedList);
+                  if (deletedList.length <= 0) {
+                    // rimuovo la lista completa
+                    //isFavorite = false;
+                    t.update(databaseRefReal, { favorites: dbVal.FieldValue.delete() });
+                  } else {
+                    // rimuovo il commerciante
+                    //isFavorite = false;
+                    t.update(databaseRefReal, { favorites: deletedList });
+                  }
+                } else {
+                  // aggiungo il commerciante
+                  let newFavorites = [...favorites, { id }];
+                  var list = newFavorites.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
+                  //isFavorite = true;
+                  t.update(databaseRefReal, {
+                    favorites: list
+                  });
+                }
+              });
+            } else {
+              // aggiungo il commerciante per la prima volta
+              //isFavorite = true;
+              t.update(databaseRefReal, {
+                favorites: [
+                  { id }
+                ]
+              });
+            }
+          });
+          getFavorites();
+        } catch (error) {
+          console.log("---setFavorite[Error]", error);
+        }
+      } else {
+        console.warn("non ho un utente per aggiugnere questo commerciante ai preferiti");
+      }
+    }
+    if (false) {
+      return (
+        <TouchableWithoutFeedback
+          key={index}
+          onPress={() => {
+            navigation.navigate("Shop", { id: id });
+          }}>
+          <View style={{
+            //width: 342,
+            backgroundColor: "white",
+            marginHorizontal: 10,
+            marginVertical: 10,
+            borderRadius: 5,
+            //marginTop: 20,
+            //marginBottom: 20,
+            //shadowColor: Colors.light.nero,
+            //shadowOpacity: 0.15,
+            //shadowOffset: {
+            //  width: 0,
+            //  height: 4
+            //},
+            //shadowRadius: 10,
+            //elevation: 1,
+            flexDirection: "row",
+          }}>
+            <Image style={{
+              width: 122,
+              height: 113,
+              borderRadius: 5,
+              marginVertical: 10,
+              marginHorizontal: 10,
+              //alignSelf: "center"
+            }} source={mainPhoto ? { uri: mainPhoto.url } : require('../assets/images/salon.jpeg')} />
+            <View style={{ maxWidth: 180 }}>
+              <View style={{ marginTop: 10 }}>
+                <BaseText size={10} maxHeight={20}>{title}</BaseText>
+              </View>
+              <View style={{
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                alignItems: "center",
+                alignContent: "center"
+              }}>
+                <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+                <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+                <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+                <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+                <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+                <BaseText size={9} styles={{ marginLeft: 5 }}>({stars})</BaseText>
+              </View>
+              <View style={{ marginTop: 5 }}>
+                <BaseText size={8} maxHeight={20}>{desc}</BaseText>
+              </View>
+              <View style={{
+                flexDirection: "row",
+                alignContent: "center",
+                alignItems: "center",
+                justifyContent: "flex-start"
+              }}>
+                <Ionicons name="ios-pin" size={25} color={Colors.light.violaDes} style={{ marginRight: 5 }} />
+                <BaseText size={8} maxWidth={160} color={"#616161"}>{via}</BaseText>
+              </View>
+              <View style={{
+                position: "absolute",
+                bottom: 10,
+                flexDirection: "row",
+                alignItems: "center"
+              }}>
+                <View style={{
+                  minWidth: 25,
+                  minHeight: 14,
+                  paddingHorizontal: 5,
+                  borderRadius: 5,
+                  backgroundColor: economyColor,
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}>
+                  <BaseText weight={700} color={economyTColor} size={8}>{economyTitle}</BaseText>
+                </View>
+                <View style={{
+                  width: 65,
+                  height: 14,
+                  borderRadius: 5,
+                  backgroundColor: false ? "rgba(133, 194, 170, 0.4)" : "#C4C4C4",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginLeft: 8
+                }}>
+                  <BaseText weight={700} styles={{
+                    color: false ? "#008D56" : "#525252",
+                    fontSize: 8,
+                    // fontFamily: "Montserrat_700Bold"
+                  }}>{false ? "APERTO" : "CHIUSO"}</BaseText>
+                </View>
+              </View>
+            </View>
+            <View style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              alignContent: "center",
+              position: "absolute",
+              right: 15,
+              bottom: 10
+            }}>
+              <BaseText weight={400} color={Colors.light.nero} size={10}>{"Esplora"}</BaseText>
+              {/*<RightIcon width={19} height={19} style={{ marginLeft: 2 }} />*/}
+            </View>
+            {user !== null && <TouchableOpacity onPress={setFavorite} style={{
+              position: "absolute",
+              right: 15,
+              top: 10
+            }}>
+              <Ionicons name={isFavorite ? "ios-heart" : "ios-heart-empty"} size={20} color={Colors.light.arancioDes} />
+            </TouchableOpacity>}
+          </View>
+        </TouchableWithoutFeedback>
+      )
+    }
+    return (
+      <TouchableOpacity
+        key={index}
+        onPress={() => {
+          Vibration.impactTouch("Light");
+          navigation.navigate("Shop", { id: id });
+        }}>
+        {/*<View style={{
+          //backgroundColor: "white",
+          marginHorizontal: 10,
+          marginVertical: 10,
+          borderRadius: 5,
+          flexDirection: "row",
+        }}>*/}
+        <>
+          <ImageBackground
+            style={{
+              flex: 1,
+              height: 145,
+              borderRadius: 5,
+              marginHorizontal: 20,
+              marginVertical: 10,
+              flexDirection: "row",
+            }}
+            imageStyle={{
+              borderRadius: 5,
+              backgroundColor: Colors.light.bianco,
+              resizeMode: "cover"
+            }}
+            source={mainPhoto ? { uri: mainPhoto.url } : require('../assets/images/salon.jpeg')}
+          >
+            {user !== null && (
+              <TouchableOpacity onPress={setFavorite} style={{
+                position: "absolute",
+                right: 15,
+                top: 10,
+                zIndex: 10
+              }}>
+                <Ionicons name={isFavorite ? "ios-heart" : "ios-heart-empty"} size={20} color={Colors.light.bianco} />
+              </TouchableOpacity>
+            )}
+            <View style={{
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              //backgroundColor: Colors.light.newviola,
+              //backgroundColor: Colors.light.nero,
+              backgroundColor: Colors.light.bianco,
+              borderRadius: 5,
+              opacity: .3,
+              zIndex: 1
+            }} />
+          </ImageBackground>
+          <View style={{ marginHorizontal: 20, marginBottom: 10 }}>
+            <BaseText size={14} weight={400}>{title}</BaseText>
+            <View style={{
+              flexDirection: "row",
+              alignContent: "center",
+              alignItems: "center",
+              justifyContent: "flex-start"
+            }}>
+              <Ionicons name="ios-pin" size={25} color={Colors.light.violaDes} style={{ marginRight: 5 }} />
+              <BaseText size={8} color={"#616161"}>{via}</BaseText>
+            </View>
+            <View style={{
+              //position: "absolute",
+              //bottom: 10,
+              marginTop: 5,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              alignContent: "center"
+            }}>
+              {stars > 0 && (
+                <View style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  alignContent: "center",
+                  marginRight: 10
+                }}>
+                  <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+                  <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+                  <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+                  <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+                  <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+                  <BaseText size={9} styles={{ marginLeft: 5 }}>({stars})</BaseText>
+                </View>
+              )}
+              <View style={{
+                minWidth: 25,
+                minHeight: 14,
+                paddingHorizontal: 5,
+                borderRadius: 5,
+                backgroundColor: economyColor,
+                justifyContent: "center",
+                alignItems: "center"
+              }}>
+                <BaseText weight={700} color={economyTColor} size={8}>{economyTitle}</BaseText>
+              </View>
+              <View style={{
+                width: 65,
+                height: 14,
+                borderRadius: 5,
+                backgroundColor: false ? "rgba(133, 194, 170, 0.4)" : "#C4C4C4",
+                justifyContent: "center",
+                alignItems: "center",
+                marginLeft: 10
+              }}>
+                <BaseText weight={700} styles={{
+                  color: false ? "#008D56" : "#525252",
+                  fontSize: 8,
+                  // fontFamily: "Montserrat_700Bold"
+                }}>{false ? "APERTO" : "CHIUSO"}</BaseText>
+              </View>
+            </View>
+          </View>
+        </>
+        {/*
+            <View style={{ maxWidth: 180 }}>
+              <View style={{ marginTop: 5 }}>
+                <BaseText size={8} maxHeight={20}>{desc}</BaseText>
+              </View>
+              
+              
+            </View>
+          */}
+        {/*<View style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            alignContent: "center",
+            position: "absolute",
+            right: 15,
+            bottom: 10
+          }}>
+          </View>*/}
+        {/*<BaseText weight={400} color={Colors.light.nero} size={10}>{"Esplora"}</BaseText>*/}
+        {/*<RightIcon width={19} height={19} style={{ marginLeft: 2 }} />*/}
+      </TouchableOpacity>
+    )
+    //return (
+    //  <View></View>
+    //)
+  }
+
   if (isLoading) {
     return (
-      <Loader color={Colors.light.arancioDes} size={"large"} animating={true} />
+      <Loader color={Colors.light.bianco} size={"large"} animating={true} />
     )
   }
 
@@ -175,7 +533,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
             <Ionicons name="ios-search" color="black" size={20} style={styles.iconSearch} />
           </View>
         </View>
-        <Desk style={styles.image} width="262" height="258" />
+        <Desk style={styles.image} width="262" height="258" color={"white"} />
       </SafeAreaView>
       {/**
              * modalIntro
@@ -215,7 +573,10 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
       {/**
              * content
              */}
-      <ScrollView contentContainerStyle={{ backgroundColor: "transparent", }}>
+      <ScrollView
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ backgroundColor: "transparent", paddingBottom: 100 }}>
         {/**
                  * Servizi
                  */}
@@ -224,7 +585,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
             fontSize: 13,
             textTransform: "uppercase",
             marginLeft: 20,
-          }}>Servizi</BaseText>
+          }}>{"I NOSTRI SERVIZI"}</BaseText>
           <View style={{ marginTop: 15 }} />
           <ScrollView
             contentContainerStyle={{ paddingLeft: 20 }}
@@ -257,12 +618,12 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
                       justifyContent: "center",
                       alignItems: "center"
                     }}>
-                      <Ionicons name="ios-star-outline" size={30} color={Colors.light.arancioDes} />
+                      <BaseText color={Colors.light.newviola}>{label.charAt(0)}</BaseText>
+                      {/*<Ionicons name="ios-star-outline" size={30} color={Colors.light.arancioDes} />*/}
                     </View>
                     <BaseText styles={{
                       marginTop: 5,
-                      fontSize: 15,
-                      // fontFamily: "Montserrat_300Light",
+                      fontSize: 13,
                       textAlign: "center"
                     }}>{label}</BaseText>
                   </TouchableOpacity>
@@ -272,16 +633,16 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
           </ScrollView>
         </View>
         {/**
-                 * Parrucchieri // old Raccomandati per te
-                 */}
+         * Parrucchieri // old Raccomandati per te
+         */}
         <View style={{ backgroundColor: "transparent", marginLeft: 20, marginTop: 20 }}>
           <BaseText weight={300} styles={{
             fontSize: 13,
             textTransform: "uppercase"
-          }}>Parrucchieri</BaseText>
+          }}>{"I nostri Commercianti"}</BaseText>
         </View>
         <View style={{ backgroundColor: "transparent" }} >
-          <ScrollView
+          {/*<ScrollView
             showsHorizontalScrollIndicator={false}
             bounces={false}
             snapToInterval={width}
@@ -290,183 +651,21 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
             horizontal
             contentContainerStyle={{ paddingLeft: 10 }}
           >
-            {parrucchieri.map(({ title, stars, via, desc, mainPhoto, economy, id }, index) => {
-              let economyColor = "rgba(133, 194, 170, 0.4)", economyTitle = "€", economyTColor = "#008D56";
-              if (economy) {
-                switch (economy) {
-                  case 1:
-                    economyColor = "rgba(244, 195, 108, 0.4)";
-                    economyTitle = "€€";
-                    economyTColor = "#CB860B";
-                    break;
-                  case 2:
-                    economyColor = "rgba(244, 195, 108, 0.4)";
-                    economyTitle = "€€€";
-                    economyTColor = "#CB860B";
-                    break;
-                }
-              }
-              if (desc.length > 25) {
-                desc = desc.slice(0, 25) + " ...";
-              }
-              if (title.length > 23) {
-                title = title.slice(0, 23) + "";
-              }
-              let isFavorite = false;
-              if (favoritesFB !== undefined) {
-                isFavorite = favoritesFB.includes(id);
-                //console.log(isFavorite, "---isFAV---")
-                //console.log(favoritesFB, "---favoritesFB---")
-                //console.log(id, "---id---")
-              }
-              const setFavorite = async () => {
-                if (user !== null && userDocId !== null) {
-                  console.log("---hoPremuto---", id)
-                  try {
-                    var databaseRefReal = await db.collection('utentiApp').doc(userDocId);
-                    await db.runTransaction(async (t) => {
-                      const doc = await t.get(databaseRefReal);
-                      console.log("---favoritesOnDB---", doc.data()?.favorites)
-                      let favorites = doc.data().favorites;
-                      // DOC: se ho preferiti entro per capire come rimuoverlo
-                      if (favorites && favorites !== undefined) {
-                        favorites.forEach((element) => {
-                          if (element.id === id) {
-                            // DOC SE HO GIA LO STESSO PREFERITO PREMUTO LO RIMUOVO
-                            var deletedList = favorites.filter(x => {
-                              return x.id != id;
-                            })
-                            console.log("---deletedList[FAVORITES]---", deletedList);
-                            if (deletedList.length <= 0) {
-                              // rimuovo la lista completa
-                              //isFavorite = false;
-                              t.update(databaseRefReal, { favorites: dbVal.FieldValue.delete() });
-                            } else {
-                              // rimuovo il commerciante
-                              //isFavorite = false;
-                              t.update(databaseRefReal, { favorites: deletedList });
-                            }
-                          } else {
-                            // aggiungo il commerciante
-                            let newFavorites = [...favorites, { id }];
-                            var list = newFavorites.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
-                            //isFavorite = true;
-                            t.update(databaseRefReal, {
-                              favorites: list
-                            });
-                          }
-                        });
-                      } else {
-                        // aggiungo il commerciante per la prima volta
-                        //isFavorite = true;
-                        t.update(databaseRefReal, {
-                          favorites: [
-                            { id }
-                          ]
-                        });
-                      }
-                    });
-                    getFavorites();
-                  } catch (error) {
-                    console.log("---setFavorite[Error]", error);
-                  }
-                } else {
-                  console.warn("non ho un utente per aggiugnere questo commerciante ai preferiti");
-                }
-              }
-
-              return (
-                <TouchableWithoutFeedback key={index} onPress={() => {
-                  navigation.navigate("Shop", { id: id });
-                }}>
-                  <View style={{
-                    width: 342,
-                    marginHorizontal: 10,
-                    borderRadius: 5,
-                    marginTop: 20,
-                    marginBottom: 20,
-                    shadowColor: Colors.light.nero,
-                    shadowOpacity: 0.15,
-                    shadowOffset: {
-                      width: 0,
-                      height: 4
-                    },
-                    shadowRadius: 10,
-                    flexDirection: "row",
-                  }}>
-                    <Image style={{ width: 122, height: 113, borderRadius: 5, marginVertical: 10, marginHorizontal: 10, alignSelf: "center" }} source={mainPhoto ? { uri: mainPhoto.url } : require('../assets/images/salon.jpeg')} />
-                    <View style={{ maxWidth: 180 }}>
-                      <View style={{ marginTop: 10 }}>
-                        <BaseText size={10} maxHeight={20}>{title}</BaseText>
-                      </View>
-                      <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center", alignContent: "center" }}>
-                        <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
-                        <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
-                        <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
-                        <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
-                        <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
-                        <BaseText size={9} styles={{ marginLeft: 5 }}>({stars})</BaseText>
-                      </View>
-                      <View style={{ marginTop: 5 }}>
-                        <BaseText size={8} maxHeight={20}>{desc}</BaseText>
-                      </View>
-                      <View style={{ flexDirection: "row", alignContent: "center", alignItems: "center", justifyContent: "flex-start" }}>
-                        <Ionicons name="ios-pin" size={25} color={Colors.light.violaDes} style={{ marginRight: 5 }} />
-                        <BaseText size={8} maxWidth={160} color={"#616161"}>{via}</BaseText>
-                      </View>
-                      <View style={{ position: "absolute", bottom: 10, flexDirection: "row", alignItems: "center" }}>
-                        <View style={{
-                          minWidth: 25,
-                          minHeight: 14,
-                          paddingHorizontal: 5,
-                          borderRadius: 5,
-                          backgroundColor: economyColor,
-                          justifyContent: "center",
-                          alignItems: "center"
-                        }}>
-                          <BaseText weight={700} color={economyTColor} size={8}>{economyTitle}</BaseText>
-                        </View>
-                        <View style={{
-                          width: 65,
-                          height: 14,
-                          borderRadius: 5,
-                          backgroundColor: false ? "rgba(133, 194, 170, 0.4)" : "#C4C4C4",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          marginLeft: 8
-                        }}>
-                          <BaseText weight={700} styles={{
-                            color: false ? "#008D56" : "#525252",
-                            fontSize: 8,
-                            // fontFamily: "Montserrat_700Bold"
-                          }}>{false ? "APERTO" : "CHIUSO"}</BaseText>
-                        </View>
-                      </View>
-                    </View>
-                    <View style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      alignContent: "center",
-                      position: "absolute",
-                      right: 10,
-                      bottom: 8
-                    }}>
-                      <BaseText weight={700} color={Colors.light.nero} size={9}>{"DETTAGLI"}</BaseText>
-                      <RightIcon width={19} height={19} style={{ marginLeft: 2 }} />
-                    </View>
-                    {user !== null && <TouchableOpacity onPress={setFavorite} style={{
-                      position: "absolute",
-                      right: 15,
-                      top: 10
-                    }}>
-                      <Ionicons name={isFavorite ? "ios-heart" : "ios-heart-empty"} size={20} color={Colors.light.arancioDes} />
-                    </TouchableOpacity>}
-                  </View>
-                </TouchableWithoutFeedback>
-              )
-            })}
-          </ScrollView>
+            {RenderCards()}
+          </ScrollView>*/}
+          {parrucchieri !== undefined && (
+            <FlatList
+              data={parrucchieri}
+              contentContainerStyle={{
+                backgroundColor: "transparent"
+              }}
+              style={{
+                backgroundColor: "transparent"
+              }}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item, index }) => renderCards(item, index)}
+            />
+          )}
         </View>
       </ScrollView>
     </View>
@@ -476,7 +675,8 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.bg
+    //backgroundColor: Colors.light.bg
+    backgroundColor: "white"
   },
   textHeader: {
     height: 56,
@@ -509,7 +709,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 25,
-    color: "#181818",
+    color: Colors.light.bianco,
     marginTop: 15,
     marginBottom: 10,
     marginLeft: 35,
@@ -518,11 +718,11 @@ const styles = StyleSheet.create({
     width: 183,
     height: 106,
     fontSize: 16,
-    color: "#181818",
+    color: Colors.light.bianco,
     marginLeft: 35,
   },
   header: {
-    backgroundColor: Colors.light.arancio,
+    backgroundColor: Colors.light.newviola,
     width: "100%",
     height: 215,
     borderBottomLeftRadius: 15
