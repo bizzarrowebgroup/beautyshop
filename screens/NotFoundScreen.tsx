@@ -172,6 +172,8 @@ export default function NotFoundScreen({
   const [isLoading, setLoading] = React.useState(false);
   const [registerErrors, setRegisterError] = React.useState(undefined);
 
+  const [prenotazioni, setPrenotazioni] = React.useState(undefined);
+
   const { user, setUser } = React.useContext(AuthUserContext);
   //React.useEffect(() => {
   //  if (user != null) {
@@ -203,30 +205,35 @@ export default function NotFoundScreen({
     // navigation.pop();
   }
   const checkPrenotazioni = async () => {
-    let dbPren = await db.collection('prenotazioni').get();
-    if (!dbPren.empty) {
-      let finalpreno = [];
-      dbPren.forEach(item => {
-        let data = item.data();
-        //if (data.slot_date) {
-        //  console.log(moment(data.slot_date).isoWeekday(), "momentDateFromDB");
-        //}
-        finalpreno.push({ id: data.id, ...data });
-      })
-      return finalpreno;
-    } else {
-      console.log("non ci sono prenotazioi, proseguo con undefined");
-      return undefined;
-    }
+    return new Promise(async (resolve, reject) => {
+      let dbPren = await db.collection('prenotazioni').get();
+      if (!dbPren.empty) {
+        let finalpreno = [];
+        dbPren.forEach(item => {
+          let data = item.data();
+          //if (data.slot_date) {
+          //  console.log(moment(data.slot_date).isoWeekday(), "momentDateFromDB");
+          //}
+          finalpreno.push({ id: data.id, ...data });
+        })
+        //return finalpreno;
+        resolve(finalpreno)
+      } else {
+        console.log("non ci sono PRENOTAZIONI, proseguo con undefined");
+        //return undefined;
+        resolve(undefined)
+      }
+    })
+
   }
 
-  const workSlots = async (isoWeekday?, orariFb = undefined) => {
+  const workSlots = async (isoWeekday?, orariFb = undefined, realDate?) => {
     let today = isoWeekday ? isoWeekday : moment().isoWeekday();
     let todayHours = [];
-    let prenotazioni = await checkPrenotazioni();
 
-    console.log('---orari workSlots---')
-    console.log('---' + JSON.stringify(prenotazioni) + '---')
+
+    console.log('---today---')
+    console.log('---' + today + '---')
     console.log('------')
     // check if i recive or force the render of timeslots
     if (orari !== undefined) {
@@ -244,6 +251,7 @@ export default function NotFoundScreen({
         }
       });
     }
+
     if (todayHours.length > 0) {
       let open = todayHours[0].open.split(":");
       let openHours = open[0] ? open[0] : 0;
@@ -252,11 +260,11 @@ export default function NotFoundScreen({
       let close = todayHours[0].close.split(":");
       let closeHours = close[0] ? close[0] : 0;
       let closeMinutes = close[1] ? close[1] : 0;
-
-      let start = moment().hours(openHours).minute(openMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
-      let end = moment().hours(closeHours).minute(closeMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
-      console.log("--ORARIO APERTURA--", start)
-      console.log("--ORARIO CHIUSURA--", end)
+      //console.log("---realDate---", realDate)
+      let start = moment(realDate).hours(openHours).minute(openMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+      let end = moment(realDate).hours(closeHours).minute(closeMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+      //console.log("--ORARIO APERTURA--", start)
+      //console.log("--ORARIO CHIUSURA--", end)
       const step = (x) => {
         return moment(x).add(15, 'minutes');
       }
@@ -266,7 +274,7 @@ export default function NotFoundScreen({
         blocksSlots.push(cursor);
         cursor = step(cursor);
       }
-      if (blocksSlots.length > 0) {
+      if (blocksSlots.length > 0 && prenotazioni !== undefined) {
         let jona = blocksSlots.filter((e, index) => {
           return prenotazioni.some(d => {
             if (d.serviceId == serviceId) {
@@ -275,7 +283,12 @@ export default function NotFoundScreen({
               let slotMonth = moment(d.slot_date).month();
               let realDay = moment(e).format('DD');
               let slotDay = moment(d.slot_date).format('DD');
-
+              //console.log({
+              //  realMonth,
+              //  realDay,
+              //  slotMonth,
+              //  slotDay
+              //})
               // old moment(d.slot_date).isoWeekday() == today
               if (realMonth == slotMonth && realDay == slotDay) {
 
@@ -296,10 +309,14 @@ export default function NotFoundScreen({
                 //console.log("--ITS MINORE--", moment(e).format('x') < moment(realDataOpen).format('x'))
                 //console.log("--ITS MAGGIORE--", moment(e).format('x') > moment(realDataClose).format('x'))
                 let minore = moment(e).format('x') < moment(realDataOpen).format('x');
-                let maggiore = moment(e).format('x') > moment(realDataClose).format('x');
+                let maggiore = moment(e).format('x') >= moment(realDataClose).format('x');
                 if (minore || maggiore) return true;
                 else return false;
+              } else {
+                return false;
               }
+            } else {
+              return false;
             }
           });
         });
@@ -373,6 +390,9 @@ export default function NotFoundScreen({
     let commercianteId = await obtainCommercianteId(serviceId);
     setCommerciante(commercianteId);
     let orariFb = await iterateOrari(commercianteId);
+    let prenotazioni = await checkPrenotazioni();
+    setPrenotazioni(prenotazioni);
+
     setIsOn(true);
     //console.log('---orariFb---')
     //console.log('---' + JSON.stringify(orariFb) + '---')
@@ -383,10 +403,13 @@ export default function NotFoundScreen({
     //console.log('---orari initPrenota---')
     //console.log('---' + JSON.stringify(orari) + '---')
     //console.log('------')
-    setDateSelected(moment());
+    //setDateSelected(moment());
     // te li forzo porco dio
-    workSlots(undefined, orariFb);
-    setLoading(false);
+    setTimeout(() => {
+      
+      workSlots(undefined, orariFb, undefined);
+      setLoading(false);
+    }, 5000);
   }
 
   React.useEffect(() => {
@@ -443,9 +466,12 @@ export default function NotFoundScreen({
     }
   }
   const onDateChange = (date) => {
+    //setTimeout(() => {
+    console.log("DATA PREMUTA PORCO DO", date)
     setDateSelected(date);
     let today = moment(date).isoWeekday();
-    workSlots(today);
+    workSlots(today, undefined, date);
+    //}, 0);
   };
 
   const bottomSheetRef = React.useRef<BottomSheet>(null);
@@ -941,6 +967,7 @@ export default function NotFoundScreen({
               <CalendarPicker
                 onDateChange={(date) => onDateChange(date)}
                 selectedStartDate={daySelected}
+                //date={daySelected}
                 weekdays={['L', 'M', 'M', 'G', 'V', 'S', 'D']}
                 months={['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre']}
                 startFromMonday={true}
@@ -957,6 +984,7 @@ export default function NotFoundScreen({
                   paddingLeft: 20,
                   paddingTop: 5,
                 }}
+                headingLevel={3}
                 nextTitleStyle={{
                   color: Colors.light.arancioDes,
                   paddingRight: 20,
@@ -1014,7 +1042,7 @@ export default function NotFoundScreen({
                 }}>
                   {
                     blocks !== undefined && blocks.map((slot, index) => {
-                      console.log("--slot--", slot)
+                      //console.log("--slot--", slot)
                       const onPress = () => {
                         if (index == blockSelected) {
                           setBlockSelected(undefined);
@@ -1025,7 +1053,7 @@ export default function NotFoundScreen({
                         }
                       }
                       return (
-                        <TouchableOpacity key={index} onPress={onPress} style={{
+                        <TouchableOpacity key={index} onPress={() => onPress()} style={{
                           borderRadius: 5,
                           backgroundColor: blockSelected == index ? Colors.light.arancio : Colors.light.grigio,
                           width: 53,
