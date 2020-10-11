@@ -253,9 +253,10 @@ export default function NotFoundScreen({
       let closeHours = close[0] ? close[0] : 0;
       let closeMinutes = close[1] ? close[1] : 0;
 
-      let start = moment().hours(openHours).minute(openMinutes).second(0).millisecond(0);
-      let end = moment().hours(closeHours).minute(closeMinutes).second(0).millisecond(0);
-
+      let start = moment().hours(openHours).minute(openMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+      let end = moment().hours(closeHours).minute(closeMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+      console.log("--ORARIO APERTURA--", start)
+      console.log("--ORARIO CHIUSURA--", end)
       const step = (x) => {
         return moment(x).add(15, 'minutes');
       }
@@ -267,15 +268,45 @@ export default function NotFoundScreen({
       }
       if (blocksSlots.length > 0) {
         let jona = blocksSlots.filter((e, index) => {
-          return (!prenotazioni.some(d => {
-            //console.log("--e--", moment(e).format("dddd DD MMMM"))
-            //console.log("--d--", d)
-            //console.log("--moment--", moment(d.slot_date).format("dddd DD MMMM"))
-            return moment(d.slot_date).isoWeekday == today && d.slot_time === e && d.slot_end_time === e
-          }))
+          return prenotazioni.some(d => {
+            if (d.serviceId == serviceId) {
+
+              let realMonth = moment(e).month();
+              let slotMonth = moment(d.slot_date).month();
+              let realDay = moment(e).format('DD');
+              let slotDay = moment(d.slot_date).format('DD');
+
+              // old moment(d.slot_date).isoWeekday() == today
+              if (realMonth == slotMonth && realDay == slotDay) {
+
+                //console.log("--blocksSlot--", e)
+                let open = d.slot_time.split(":");
+                let openHours = open[0] ? open[0] : 0;
+                let openMinutes = open[1] ? open[1] : 0;
+
+                let close = d.slot_end_time.split(":");
+                let closeHours = close[0] ? close[0] : 0;
+                let closeMinutes = close[1] ? close[1] : 0;
+
+                let realDataOpen = moment(d.slot_date).hours(openHours).minutes(openMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+                let realDataClose = moment(d.slot_date).hours(closeHours).minutes(closeMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+
+                //console.log("---DATA FORMATTATA REALE APERTURA PRENOTAZIONE---", realDataOpen);
+                //console.log("---DATA FORMATTATA REALE CHIUSURA PRENOTAZIONE---", realDataClose);
+                //console.log("--ITS MINORE--", moment(e).format('x') < moment(realDataOpen).format('x'))
+                //console.log("--ITS MAGGIORE--", moment(e).format('x') > moment(realDataClose).format('x'))
+                let minore = moment(e).format('x') < moment(realDataOpen).format('x');
+                let maggiore = moment(e).format('x') > moment(realDataClose).format('x');
+                if (minore || maggiore) return true;
+                else return false;
+              }
+            }
+          });
         });
-        //console.log("jona----", jona)
-        setBlocks(blocksSlots);
+        console.log("jona----", jona);
+        if (jona != undefined && jona.length > 0) {
+          setBlocks(jona);
+        } else setBlocks(blocksSlots);
       } else {
         setBlocks(undefined);
       }
@@ -983,6 +1014,7 @@ export default function NotFoundScreen({
                 }}>
                   {
                     blocks !== undefined && blocks.map((slot, index) => {
+                      console.log("--slot--", slot)
                       const onPress = () => {
                         if (index == blockSelected) {
                           setBlockSelected(undefined);
@@ -1005,7 +1037,7 @@ export default function NotFoundScreen({
                           marginHorizontal: 10
                         }}>
                           <BaseText size={12} weight={400}>
-                            {slot.format("HH:mm")}
+                            {slot.utc().utcOffset("-02:00", true).format("HH:mm")}
                           </BaseText>
                         </TouchableOpacity>
                       )
