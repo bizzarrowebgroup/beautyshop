@@ -146,7 +146,7 @@ const Profilo = ({
             paddingTop: 20,
             paddingBottom: 200,
           }}>
-            <View style={{ marginLeft: 20 }}>
+            {/*<View style={{ marginLeft: 20 }}>
               <BaseText size={10}>{"Tessera fedeltà".toUpperCase()}</BaseText>
               <View style={{
                 backgroundColor: Colors.light.giallo,
@@ -192,7 +192,7 @@ const Profilo = ({
                 </View>
               </View>
               <BaseText size={10} color={"#333333"} styles={{ marginRight: 20, textAlign: "center" }}>{"Spiegazione tessere, come accumulare punti etc.\nAmet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet."}</BaseText>
-            </View>
+            </View>*/}
             <View style={{ marginHorizontal: 40, marginVertical: 20, height: 1, backgroundColor: "#A6A6A6" }} />
             <View style={{
               backgroundColor: Colors.light.bianco,
