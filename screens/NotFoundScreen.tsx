@@ -406,7 +406,6 @@ export default function NotFoundScreen({
     //setDateSelected(moment());
     // te li forzo porco dio
     setTimeout(() => {
-      
       workSlots(undefined, orariFb, undefined);
       setLoading(false);
     }, 5000);
