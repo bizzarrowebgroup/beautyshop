@@ -50,7 +50,7 @@ const BaseText = ({ ...props }) => {
     <View {...props}>
       <Text style={[
         {
-          fontSize: fontSize(props.size) || fontSize(20),
+          fontSize: fontSize(props.size) || fontSize(12),
           color: props.color || "black",
           backgroundColor: props.background || "transparent",
           textAlign: props.textAlign,

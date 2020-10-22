@@ -8,7 +8,7 @@ import Colors from './constants/Colors';
 import Navigation from "./navigation";
 import Loader from './components/Loader';
 
-// import NetInfo from "@react-native-community/netinfo";
+import NetInfo from "@react-native-community/netinfo";
 // import * as Sentry from "sentry-expo";
 // import * as firebase from "firebase";
 import Toast from "react-native-toast-message"
@@ -110,21 +110,21 @@ export default function App() {
   }, [])
   // const [lang, setLang] = React.useState("it");
   // Listen for authentication state to change.
-  // React.useEffect(() => {
-  //   const unsubscribe = NetInfo.addEventListener(state => {
-  //     console.log("Connection type", state.type);
-  //     console.log("Is connected?", state.isConnected);
-  //   });
-  //   // firebase.initializeApp(FirebaseConfig);
-  //   // firebase.auth().onAuthStateChanged((user) => {
-  //   //   if (user != null) {
-  //   //     console.log("We are authenticated now!");
-  //   //   }
-  //   // });
-  //   return () => {
-  //     unsubscribe();
-  //   }
-  // }, []);
+  React.useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      console.log("Connection type", state.type);
+      console.log("Is connected?", state.isConnected);
+    });
+    // firebase.initializeApp(FirebaseConfig);
+    // firebase.auth().onAuthStateChanged((user) => {
+    //   if (user != null) {
+    //     console.log("We are authenticated now!");
+    //   }
+    // });
+    return () => {
+      unsubscribe();
+    }
+  }, []);
   const showToast = (header, message, type = 'error', pos = 'top', duration = 1500) => {
     errorToast.current.show({
       text1: header,
@@ -144,7 +144,7 @@ export default function App() {
     foto
   };
   if (!isLoadingComplete || fetching) {
-  //if (true) {
+    //if (true) {
     return (
       <Loader color={Colors.light.bianco} size={"large"} animating={true} />
     )

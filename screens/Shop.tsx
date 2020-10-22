@@ -24,6 +24,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { db } from '../network/Firebase';
+import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 
 const { width } = Dimensions.get('window');
 
@@ -104,7 +105,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
   const [sabato, setSabato] = React.useState({});
   const [domenica, setDomenica] = React.useState({});
   const [noOrari, setOrari] = React.useState(false);
-  const [recensioni, setRecensioni] = React.useState(null);
+  const [recensioni, setRecensioni] = React.useState(undefined);
   const [servizi, setServizi] = React.useState(undefined);
 
   const [indexChosenService, setChosenService] = React.useState(undefined);
@@ -113,6 +114,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
   const [descChosenService, setDescChosenService] = React.useState(undefined);
   const [titleChosenService, setTitleChosenService] = React.useState(undefined);
 
+  const [loading, setLoading] = React.useState(true);
   //const [customerTitle, setCustomerTitle] = React.useState(undefined);
 
   const heightX = !bool ? 44 : 100;
@@ -207,11 +209,15 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
             finalRecensioni.push(data);
           }
         });
-        setRecensioni(finalRecensioni)
+        setRecensioni(finalRecensioni);
+        //setTimeout(() => {
+          setLoading(false);
+        //}, 500);
       }
     }
 
   }
+
   const uniqueArray = (array) => {
     var obj = {};
     array.forEach((v) => {
@@ -240,6 +246,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
       }
     });
   }
+
   const iterateFinal = async (finalServizi) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -266,6 +273,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
       }
     });
   }
+
   // HHCFptUM91FqhMq2INjE id
   const getServizi = async (idCommerciante) => {
     const serviziFirebase = db.collection('servizicommercianti');
@@ -284,14 +292,14 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
     }
   }
 
-  const setPreferito = async (idPreferito) => {
-    let preferito = {
-      //idUser: User.
-      preferito: idPreferito,
-      //user: 
-    };
-    const preferitiFB = db.collection('preferitiApp').add(preferito);
-  }
+  //const setPreferito = async (idPreferito) => {
+  //  let preferito = {
+  //    //idUser: User.
+  //    preferito: idPreferito,
+  //    //user: 
+  //  };
+  //  const preferitiFB = db.collection('preferitiApp').add(preferito);
+  //}
 
   React.useEffect(() => {
     if (route.params?.id) {
@@ -305,12 +313,12 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
   }, [route.params?.id]);
 
 
-  if (data === undefined) {
-    return (
-      //<Spinner />
-      <Loader color={Colors.light.bianco} size={"large"} animating={true} />
-    )
-  }
+  //if (data === undefined) {
+  //  return (
+  //    //<Spinner />
+  //    <Loader color={Colors.light.bianco} size={"large"} animating={true} />
+  //  )
+  //}
 
   const serviziHeader = (title) => {
     return (
@@ -382,7 +390,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
                     alignItems: "center",
                     justifyContent: "center"
                   }}>
-                    <Ionicons name={"ios-checkbox-outline"} size={15} color={"white"} />
+                    <Ionicons name={"ios-checkbox-outline"} size={15} color={Colors.light.bianco} />
                   </View>
                 )}
               </TouchableOpacity>
@@ -413,7 +421,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
             </View>
             {id === indexX &&
               <View style={{
-                backgroundColor: "white",
+                backgroundColor: Colors.light.bianco,
                 borderBottomRightRadius: 10,
                 borderBottomLeftRadius: 10,
                 padding: 15,
@@ -436,256 +444,350 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
       );
     }
   };
+  //if (data === undefined && loading) {
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Header hasBack={true} title={""} onPress={() => { navigation.goBack() }} styles={{ zIndex: -1 }} />
+        <ShimmerPlaceholder
+          width={width}
+          height={250}
+          style={{ marginBottom: 10, }}
+          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+          shimmerStyle={{ borderRadius: 0 }}
+        />
+        <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 20, }}>
+          <BaseText weight={300} styles={{
+            fontSize: 13,
+            textTransform: "uppercase"
+          }}>{"Informazioni"}</BaseText>
+        </View>
+        <ShimmerPlaceholder
+          width={width - 40}
+          height={64}
+          style={{ marginHorizontal: 20, marginBottom: 20 }}
+          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+          shimmerStyle={{ borderRadius: 10 }}
+        ></ShimmerPlaceholder>
+        <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
+          <BaseText weight={300} styles={{
+            fontSize: 13,
+            textTransform: "uppercase"
+          }}>{"Orario"}</BaseText>
+        </View>
+        <ShimmerPlaceholder
+          width={width - 40}
+          height={44}
+          style={{ marginVertical: 5, marginHorizontal: 20 }}
+          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+          shimmerStyle={{ borderRadius: 10 }}
+        >
+        </ShimmerPlaceholder>
+        <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
+          <BaseText weight={300} styles={{
+            fontSize: 13,
+            textTransform: "uppercase"
+          }}>{"Valutazioni e recensioni"}</BaseText>
+        </View>
+        <ShimmerPlaceholder
+          width={width - 40}
+          height={118.5}
+          style={{ marginLeft: 20, marginTop: 5 }}
+          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+          shimmerStyle={{ borderRadius: 10 }}
+        />
+        <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
+          <BaseText weight={300} styles={{
+            fontSize: 13,
+            textTransform: "uppercase"
+          }}>{"Servizi"}</BaseText>
+        </View>
+        <ShimmerPlaceholder
+          width={width - 40}
+          height={44}
+          style={{ marginTop: 5, marginVertical: 20, marginHorizontal: 20, alignSelf: "center" }}
+          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+          shimmerStyle={{ borderRadius: 10 }}
+        />
+        <ShimmerPlaceholder
+          width={width - 40}
+          height={44}
+          style={{ marginTop: 5, marginVertical: 20, marginHorizontal: 20, alignSelf: "center" }}
+          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+          shimmerStyle={{ borderRadius: 10 }}
+        />
+        <ShimmerPlaceholder
+          width={width - 40}
+          height={44}
+          style={{ marginTop: 5, marginVertical: 20, marginHorizontal: 20, alignSelf: "center" }}
+          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+          shimmerStyle={{ borderRadius: 10 }}
+        />
+        <ShimmerPlaceholder
+          width={width - 40}
+          height={44}
+          style={{ marginTop: 5, marginVertical: 20, marginHorizontal: 20, alignSelf: "center" }}
+          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+          shimmerStyle={{ borderRadius: 10 }}
+        />
+      </View>
+    );
+  } else {
+    return (
+      <View style={styles.container}>
+        {/*<Animated.View pointerEvents="none" style={shadowOverlayStyle} />*/}
+        <BottomSheet
+          ref={bottomSheetRef}
+          snapPoints={snapPoints}
+          initialSnapIndex={0}
+          //handleComponent={() => <Handle />}
+          handleComponent={() => <Handle style={{ backgroundColor: Colors.light.arancio }} />}
+          topInset={headerHeight}
+          animatedPosition={position}
+          onChange={handleSheetChanges}
+        >
+          <View style={{
+            backgroundColor: Colors.light.arancio,
+            height: 320,
+            paddingHorizontal: 50
+          }}>
+            <View style={{
+              justifyContent: "space-between",
+              alignContent: "center",
+              alignItems: "center",
+              flexDirection: "row",
+              marginTop: 15,
+            }}>
+              <View>
+                <BaseText size={15} weight={700} styles={{ flexWrap: 'wrap' }}>{titleChosenService}</BaseText>
+                <BaseText size={10} weight={300} styles={{ flexWrap: 'wrap', maxWidth: 250 }}>{descChosenService}</BaseText>
+              </View>
+              <BaseText size={14} weight={700} >{costChosenService} €</BaseText>
+            </View>
+            {/*<View style={{ alignSelf: "center", marginTop: 15 }}>
+              <BaseText size={10} weight={600}>
+                NB:
+              </BaseText>
+              <BaseText size={8} weight={300} italic styles={{ flexWrap: 'wrap' }}>
+                Ricordati che devi ricevere una conferma dal gestore prima di poter avere la prenotazione!
+              </BaseText>
+            </View>*/}
+            <View style={{ marginBottom: 20 }}>
+              <BaseButton title={"Avanti"} onPress={() => {
+                navigation.navigate("NotFound", {
+                  serviceId: indexChosenService,
+                  serviceDuration: durationChosenService,
+                  serviceCost: costChosenService,
+                  serviceDesc: descChosenService,
+                  serviceTitle: titleChosenService,
+                  serviceCustomer: data.title,
+                })
+              }} />
+            </View>
+          </View>
+        </BottomSheet>
+        <Header hasBack={true} title={""} onPress={() => { navigation.goBack() }} styles={{ zIndex: -1 }} />
+        <ScrollView
+          contentContainerStyle={{
+            paddingBottom: 200
+          }}
+          style={{
+            zIndex: -1
+          }}
+          showsVerticalScrollIndicator={false}
+          decelerationRate="fast"
+          scrollEventThrottle={1}
+        >
+          {/**
+                   * mainINFO
+                   */}
+          <Image style={{ width: "100%", height: 250, }} source={require('../assets/images/salon.jpeg')} />
 
-  return (
-    <View style={styles.container}>
-      <Animated.View pointerEvents="none" style={shadowOverlayStyle} />
-      <BottomSheet
-        ref={bottomSheetRef}
-        snapPoints={snapPoints}
-        initialSnapIndex={0}
-        //handleComponent={() => <Handle />}
-        handleComponent={() => <Handle style={{ backgroundColor: Colors.light.arancio }} />}
-        topInset={headerHeight}
-        animatedPosition={position}
-        onChange={handleSheetChanges}
-      >
-        <View style={{
-          backgroundColor: Colors.light.arancio,
-          height: 320,
-          paddingHorizontal: 50
-        }}>
-          <View style={{
-            justifyContent: "space-between",
-            alignContent: "center",
-            alignItems: "center",
-            flexDirection: "row",
-            marginTop: 15,
-          }}>
-            <View>
-              <BaseText size={15} weight={700} styles={{ flexWrap: 'wrap' }}>{titleChosenService}</BaseText>
-              <BaseText size={10} weight={300} styles={{ flexWrap: 'wrap', maxWidth: 250 }}>{descChosenService}</BaseText>
-            </View>
-            <BaseText size={14} weight={700} >{costChosenService} €</BaseText>
-          </View>
-          {/*<View style={{ alignSelf: "center", marginTop: 15 }}>
-            <BaseText size={10} weight={600}>
-              NB:
-            </BaseText>
-            <BaseText size={8} weight={300} italic styles={{ flexWrap: 'wrap' }}>
-              Ricordati che devi ricevere una conferma dal gestore prima di poter avere la prenotazione!
-            </BaseText>
+          {/*<View style={{ flexDirection: "row", alignContent: "center", alignItems: "flex-start", justifyContent: "space-between", marginTop: 15 }}>
+              <Image style={{ width: 76, height: 61, borderRadius: 5, marginRight: 4 }} source={require('../assets/images/salon.jpeg')} />
+              <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
+              <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
+              <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
+            </View>*/}
+          {/*{!noOrari && <View style={[styles.btn, { backgroundColor: Colors.light.arancioDes, }]}>
+              <BaseText weight={400} styles={{ fontSize: 15, textTransform: "uppercase" }}>Prenota</BaseText>
+            </View>}*/}
+          {/**
+         * DESCRIZIONE
+           */}
+          {/*<View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginTop: 20, }}>
+            <BaseText weight={300} styles={{
+              fontSize: 30,
+              //textTransform: "uppercase"
+            }}>{"Informazioni"}</BaseText>
           </View>*/}
-          <View style={{ marginBottom: 20 }}>
-            <BaseButton title={"Avanti"} onPress={() => {
-              navigation.navigate("NotFound", {
-                serviceId: indexChosenService,
-                serviceDuration: durationChosenService,
-                serviceCost: costChosenService,
-                serviceDesc: descChosenService,
-                serviceTitle: titleChosenService,
-                serviceCustomer: data.title,
-              })
-            }} />
-          </View>
-        </View>
-      </BottomSheet>
-      <Header hasBack={true} title={data.title} onPress={() => { navigation.goBack() }} styles={{ zIndex: -1 }} />
-      <ScrollView
-        contentContainerStyle={{
-          paddingBottom: 200
-        }}
-        style={{
-          zIndex: -1
-        }}
-        showsVerticalScrollIndicator={false}
-        decelerationRate="fast"
-        scrollEventThrottle={1}
-      >
-        {/**
-                 * mainINFO
-                 */}
-        <View style={{ marginBottom: 20, marginHorizontal: 30, }}>
           <View style={{
-            alignContent: "center",
+            width: 65,
+            height: 15,
+            borderRadius: 5,
+            backgroundColor: status ? "rgba(133, 194, 170, 0.4)" : "#C4C4C4",
+            justifyContent: "center",
             alignItems: "center",
-            justifyContent: "space-between",
-            flexDirection: "row",
-            marginTop: 20
+            alignContent: "center",
+            marginLeft: 20,
+            marginTop: 10,
           }}>
-            <Image style={{ width: 120, height: 115, borderRadius: 5 }} source={require('../assets/images/salon.jpeg')} />
-            <View style={{ marginLeft: 10, maxWidth: 180, maxHeight: 115, marginRight: 20 }}>
-              <View style={{
-                width: 65,
-                height: 14,
-                borderRadius: 5,
-                backgroundColor: status ? "rgba(133, 194, 170, 0.4)" : "#C4C4C4",
-                justifyContent: "center",
-                alignItems: "center",
-              }}>
-                <BaseText weight={700} styles={{ color: status ? "#008D56" : "#525252" }} size={8}>{status ? "APERTO" : "CHIUSO"}</BaseText>
-              </View>
-              <View style={[styles.row, { borderColor: 'grey', borderBottomWidth: 0, padding: 3 }]}>
-                <Ionicons name="ios-phone-portrait" size={20} color="#6D6E95" style={{ width: 20, textAlign: "center" }} />
-                <BaseText size={10} styles={[styles.text, { marginLeft: 5 }]}>{data.phone}</BaseText>
-              </View>
-              <View style={[styles.row, { borderColor: 'grey', borderBottomWidth: 0, padding: 3 }]}>
-                <Ionicons name="ios-mail" size={20} color="#6D6E95" style={{ width: 20, textAlign: "center" }} />
-                <BaseText size={10} styles={[styles.text, { marginLeft: 5 }]}>{data.email}</BaseText>
-              </View>
-              <View style={[styles.row, { borderColor: 'grey', borderBottomWidth: 0, padding: 3 }]}>
-                <Ionicons name="ios-pin" size={20} color="#6D6E95" style={{ width: 20, textAlign: "center" }} />
-                <BaseText size={10} styles={[styles.text, { marginLeft: 5, maxWidth: 160, }]}>{data.via}</BaseText>
-              </View>
+            <BaseText weight={700} styles={{ color: status ? "#008D56" : "#525252" }} size={8}>{status ? "APERTO" : "CHIUSO"}</BaseText>
+          </View>
+          <View style={{
+            justifyContent: "space-around",
+            alignContent: "flex-start",
+            alignItems: "flex-start",
+            flexDirection: "column",
+            backgroundColor: Colors.light.bianco,
+            marginHorizontal: 20,
+            borderRadius: 10,
+            marginTop: 10,
+            paddingVertical: 5,
+            paddingHorizontal: 5
+          }}>
+            <View style={[styles.row, { padding: 0 }]}>
+              <Ionicons name="ios-phone-portrait" size={40} color="#6D6E95" style={{ width: 40, textAlign: "center" }} />
+              <BaseText size={12} styles={[styles.text, { marginLeft: 5 }]}>{data.phone}</BaseText>
+            </View>
+            <View style={[styles.row, { padding: 0 }]}>
+              <Ionicons name="ios-mail" size={40} color="#6D6E95" style={{ width: 40, textAlign: "center" }} />
+              <BaseText size={12} styles={[styles.text, { marginLeft: 5 }]}>{data.email}</BaseText>
+            </View>
+            <View style={[styles.row, { padding: 0 }]}>
+              <Ionicons name="ios-pin" size={40} color="#6D6E95" style={{ width: 40, textAlign: "center" }} />
+              <BaseText size={12} styles={[styles.text, { marginLeft: 5, maxWidth: 250 }]}>{data.via.toUpperCase()}</BaseText>
             </View>
           </View>
-          <View style={{ flexDirection: "row", alignContent: "center", alignItems: "flex-start", justifyContent: "space-between", marginTop: 15 }}>
-            <Image style={{ width: 76, height: 61, borderRadius: 5, marginRight: 4 }} source={require('../assets/images/salon.jpeg')} />
-            <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
-            <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
-            <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
+          <View style={{
+            marginHorizontal: 20,
+            marginVertical: 10,
+            borderRadius: 5,
+            backgroundColor: Colors.light.bianco,
+            paddingHorizontal: 20,
+            paddingVertical: 10,
+          }}>
+            <BaseText size={12} styles={[styles.text]}>{data.desc}</BaseText>
           </View>
-          {!noOrari && <View style={[styles.btn, { backgroundColor: Colors.light.arancioDes, }]}>
-            <BaseText weight={400} styles={{ fontSize: 15, textTransform: "uppercase" }}>Prenota</BaseText>
-          </View>}
-        </View>
-        {/**
-                 * DESCRIZIONE
-                 */}
-        <View style={{ marginHorizontal: 20, marginVertical: 10 }}>
-          <BaseText styles={[styles.text, { fontSize: 13 }]}>{data.desc}</BaseText>
-        </View>
-        {/**
-                 * orario
-                 */}
-        {!noOrari &&
-          Object.keys(lunedi).length > 0 &&
-          Object.keys(martedi).length > 0 &&
-          Object.keys(mercoledi).length > 0 &&
-          Object.keys(giovedi).length > 0 &&
-          Object.keys(venerdi).length > 0 &&
-          Object.keys(sabato).length > 0 &&
-          Object.keys(domenica).length > 0 &&
-          (
-            <>
-              <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
-                <BaseText weight={300} styles={{
-                  fontSize: 13,
-                  textTransform: "uppercase"
-                }}>Orario</BaseText>
-              </View>
-              <TouchableWithoutFeedback onPress={() => setBool(!bool)} style={{}}>
-                <Animated.View style={{
-                  width: width - 40,
-                  height: heightX,
-                  borderRadius: 5,
-                  backgroundColor: "white",
-                  alignSelf: "center",
-                  justifyContent: bool ? "center" : "flex-start",
-                  alignItems: "center",
-                  flexDirection: "row"
+          {/**
+           * orario
+           */}
+          {!noOrari && (<>
+            <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
+              <BaseText weight={300} size={13} styles={{
+                textTransform: "uppercase"
+              }}>{"Orario"}</BaseText>
+            </View>
+            <TouchableWithoutFeedback onPress={() => setBool(!bool)} style={{}}>
+              <Animated.View style={{
+                width: width - 40,
+                height: heightX,
+                borderRadius: 5,
+                backgroundColor: Colors.light.bianco,
+                alignSelf: "center",
+                justifyContent: bool ? "center" : "flex-start",
+                alignItems: "center",
+                flexDirection: "row"
+              }}>
+                <View style={{
+                  justifyContent: "space-between",
+                  alignContent: "space-between",
+                  alignItems: "flex-end"
                 }}>
-                  <View style={{
-                    justifyContent: "space-between",
-                    alignContent: "space-between",
-                    alignItems: "flex-end"
-                  }}>
-                    {day === 1 && !bool && (<BaseText weight={day === 1 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
-                    {bool && (<BaseText weight={day === 1 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
-                    {day === 2 && !bool && (<BaseText weight={day === 2 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
-                    {bool && (<BaseText weight={day === 2 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
-                    {day === 3 && !bool && (<BaseText weight={day === 3 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
-                    {bool && (<BaseText weight={day === 3 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
-                    {day === 4 && !bool && (<BaseText weight={day === 4 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
-                    {bool && (<BaseText weight={day === 4 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
-                  </View>
-                  {bool && (<View style={{ height: "80%", width: 1, backgroundColor: "#181818", marginHorizontal: 20 }} />)}
-                  <View style={{
-                    alignItems: "flex-end",
-                    marginTop: !bool ? 0 : 20 //0
-                  }}>
-                    {day === 5 && !bool && (<BaseText weight={day === 5 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
-                    {day === 6 && !bool && (<BaseText weight={day === 6 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
-                    {day === 0 && !bool && (<BaseText weight={day === 0 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
-                    {bool && (<BaseText weight={day === 5 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
-                    {bool && (<BaseText weight={day === 6 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
-                    {bool && (<BaseText weight={day === 0 ? 700 : 400} styles={{
-                      marginLeft: !bool ? 20 : 0,
-                      fontSize: 13,
-                      color: "#181818"
-                    }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
-                  </View>
-                  <Ionicons name="ios-arrow-down" size={24} color="#181818" style={{
-                    position: "absolute",
-                    right: 20,
-                    top: 10,
-                    transform: [{ rotate: bool ? '180deg' : '0deg' }]
-                  }} />
-                </Animated.View>
-              </TouchableWithoutFeedback>
-            </>
-          )}
-        {/**
-       * Valutazioni e recensioni
-       */}
-        {recensioni !== null && recensioni.length > 0 && (
-          <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginTop: 10 }}>
+                  {day === 1 && !bool && (<BaseText weight={day === 1 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
+                  {bool && (<BaseText weight={day === 1 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
+                  {day === 2 && !bool && (<BaseText weight={day === 2 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
+                  {bool && (<BaseText weight={day === 2 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
+                  {day === 3 && !bool && (<BaseText weight={day === 3 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
+                  {bool && (<BaseText weight={day === 3 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
+                  {day === 4 && !bool && (<BaseText weight={day === 4 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
+                  {bool && (<BaseText weight={day === 4 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
+                </View>
+                {bool && (<View style={{ height: "80%", width: 1, backgroundColor: "#181818", marginHorizontal: 20 }} />)}
+                <View style={{
+                  alignItems: "flex-end",
+                  marginTop: !bool ? 0 : 20 //0
+                }}>
+                  {day === 5 && !bool && (<BaseText weight={day === 5 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
+                  {day === 6 && !bool && (<BaseText weight={day === 6 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
+                  {day === 0 && !bool && (<BaseText weight={day === 0 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
+                  {bool && (<BaseText weight={day === 5 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
+                  {bool && (<BaseText weight={day === 6 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
+                  {bool && (<BaseText weight={day === 0 ? 700 : 400} styles={{
+                    marginLeft: !bool ? 20 : 0,
+                    //fontSize: 13,
+                    color: "#181818"
+                  }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
+                </View>
+                <Ionicons name="ios-arrow-down" size={24} color="#181818" style={{
+                  position: "absolute",
+                  right: 20,
+                  top: 10,
+                  transform: [{ rotate: bool ? '180deg' : '0deg' }]
+                }} />
+              </Animated.View>
+            </TouchableWithoutFeedback>
+          </>)}
+          {/**
+         * Valutazioni e recensioni
+         */}
+          {recensioni !== undefined && (<View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginTop: 10 }}>
             <BaseText weight={300} styles={{
               fontSize: 13,
               textTransform: "uppercase"
-            }}>Valutazioni e recensioni</BaseText>
+            }}>{"Valutazioni e recensioni"}</BaseText>
             <View style={{
               flexDirection: "row",
               marginTop: 10
@@ -724,7 +826,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
                   }}>
                     <BaseText styles={{
                       fontSize: 15,
-                    }}>{recensioni[0].user ? "NomeUtenteRecensione" : "Michela"}</BaseText>
+                    }}>{recensioni && recensioni[0].user !== "" ? recensioni[0].user : "Michela"}</BaseText>
                     <StarsReview />
                   </View>
                   <BaseText weight={300} styles={{
@@ -732,27 +834,27 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
                     marginHorizontal: 15,
                     fontSize: 15,
                     marginBottom: 15
-                  }}>{recensioni[0].desc}</BaseText>
+                  }}>{recensioni ? recensioni[0].desc : "Desc"}</BaseText>
                 </View>
               </TouchableWithoutFeedback>
             </View>
-          </View>
-        )}
-        {servizi !== undefined && <SectionList
-          sections={servizi}
-          style={{
-            //marginTop: 20,
-            marginHorizontal: 20,
-          }}
-          //ListHeaderComponent={()=>}
-          renderItem={({ item }) => <ItemService item={item} />}
-          renderSectionHeader={({ section: { title } }) => serviziHeader(title)}
-          keyExtractor={(item, index) => item.id}
-        />}
-      </ScrollView>
+          </View>)}
+          <SectionList
+            sections={servizi}
+            style={{
+              //marginTop: 20,
+              marginHorizontal: 20,
+            }}
+            //ListHeaderComponent={()=>}
+            renderItem={({ item }) => <ItemService item={item} />}
+            renderSectionHeader={({ section: { title } }) => serviziHeader(title)}
+            keyExtractor={(item, index) => item.id}
+          />
+        </ScrollView>
 
-    </View >
-  );
+      </View>
+    );
+  }
 };
 
 export default Shop;
@@ -760,12 +862,15 @@ export default Shop;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.bg
+    //backgroundColor: Colors.light.bg
+    //backgroundColor: Colors.light.bianco
+    backgroundColor: "white"
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start"
+    alignContent: "center",
+    justifyContent: "flex-start",
   },
   text: {
   },

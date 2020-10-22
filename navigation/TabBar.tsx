@@ -9,6 +9,7 @@ import {
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { BottomMenuItem } from "./BottomMenuItem";
 import { Vibration } from "../constants";
+import Colors from "../constants/Colors";
 //import { blue } from "../../styles";
 export const TabBar = ({
   state,
@@ -26,6 +27,7 @@ export const TabBar = ({
           style={[
             style.slider,
             {
+              backgroundColor: Colors.light.newviola,
               transform: [{ translateX: translateValue }],
               //width: tabWidth / 2 - 30,
               //width: tabWidth - 35,
@@ -33,7 +35,7 @@ export const TabBar = ({
               width: tabWidth,
               //borderTopLeftRadius: 20,
               //borderTopRightRadius: 20,
-              height: 80,
+              //height: 80,
               //left: tabWidth / 2 - 5,
             },
           ]}
@@ -94,7 +96,9 @@ export const TabBar = ({
 };
 const style = StyleSheet.create({
   tabContainer: {
-    height: 80,
+    height: 60,
+    //marginBottom: 10,
+    //paddingBottom: 40,
     shadowOffset: {
       width: 0,
       height: -3,
@@ -105,7 +109,7 @@ const style = StyleSheet.create({
     backgroundColor: "white",
     //borderTopRightRadius: 20,
     //borderTopLeftRadius: 20,
-    elevation: 10,
+    elevation: 1,
     position: "absolute",
     bottom: 0,
   },
@@ -117,7 +121,8 @@ const style = StyleSheet.create({
     left: 0,
     right: 0,
     //backgroundColor: "#DF7865",
-    backgroundColor: "#43377B",
+    //backgroundColor: "#43377B",
+    //backgroundColor: "#43377B",
     //borderRadius: 10,
   },
 });

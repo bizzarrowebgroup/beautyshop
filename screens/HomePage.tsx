@@ -9,7 +9,10 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
-  TouchableOpacity, FlatList
+  TouchableOpacity,
+  FlatList,
+  StatusBar,
+  RefreshControl
 } from 'react-native';
 
 import { AppContext } from '../context/Appcontext';
@@ -33,8 +36,15 @@ import { db, dbVal } from '../network/Firebase';
 import Loader from '../components/Loader';
 import { Vibration } from '../constants';
 // import LottieView from 'lottie-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
+
+const wait = timeout => {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout);
+  });
+};
 
 export default function HomePage({ navigation }: StackScreenProps<RootStackParamList, 'Shop'>) {
   const {
@@ -50,6 +60,15 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
   const [userDocId, setUserDocId] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [favoritesFB, setFavorites] = React.useState(undefined);
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   const getUserId = async () => {
     //get a unique key
     //console.log("---getUserId[called]---")
@@ -378,18 +397,22 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
           borderRadius: 5,
           flexDirection: "row",
         }}>*/}
-        <>
+        <View style={{
+          //borderBottomColor: "rgba(0,0,0,.041)",
+          //borderBottomWidth: 10,
+          //opacity: .2
+        }}>
           <ImageBackground
             style={{
               flex: 1,
               height: 145,
-              borderRadius: 5,
-              marginHorizontal: 20,
+              //borderRadius: 10,
+              //marginHorizontal: 10,
               marginVertical: 10,
               flexDirection: "row",
             }}
             imageStyle={{
-              borderRadius: 5,
+              //borderRadius: 10,
               backgroundColor: Colors.light.bianco,
               resizeMode: "cover"
             }}
@@ -405,6 +428,20 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
                 <Ionicons name={isFavorite ? "ios-heart" : "ios-heart-empty"} size={20} color={Colors.light.bianco} />
               </TouchableOpacity>
             )}
+            {/*<View style={{
+              alignSelf: "center",
+              flex: 1,
+              backgroundColor: "transparent",
+              justifyContent: "center",
+              alignItems: "center",
+              alignContent: "center",
+              marginHorizontal: 20,
+              zIndex: 2
+            }}>
+              <BaseText size={19} weight={600} color={Colors.light.bianco} styles={[styles.shadow, {
+                letterSpacing: 0.5,
+              }]}>{title}</BaseText>
+            </View>*/}
             <View style={{
               position: "absolute",
               top: 0,
@@ -413,16 +450,15 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
               width: "100%",
               height: "100%",
               //backgroundColor: Colors.light.newviola,
-              //backgroundColor: Colors.light.nero,
-              backgroundColor: Colors.light.bianco,
-              borderRadius: 5,
-              opacity: .3,
+              backgroundColor: "#8D99AE",
+              //backgroundColor: Colors.light.bianco,
+              //borderRadius: 10,
+              opacity: .15,
               zIndex: 1
             }} />
           </ImageBackground>
           <View style={{ marginHorizontal: 20, marginBottom: 10 }}>
-            <BaseText size={14} weight={400}>{title}</BaseText>
-            <View style={{
+            {/*<View style={{
               flexDirection: "row",
               alignContent: "center",
               alignItems: "center",
@@ -430,7 +466,10 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
             }}>
               <Ionicons name="ios-pin" size={25} color={Colors.light.violaDes} style={{ marginRight: 5 }} />
               <BaseText size={8} color={"#616161"}>{via}</BaseText>
-            </View>
+            </View>*/}
+            <BaseText size={14} weight={400} color={Colors.light.nero} styles={{
+              letterSpacing: 0.5,
+            }}>{title}</BaseText>
             <View style={{
               //position: "absolute",
               //bottom: 10,
@@ -484,7 +523,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
               </View>
             </View>
           </View>
-        </>
+        </View>
         {/*
             <View style={{ maxWidth: 180 }}>
               <View style={{ marginTop: 5 }}>
@@ -521,20 +560,38 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
       {/**
              * HEADER
              */}
-      <SafeAreaView style={styles.header}>
+      <LinearGradient
+        // Button Linear Gradient
+        //colors={[Colors.light.newviola, Colors.light.bianco]}
+        colors={[Colors.light.newviola, Colors.light.newviola]}
+        style={styles.header}
+      >
         <View style={styles.textHeader}>
           <BaseText styles={styles.headerText}>Esplora</BaseText>
-          <BaseText styles={styles.headerSub}>Cerca qui il servizio di cui hai bisogno</BaseText>
-          <View style={styles.searchBar}>
-            <TextInput style={{ width: "100%", height: "100%", marginHorizontal: 20, fontFamily: "Montserrat_300Light" }} />
-            <Ionicons name="ios-search" color="black" size={20} style={styles.iconSearch} />
-          </View>
+          {/*<BaseText styles={styles.headerSub}>Cerca qui il servizio di cui hai bisogno</BaseText>*/}
+        </View>
+        <View style={[styles.searchBar, {
+          //borderWidth: 1,
+          //borderColor: Colors.light.newviola
+        }]}>
+          <TextInput
+            placeholder={"Cosa vuoi fare oggi?"}
+            placeholderTextColor={Colors.light.nero}
+            style={{
+              width: "100%",
+              height: "100%",
+              marginHorizontal: 20,
+              fontFamily: "WorkSans_600SemiBold",
+              letterSpacing: 0.72
+            }} />
+          <Ionicons name="ios-search" color={Colors.light.nero} size={20} style={styles.iconSearch} />
         </View>
         <Desk style={styles.image} width="262" height="258" color={"white"} />
-      </SafeAreaView>
+      </LinearGradient>
       {/**
              * modalIntro
              */}
@@ -574,15 +631,18 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
              * content
              */}
       <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.light.arancio]} />}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ backgroundColor: "transparent", paddingBottom: 100 }}>
+
         {/**
                  * Servizi
                  */}
         <View style={{ backgroundColor: "transparent", marginTop: 10 }}>
-          <BaseText weight={300} styles={{
+          <BaseText weight={700} styles={{
             fontSize: 13,
+            letterSpacing: 0.72,
             textTransform: "uppercase",
             marginLeft: 20,
           }}>{"I NOSTRI SERVIZI"}</BaseText>
@@ -636,9 +696,10 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
          * Parrucchieri // old Raccomandati per te
          */}
         <View style={{ backgroundColor: "transparent", marginLeft: 20, marginTop: 20 }}>
-          <BaseText weight={300} styles={{
+          <BaseText weight={700} styles={{
             fontSize: 13,
-            textTransform: "uppercase"
+            letterSpacing: 0.72,
+            textTransform: "uppercase",
           }}>{"I nostri Commercianti"}</BaseText>
         </View>
         <View style={{ backgroundColor: "transparent" }} >
@@ -679,7 +740,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white"
   },
   textHeader: {
-    height: 56,
+    height: 50,
     backgroundColor: "transparent",
   },
   iconSearch: {
@@ -701,10 +762,13 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     backgroundColor: "white",
-    borderRadius: 5,
+    borderRadius: 20,
+    //marginHorizontal: 50,
+    //borderRadius: 5,
     marginHorizontal: 15,
+    marginTop: 20,
     height: 40,
-    bottom: 45,
+    //bottom: 45,
     justifyContent: "center"
   },
   headerText: {
@@ -722,15 +786,26 @@ const styles = StyleSheet.create({
     marginLeft: 35,
   },
   header: {
-    backgroundColor: Colors.light.newviola,
-    width: "100%",
-    height: 215,
-    borderBottomLeftRadius: 15
+    height: 175,
+    paddingTop: 50,
+    borderRadius: 20,
+    //borderBottomLeftRadius: 55,
+    //borderBottomRightRadius: 55
   },
   image: {
     position: "absolute",
-    right: -40,
-    top: 20,
+    right: -10,
+    //top: 20,
     zIndex: -1
+  },
+  shadow: {
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 2,
+    elevation: 1,
   }
 });

@@ -20,7 +20,10 @@ export default {
     nero: '#181818',
     bg: '#E5E5E5',
     rosso: 'red',
-    newviola: "#43377B",
+    //newviola: "#8D99AE", //blu chiaro
+    //newviola: "#F8F32B", //giallognolo
+    newviola: "#2B2D42", //blue scuro
+    nero2: "#DEFA36",
   },
   dark: {
     text: '#fff',

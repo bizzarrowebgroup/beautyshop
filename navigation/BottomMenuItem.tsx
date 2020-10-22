@@ -1,6 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import BottomIcon from "../components/svg/BottomIcon";
+import Colors from "../constants/Colors";
 type Props = {
   iconName: string;
   isCurrent?: boolean;
@@ -23,7 +24,7 @@ export const BottomMenuItem = ({ iconName, isCurrent }: Props) => {
         alignItems: "center",
       }}
     >
-      <BottomIcon type={iconName} color={isCurrent ? "white" : "#43377B"} size={32} />
+      <BottomIcon type={iconName} color={isCurrent ? Colors.light.nero : Colors.light.newviola} size={32} />
     </View>
   );
 };

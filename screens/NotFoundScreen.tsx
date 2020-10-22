@@ -9,7 +9,8 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   TouchableOpacity,
-  Alert
+  Alert,
+  Keyboard
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -216,11 +217,9 @@ export default function NotFoundScreen({
           //}
           finalpreno.push({ id: data.id, ...data });
         })
-        //return finalpreno;
         resolve(finalpreno)
       } else {
         console.log("non ci sono PRENOTAZIONI, proseguo con undefined");
-        //return undefined;
         resolve(undefined)
       }
     })
@@ -230,11 +229,9 @@ export default function NotFoundScreen({
   const workSlots = async (isoWeekday?, orariFb = undefined, realDate?) => {
     let today = isoWeekday ? isoWeekday : moment().isoWeekday();
     let todayHours = [];
-
-
-    console.log('---today---')
-    console.log('---' + today + '---')
-    console.log('------')
+    //console.log('---today---')
+    //console.log('---' + today + '---')
+    //console.log('------')
     // check if i recive or force the render of timeslots
     if (orari !== undefined) {
       orari.forEach(element => {
@@ -260,11 +257,11 @@ export default function NotFoundScreen({
       let close = todayHours[0].close.split(":");
       let closeHours = close[0] ? close[0] : 0;
       let closeMinutes = close[1] ? close[1] : 0;
-      //console.log("---realDate---", realDate)
+      //console.log("---realDate---", realDate, openHours, openMinutes, closeHours, closeMinutes)
       //let start = moment(realDate).hours(openHours).minute(openMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
       //let end = moment(realDate).hours(closeHours).minute(closeMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
-      let start = moment(realDate).hours(openHours).minute(openMinutes).second(0).millisecond(0);
-      let end = moment(realDate).hours(closeHours).minute(closeMinutes).second(0).millisecond(0);
+      let start = moment(realDate).hours(openHours).minute(openMinutes).second(0).millisecond(0)
+      let end = moment(realDate).hours(closeHours).minute(closeMinutes).second(0).millisecond(0)
       //console.log("--ORARIO APERTURA--", start)
       //console.log("--ORARIO CHIUSURA--", end)
       const step = (x) => {
@@ -276,59 +273,74 @@ export default function NotFoundScreen({
         blocksSlots.push(cursor);
         cursor = step(cursor);
       }
-      if (blocksSlots.length > 0 && prenotazioni !== undefined) {
-        //let jona = blocksSlots.filter((e, index) => {
-        //  return prenotazioni.some(d => {
-        //    if (d.serviceId == serviceId) {
+      if (prenotazioni !== undefined) {
+        let finalBlockedPrenotazioni = [];
+        prenotazioni.forEach(d => {
+          if (d.serviceId === serviceId) {
+            let realMonth = moment(realDate).month();
+            let slotMonth = moment(d.slot_date).month();
+            let realDay = moment(realDate).format('DD');
+            let slotDay = moment(d.slot_date).format('DD');
+            // old moment(d.slot_date).isoWeekday() == today
+            if (realMonth === slotMonth && realDay === slotDay) {
 
-        //      let realMonth = moment(e).month();
-        //      let slotMonth = moment(d.slot_date).month();
-        //      let realDay = moment(e).format('DD');
-        //      let slotDay = moment(d.slot_date).format('DD');
-        //      //console.log({
-        //      //  realMonth,
-        //      //  realDay,
-        //      //  slotMonth,
-        //      //  slotDay
-        //      //})
-        //      // old moment(d.slot_date).isoWeekday() == today
-        //      if (realMonth == slotMonth && realDay == slotDay) {
+              //console.log("--STO BLOCCANDO QUESTO GIORNO--", slotDay)
+              let open = d.slot_time.split(":");
+              let openHours = open[0] ? open[0] : 0;
+              let openMinutes = open[1] ? open[1] : 0;
 
-        //        //console.log("--blocksSlot--", e)
-        //        let open = d.slot_time.split(":");
-        //        let openHours = open[0] ? open[0] : 0;
-        //        let openMinutes = open[1] ? open[1] : 0;
+              let close = d.slot_end_time.split(":");
+              let closeHours = close[0] ? close[0] : 0;
+              let closeMinutes = close[1] ? close[1] : 0;
 
-        //        let close = d.slot_end_time.split(":");
-        //        let closeHours = close[0] ? close[0] : 0;
-        //        let closeMinutes = close[1] ? close[1] : 0;
-
-        //        let realDataOpen = moment(d.slot_date).hours(openHours).minutes(openMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
-        //        let realDataClose = moment(d.slot_date).hours(closeHours).minutes(closeMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
-
-        //        //console.log("---DATA FORMATTATA REALE APERTURA PRENOTAZIONE---", realDataOpen);
-        //        //console.log("---DATA FORMATTATA REALE CHIUSURA PRENOTAZIONE---", realDataClose);
-        //        //console.log("--ITS MINORE--", moment(e).format('x') < moment(realDataOpen).format('x'))
-        //        //console.log("--ITS MAGGIORE--", moment(e).format('x') > moment(realDataClose).format('x'))
-        //        let minore = moment(e).format('x') < moment(realDataOpen).format('x');
-        //        let maggiore = moment(e).format('x') >= moment(realDataClose).format('x');
-        //        if (minore || maggiore) return true;
-        //        else return false;
-        //      } else {
-        //        return false;
-        //      }
-        //    } else {
-        //      return false;
-        //    }
-        //  });
-        //});
-        //console.log("jona----", jona);
-        //if (jona != undefined && jona.length > 0) {
-        //setBlocks(jona);
-        //} else setBlocks(blocksSlots);
-        setBlocks(blocksSlots);
+              // let realDataOpen = moment(d.slot_date).hours(openHours).minutes(openMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+              // let realDataClose = moment(d.slot_date).hours(closeHours).minutes(closeMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+              let realDataOpen = moment(d.slot_date).hours(openHours).minutes(openMinutes).second(0).millisecond(0)
+              let realDataClose = moment(d.slot_date).hours(closeHours).minutes(closeMinutes).second(0).millisecond(0)
+              finalBlockedPrenotazioni.push({ open: realDataOpen, close: realDataClose });
+              //let minore = moment().format('x') < moment(realDataOpen).format('x');
+              //let maggiore = moment().format('x') >= moment(realDataClose).format('x');
+              //if (minore || maggiore) return true;
+              //else return false;
+              //} else {
+              //  return false;
+              //}
+              //} else {
+              //  return false;
+              //}
+              //});
+            }
+          }
+        });
+        if (finalBlockedPrenotazioni.length > 0 && blocksSlots.length > 0) {
+          //console.log("---finalBlockedPrenotazioni---", finalBlockedPrenotazioni)
+          //console.log("---blocksSlots---", blocksSlots)
+          let blockSlotsFiltered = blocksSlots.filter((e) => {
+            return finalBlockedPrenotazioni.some((d) => {
+              let open = d.open;
+              let close = d.close;
+              let minore = moment(e).format('x') < moment(open).format('x');
+              let maggiore = moment(e).format('x') >= moment(close).format('x');
+              if (minore || maggiore) return false;
+              else return true;
+            });
+          });
+          const arrayRemove = (arr1, arr2) => {
+            //console.log("--array1--", arr1)
+            //console.log("--array2--", arr2)
+            const filteredArray = arr1.filter(function (x) {
+              return arr2.indexOf(x) < 0;
+            });
+            return filteredArray;
+          }
+          let finalBlocks = arrayRemove(blocksSlots, blockSlotsFiltered);
+          //console.log(finalBlocks, "--finalBlocks--")
+          setBlocks(finalBlocks);
+        } else {
+          setBlocks(blocksSlots);
+        }
       } else {
-        setBlocks(undefined);
+        setBlocks(blocksSlots);
       }
     }
 
@@ -408,10 +420,10 @@ export default function NotFoundScreen({
     //console.log('------')
     //setDateSelected(moment());
     // te li forzo porco dio
-    setTimeout(() => {
-      workSlots(undefined, orariFb, undefined);
-      setLoading(false);
-    }, 5000);
+    //setTimeout(() => {
+    workSlots(moment().isoWeekday(), orariFb, undefined);
+    setLoading(false);
+    //}, 5000);
   }
 
   React.useEffect(() => {
@@ -438,7 +450,7 @@ export default function NotFoundScreen({
       setServiceTitle(serviceTitle);
       setServiceCustomer(serviceCustomer);
 
-      setParte(3); // 5 o 3
+      setParte(4); // 5 o 3
       handleSnapPress(1);
     }
   }, [route.params]);
@@ -467,6 +479,7 @@ export default function NotFoundScreen({
         }
     }
   }
+
   const onDateChange = (date) => {
     //setTimeout(() => {
     //console.log("DATA PREMUTA PORCO DO", date)
@@ -581,6 +594,13 @@ export default function NotFoundScreen({
       }
     }
   }
+
+  const DismissKeyboard = ({ children }) => (
+    <TouchableWithoutFeedback
+      onPress={() => Keyboard.dismiss()}>
+      {children}
+    </TouchableWithoutFeedback>
+  );
 
   if (isLoading) {
     return (
@@ -1031,16 +1051,16 @@ export default function NotFoundScreen({
                 {blocks == undefined &&
                   <BaseText size={18} weight={500}>Non ci sono orari disponibili per il giorno selezionato</BaseText>
                 }
-                <View style={{
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{
                   flexDirection: "row",
-                  flexWrap: "wrap",
-                  alignContent: "center",
-                  alignItems: "center",
-                  justifyContent: "space-between",
+                  //flexWrap: "wrap",
+                  //alignContent: "center",
+                  //alignItems: "center",
+                  //justifyContent: "space-between",
                   marginHorizontal: 10,
                   marginTop: 15,
                   marginBottom: 10,
-                  display: blocks == undefined ? "none" : "flex"
+                  //display: blocks == undefined ? "none" : "flex"
                 }}>
                   {
                     blocks !== undefined && blocks.map((slot, index) => {
@@ -1074,7 +1094,7 @@ export default function NotFoundScreen({
                       )
                     })
                   }
-                </View>
+                </ScrollView>
               </View>
             </View>
           </ScrollView>
@@ -1214,6 +1234,16 @@ export default function NotFoundScreen({
                 )}
                 {user != null && (
                   <View style={{ marginBottom: 20 }}>
+                    <DismissKeyboard>
+                      <TextInput
+                        multiline
+                        numberOfLines={4}
+                        placeholder={"Note informative"}
+                        style={{
+                          lineHeight: 23,
+                        }}
+                      />
+                    </DismissKeyboard>
                     <BaseButton title={"Prenota"} onPress={() => {
                       //console.log("hai premuto prenota in parte 4");
                       Alert.alert(
