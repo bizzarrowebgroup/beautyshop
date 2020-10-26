@@ -142,7 +142,9 @@ const Profilo = ({
           </View>
           <ScrollView style={{
             zIndex: 1,
+            backgroundColor: "transparent",
           }} contentContainerStyle={{
+            backgroundColor: "transparent",
             paddingTop: 20,
             paddingBottom: 200,
           }}>
@@ -193,9 +195,8 @@ const Profilo = ({
               </View>
               <BaseText size={10} color={"#333333"} styles={{ marginRight: 20, textAlign: "center" }}>{"Spiegazione tessere, come accumulare punti etc.\nAmet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet."}</BaseText>
             </View>*/}
-            <View style={{ marginHorizontal: 40, marginVertical: 20, height: 1, backgroundColor: "#A6A6A6" }} />
+            {/*<View style={{ marginHorizontal: 40, marginVertical: 20, height: 1, backgroundColor: "#A6A6A6" }} />*/}
             <View style={{
-              backgroundColor: Colors.light.bianco,
               height: 45,
               alignItems: "center",
               justifyContent: "space-between",
@@ -226,11 +227,10 @@ const Profilo = ({
                 }} />
               </TouchableOpacity>
             </View>
-            <View style={{ marginTop: 5, marginHorizontal: 20, marginBottom: 10 }}>
+            {/*<View style={{ marginTop: 5, marginHorizontal: 20, marginBottom: 10 }}>
               <BaseText size={9} color={"#696969"}>Le notifiche sono relative alle prenotazioni ed eventuali promozioni specifiche</BaseText>
-            </View>
-            <TouchableOpacity style={{
-              backgroundColor: Colors.light.bianco,
+            </View>*/}
+            {/*<TouchableOpacity style={{
               height: 45,
               alignItems: "center",
               justifyContent: "space-between",
@@ -241,27 +241,53 @@ const Profilo = ({
               <Ionicons name="ios-return-right" size={30} color={Colors.light.arancioDes} style={{
                 marginRight: 20
               }} />
-            </TouchableOpacity>
-            <View style={{ marginTop: 5, marginHorizontal: 20 }}>
+            </TouchableOpacity>*/}
+            {/*<View style={{ marginTop: 5, marginHorizontal: 20 }}>
               <BaseText size={9} color={"#696969"}>Qui troverai la raccolta di tutte le tue recensioni inviate a seguito di una prenotazine!</BaseText>
-            </View>
-            {/*<View style={{ marginHorizontal: 40, marginVertical: 20, height: 1, backgroundColor: "#A6A6A6" }} />*/}
-            <TouchableOpacity onPress={handleSignOut} style={{
-              backgroundColor: Colors.light.arancioDes,
-              borderRadius: 10,
-              marginHorizontal: 20,
-              marginTop: 20,
-              justifyContent: "center",
+            </View>*/}
+            <TouchableOpacity onPress={() => navigation.navigate("Prenotazioni")} style={{
+              height: 45,
               alignItems: "center",
+              justifyContent: "space-between",
               alignContent: "center",
-              height: 60
+              flexDirection: "row"
             }}>
-              <BaseText size={14} weight={600} color={Colors.light.bianco}>{"Esci".toUpperCase()}</BaseText>
+              <BaseText size={13} styles={{ marginLeft: 20 }}>Le tue prenotazioni</BaseText>
+              <Ionicons name="ios-return-right" size={30} color={Colors.light.arancioDes} style={{
+                marginRight: 20
+              }} />
             </TouchableOpacity>
-            <View style={{ alignContent: "center", alignItems: "center", justifyContent: "center", marginVertical: 20 }}>
-              <BaseText size={9} weight={700}>{`Versione App ${Constants.manifest.version} (${Constants.platform.ios.buildNumber || 0})`}</BaseText>
-            </View>
+            <TouchableOpacity onPress={() => navigation.navigate("Preferiti")} style={{
+              height: 45,
+              alignItems: "center",
+              justifyContent: "space-between",
+              alignContent: "center",
+              flexDirection: "row"
+            }}>
+              <BaseText size={13} styles={{ marginLeft: 20 }}>I tuoi preferiti</BaseText>
+              <Ionicons name="ios-return-right" size={30} color={Colors.light.arancioDes} style={{
+                marginRight: 20
+              }} />
+            </TouchableOpacity>
+            {/*<View style={{ marginHorizontal: 40, marginVertical: 20, height: 1, backgroundColor: "#A6A6A6" }} />*/}
           </ScrollView>
+          <TouchableOpacity onPress={handleSignOut} style={{
+            backgroundColor: Colors.light.arancioDes,
+            borderRadius: 10,
+            marginHorizontal: 50,
+            //marginTop: 20,
+            justifyContent: "center",
+            alignItems: "center",
+            alignContent: "center",
+            height: 50,
+            bottom: 20
+          }}>
+            <BaseText size={14} weight={600} color={Colors.light.bianco}>{"Esci".toUpperCase()}</BaseText>
+          </TouchableOpacity>
+          <View style={{ alignContent: "center", alignItems: "center", justifyContent: "center", marginVertical: 20, bottom: 20 }}>
+            {/*<BaseText size={9} weight={700}>{`Versione App ${Constants.manifest.version} (${Constants.platform.ios.buildNumber || 0})`}</BaseText>*/}
+            <BaseText size={9} weight={700}>{`Versione App ${Constants.manifest.version} (3)`}</BaseText>
+          </View>
         </View>
       </SafeAreaView>
     </React.Fragment>

@@ -211,7 +211,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
         });
         setRecensioni(finalRecensioni);
         //setTimeout(() => {
-          setLoading(false);
+        setLoading(false);
         //}, 500);
       }
     }
@@ -694,22 +694,22 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
                   alignContent: "space-between",
                   alignItems: "flex-end"
                 }}>
-                  {day === 1 && !bool && (<BaseText weight={day === 1 ? 700 : 400} styles={{
+                  {day === 1 && !bool && (<BaseText weight={day === 1 ? 700 : 400} size={9} styles={{
                     marginLeft: !bool ? 20 : 0,
                     //fontSize: 13,
                     color: "#181818"
                   }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 1 ? 700 : 400} styles={{
+                  {bool && (<BaseText weight={day === 1 ? 700 : 400} size={9} styles={{
                     marginLeft: !bool ? 20 : 0,
                     //fontSize: 13,
                     color: "#181818"
                   }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
-                  {day === 2 && !bool && (<BaseText weight={day === 2 ? 700 : 400} styles={{
+                  {day === 2 && !bool && (<BaseText weight={day === 2 ? 700 : 400} size={9} styles={{
                     marginLeft: !bool ? 20 : 0,
                     //fontSize: 13,
                     color: "#181818"
                   }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 2 ? 700 : 400} styles={{
+                  {bool && (<BaseText weight={day === 2 ? 700 : 400} size={9} styles={{
                     marginLeft: !bool ? 20 : 0,
                     //fontSize: 13,
                     color: "#181818"
@@ -719,17 +719,17 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
                     //fontSize: 13,
                     color: "#181818"
                   }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 3 ? 700 : 400} styles={{
+                  {bool && (<BaseText weight={day === 3 ? 700 : 400} size={9} styles={{
                     marginLeft: !bool ? 20 : 0,
                     //fontSize: 13,
                     color: "#181818"
                   }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
-                  {day === 4 && !bool && (<BaseText weight={day === 4 ? 700 : 400} styles={{
+                  {day === 4 && !bool && (<BaseText weight={day === 4 ? 700 : 400} size={9} styles={{
                     marginLeft: !bool ? 20 : 0,
                     //fontSize: 13,
                     color: "#181818"
                   }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 4 ? 700 : 400} styles={{
+                  {bool && (<BaseText weight={day === 4 ? 700 : 400} size={9} styles={{
                     marginLeft: !bool ? 20 : 0,
                     //fontSize: 13,
                     color: "#181818"
@@ -740,32 +740,32 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
                   alignItems: "flex-end",
                   marginTop: !bool ? 0 : 20 //0
                 }}>
-                  {day === 5 && !bool && (<BaseText weight={day === 5 ? 700 : 400} styles={{
+                  {day === 5 && !bool && (<BaseText weight={day === 5 ? 700 : 400} size={9} styles={{
                     marginLeft: !bool ? 20 : 0,
                     //fontSize: 13,
                     color: "#181818"
                   }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
-                  {day === 6 && !bool && (<BaseText weight={day === 6 ? 700 : 400} styles={{
+                  {day === 6 && !bool && (<BaseText weight={day === 6 ? 700 : 400} size={9} styles={{
                     marginLeft: !bool ? 20 : 0,
                     //fontSize: 13,
                     color: "#181818"
                   }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
-                  {day === 0 && !bool && (<BaseText weight={day === 0 ? 700 : 400} styles={{
+                  {day === 0 && !bool && (<BaseText weight={day === 0 ? 700 : 400} size={9} styles={{
                     marginLeft: !bool ? 20 : 0,
                     //fontSize: 13,
                     color: "#181818"
                   }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 5 ? 700 : 400} styles={{
+                  {bool && (<BaseText weight={day === 5 ? 700 : 400} size={9} styles={{
                     marginLeft: !bool ? 20 : 0,
                     //fontSize: 13,
                     color: "#181818"
                   }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 6 ? 700 : 400} styles={{
+                  {bool && (<BaseText weight={day === 6 ? 700 : 400} size={9} styles={{
                     marginLeft: !bool ? 20 : 0,
                     //fontSize: 13,
                     color: "#181818"
                   }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 0 ? 700 : 400} styles={{
+                  {bool && (<BaseText weight={day === 0 ? 700 : 400} size={9} styles={{
                     marginLeft: !bool ? 20 : 0,
                     //fontSize: 13,
                     color: "#181818"
@@ -784,10 +784,9 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
          * Valutazioni e recensioni
          */}
           {recensioni !== undefined && (<View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginTop: 10 }}>
-            <BaseText weight={300} styles={{
-              fontSize: 13,
+            <BaseText weight={300} size={13} styles={{
               textTransform: "uppercase"
-            }}>{"Valutazioni e recensioni"}</BaseText>
+            }}>{"alutazioni e recensioni"}</BaseText>
             <View style={{
               flexDirection: "row",
               marginTop: 10
@@ -826,7 +825,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
                   }}>
                     <BaseText styles={{
                       fontSize: 15,
-                    }}>{recensioni && recensioni[0].user !== "" ? recensioni[0].user : "Michela"}</BaseText>
+                    }}>{recensioni && recensioni.length > 0 ? recensioni[0].user : "Utente d'esempio"}</BaseText>
                     <StarsReview />
                   </View>
                   <BaseText weight={300} styles={{
@@ -834,7 +833,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
                     marginHorizontal: 15,
                     fontSize: 15,
                     marginBottom: 15
-                  }}>{recensioni ? recensioni[0].desc : "Desc"}</BaseText>
+                  }}>{recensioni && recensioni.length > 0 ? recensioni[0].desc : "Descrizione d'esempio"}</BaseText>
                 </View>
               </TouchableWithoutFeedback>
             </View>

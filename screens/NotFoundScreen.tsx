@@ -157,7 +157,7 @@ export default function NotFoundScreen({
   const [serviceId, setServiceId] = React.useState(undefined);
   const [daySelected, setDateSelected] = React.useState(undefined);
   // blocco stato orari che prendo da db
-  const [blocks, setBlocks] = React.useState(undefined);
+  const [blocks, setBlocks] = React.useState(null);
   const [blockSelected, setBlockSelected] = React.useState(undefined);
   const [timeSelected, setTimeSelected] = React.useState(undefined);
   const [orari, setOrari] = React.useState(undefined);
@@ -171,6 +171,7 @@ export default function NotFoundScreen({
   const [commercianteId, setCommerciante] = React.useState(undefined);
 
   const [isLoading, setLoading] = React.useState(false);
+  const [notes, setNotes] = React.useState("");
   const [registerErrors, setRegisterError] = React.useState(undefined);
 
   const [prenotazioni, setPrenotazioni] = React.useState(undefined);
@@ -223,15 +224,14 @@ export default function NotFoundScreen({
         resolve(undefined)
       }
     })
-
   }
 
   const workSlots = async (isoWeekday?, orariFb = undefined, realDate?) => {
     let today = isoWeekday ? isoWeekday : moment().isoWeekday();
     let todayHours = [];
-    //console.log('---today---')
-    //console.log('---' + today + '---')
-    //console.log('------')
+    console.log('---today---')
+    console.log('---' + today + '---')
+    console.log('------')
     // check if i recive or force the render of timeslots
     if (orari !== undefined) {
       orari.forEach(element => {
@@ -273,6 +273,7 @@ export default function NotFoundScreen({
         blocksSlots.push(cursor);
         cursor = step(cursor);
       }
+      console.log("---blocksGOT---", blocksSlots)
       if (prenotazioni !== undefined) {
         let finalBlockedPrenotazioni = [];
         prenotazioni.forEach(d => {
@@ -336,11 +337,15 @@ export default function NotFoundScreen({
           let finalBlocks = arrayRemove(blocksSlots, blockSlotsFiltered);
           //console.log(finalBlocks, "--finalBlocks--")
           setBlocks(finalBlocks);
-        } else {
+        } else if (blocksSlots.length > 0) {
           setBlocks(blocksSlots);
+        } else {
+          setBlocks(undefined);
         }
-      } else {
+      } else if (blocksSlots.length > 0) {
         setBlocks(blocksSlots);
+      } else {
+        setBlocks(undefined);
       }
     }
 
@@ -409,21 +414,15 @@ export default function NotFoundScreen({
     setPrenotazioni(prenotazioni);
 
     setIsOn(true);
-    //console.log('---orariFb---')
-    //console.log('---' + JSON.stringify(orariFb) + '---')
-    //console.log('------')
 
     setOrari(orariFb);
     setServiceId(serviceId);
-    //console.log('---orari initPrenota---')
-    //console.log('---' + JSON.stringify(orari) + '---')
-    //console.log('------')
+    // te li forzo porco dio debug test
     //setDateSelected(moment());
-    // te li forzo porco dio
     //setTimeout(() => {
-    workSlots(moment().isoWeekday(), orariFb, undefined);
+    //workSlots(moment().isoWeekday(), orariFb, undefined);
     setLoading(false);
-    //}, 5000);
+    //}, 1000);
   }
 
   React.useEffect(() => {
@@ -450,7 +449,7 @@ export default function NotFoundScreen({
       setServiceTitle(serviceTitle);
       setServiceCustomer(serviceCustomer);
 
-      setParte(4); // 5 o 3
+      setParte(3); // 1 2 3 4 5
       handleSnapPress(1);
     }
   }, [route.params]);
@@ -495,7 +494,6 @@ export default function NotFoundScreen({
   // variables
   const snapPoints = React.useMemo(() => [0, 120, 280], []);
   const position = useValue<number>(0);
-
   const handleSnapPress = React.useCallback(index => {
     bottomSheetRef.current?.snapTo(index);
   }, []);
@@ -557,7 +555,8 @@ export default function NotFoundScreen({
         slot_end_time: moment(timeSelected).add(serviceDuration * 10, 'minutes').format("HH:mm"),
         state: 0,
         serviceId,
-        commercianteId
+        commercianteId,
+        notes
       }
       try {
         const res = await db.collection('prenotazioni').add(prenotazione);
@@ -577,7 +576,8 @@ export default function NotFoundScreen({
           slot_end_time: moment(timeSelected).add(serviceDuration * 10, 'minutes').format("HH:mm"),
           state: 0,
           serviceId,
-          commercianteId
+          commercianteId,
+          notes
         }
         try {
           const res = await db.collection('prenotazioni').add(prenotazione);
@@ -988,8 +988,8 @@ export default function NotFoundScreen({
             }}>
               <CalendarPicker
                 onDateChange={(date) => onDateChange(date)}
-                selectedStartDate={daySelected}
-                //date={daySelected}
+                //selectedStartDate={daySelected}
+                date={daySelected}
                 weekdays={['L', 'M', 'M', 'G', 'V', 'S', 'D']}
                 months={['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre']}
                 startFromMonday={true}
@@ -1039,7 +1039,8 @@ export default function NotFoundScreen({
             <View style={{
               marginHorizontal: 20,
               backgroundColor: Colors.light.bianco,
-              borderRadius: 10
+              borderRadius: 10,
+              display: blocks === null ? "none" : "flex"
             }}>
               <View style={{
                 marginVertical: 15,
@@ -1048,8 +1049,11 @@ export default function NotFoundScreen({
                 alignContent: "center"
               }}>
                 <BaseText size={14} weight={400} color={Colors.light.nero}>Orari disponibili</BaseText>
-                {blocks == undefined &&
-                  <BaseText size={18} weight={500}>Non ci sono orari disponibili per il giorno selezionato</BaseText>
+                {/*{blocks === null &&
+                  <BaseText size={10} weight={600} color={Colors.light.rosso}>Scegli una data!</BaseText>
+                }*/}
+                {blocks === undefined &&
+                  <BaseText size={10} weight={600} color={Colors.light.rosso}>🚨 In questa data il commerciante è chiuso! 🚨</BaseText>
                 }
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{
                   flexDirection: "row",
@@ -1060,10 +1064,10 @@ export default function NotFoundScreen({
                   marginHorizontal: 10,
                   marginTop: 15,
                   marginBottom: 10,
-                  //display: blocks == undefined ? "none" : "flex"
+                  display: blocks == undefined && blocks == null ? "none" : "flex"
                 }}>
                   {
-                    blocks !== undefined && blocks.map((slot, index) => {
+                    blocks !== undefined && blocks !== null && blocks.map((slot, index) => {
                       //console.log("--slot--", slot)
                       const onPress = () => {
                         if (index == blockSelected) {
@@ -1102,7 +1106,7 @@ export default function NotFoundScreen({
       )}
       {parte === 4 && (
         <>
-          <View>
+          <ScrollView>
             <BaseText styles={[styles.first, { marginBottom: 10, textTransform: "uppercase" }]} size={10} color={Colors.light.bianco}>
               {user == null ? "registrazione" : "conferma dati prenotazione"}
             </BaseText>
@@ -1234,16 +1238,25 @@ export default function NotFoundScreen({
                 )}
                 {user != null && (
                   <View style={{ marginBottom: 20 }}>
-                    <DismissKeyboard>
-                      <TextInput
-                        multiline
-                        numberOfLines={4}
-                        placeholder={"Note informative"}
-                        style={{
-                          lineHeight: 23,
-                        }}
-                      />
-                    </DismissKeyboard>
+                    {/*<DismissKeyboard>*/}
+                    <TextInput
+                      value={notes}
+                      onChangeText={(value) => { setNotes(value) }}
+                      multiline
+                      numberOfLines={4}
+                      placeholder={"Note informative"}
+                      style={{
+                        //lineHeight: 30,
+                        marginTop: 20,
+                        borderRadius: 8,
+                        borderWidth: 1,
+                        paddingVertical: 20,
+                        height: 100,
+                        paddingHorizontal: 10,
+                        borderColor: "black"
+                      }}
+                    />
+                    {/*</DismissKeyboard>*/}
                     <BaseButton title={"Prenota"} onPress={() => {
                       //console.log("hai premuto prenota in parte 4");
                       Alert.alert(
@@ -1264,7 +1277,7 @@ export default function NotFoundScreen({
                 )}
               </View>
             </View>
-          </View>
+          </ScrollView>
         </>
       )}
       {parte === 5 && (

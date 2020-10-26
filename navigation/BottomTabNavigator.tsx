@@ -293,32 +293,32 @@ function TabTwoNavigator() {
     </TabTwoStack.Navigator>
   );
 }
-const PreferitiStack = createStackNavigator();
+//const PreferitiStack = createStackNavigator();
 
-function PreferitiNav() {
-  return (
-    <PreferitiStack.Navigator>
-      <PreferitiStack.Screen
-        name="Preferiti"
-        component={Preferiti}
-        options={{ headerShown: false }}
-      />
-    </PreferitiStack.Navigator>
-  );
-}
-const PrenotaziniStack = createStackNavigator();
+//function PreferitiNav() {
+//  return (
+//    <PreferitiStack.Navigator>
+//      <PreferitiStack.Screen
+//        name="Preferiti"
+//        component={Preferiti}
+//        options={{ headerShown: false }}
+//      />
+//    </PreferitiStack.Navigator>
+//  );
+//}
+//const PrenotaziniStack = createStackNavigator();
 
-function PrenotazioniNav() {
-  return (
-    <PrenotaziniStack.Navigator>
-      <PrenotaziniStack.Screen
-        name="Prenotazioni"
-        component={Prenotazioni}
-        options={{ headerShown: false }}
-      />
-    </PrenotaziniStack.Navigator>
-  );
-}
+//function PrenotazioniNav() {
+//  return (
+//    <PrenotaziniStack.Navigator>
+//      <PrenotaziniStack.Screen
+//        name="Prenotazioni"
+//        component={Prenotazioni}
+//        options={{ headerShown: false }}
+//      />
+//    </PrenotaziniStack.Navigator>
+//  );
+//}
 const ProfiloStack = createStackNavigator();
 
 function ProfiloNav() {
@@ -327,6 +327,16 @@ function ProfiloNav() {
       <ProfiloStack.Screen
         name="Profilo"
         component={Profilo}
+        options={{ headerShown: false }}
+      />
+      <ProfiloStack.Screen
+        name="Preferiti"
+        component={Preferiti}
+        options={{ headerShown: false }}
+      />
+      <ProfiloStack.Screen
+        name="Prenotazioni"
+        component={Prenotazioni}
         options={{ headerShown: false }}
       />
     </ProfiloStack.Navigator>

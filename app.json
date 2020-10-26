@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -21,13 +21,15 @@
     "android": {
       "useNextNotificationsApi": true,
       "package": "it.bizzarro.beautshop",
-      "versionCode": 1
+      "versionCode": 1,
+      "userInterfaceStyle": "light"
     },
     "ios": {
       "supportsTablet": false,
       "usesAppleSignIn": true,
       "bundleIdentifier": "it.bizzarro.beautyshop",
-      "buildNumber": "2"
+      "buildNumber": "3",
+      "userInterfaceStyle": "light"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
