@@ -1,6 +1,8 @@
 import * as firebase from 'firebase';
 import 'firebase/auth';
 import 'firebase/firestore';
+import * as Facebook from 'expo-facebook';
+
 //import { resolvePlugin } from '@babel/core';
 
 // import firebaseConfig from './firebaseConfig';
@@ -81,6 +83,122 @@ export const registerFromNotFound = async (user, email, phone) => {
   } catch (error) {
     console.warn("---cannotRegisterCurrentUser---", error);
     return null;
+  }
+}
+
+export const signInWithFacebook = async () => {
+  try {
+    await Facebook.initializeAsync('3483388645055624');
+    //});
+    const {
+      type,
+      token,
+      expirationDate,
+      permissions,
+      declinedPermissions,
+    } = await Facebook.logInWithReadPermissionsAsync({
+      permissions: ['public_profile'],
+    });
+    if (type === 'success') {
+      // Get the user's name using Facebook's Graph API
+      const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,birthday,picture.type(large)`);
+      let fbData = await response.json();
+      if (fbData) {
+        const { picture, name, birthday } = fbData;
+        //console.log("---picture---", picture.data.url)
+        //console.log("---fbData---", fbData)
+        await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+        const credential = firebase.auth.FacebookAuthProvider.credential(token);
+        try {
+          let userId = await auth.signInWithCredential(credential);
+          await auth.currentUser.updateProfile({
+            displayName: name,
+            photoURL: picture.data.url
+          }).then((result) => {
+            console.log(result, "---logInWithFB-updateProfile---");
+          }).catch((error) => {
+            console.log("---logInWithFB-updateProfile-error---", error);
+          });
+          //console.log("---token---", token)
+          //console.log("---credential---", credential)
+          //console.log("---signInWithCredential---", userId)
+          let { user } = userId;
+          if (user.uid !== '') {
+            let userToDB = {
+              //birthday: birthday,
+              userId: user.uid,
+              phone: '',
+              pwd: '',
+              loyalitypoints: 150, // when we register a new user we give him 150 points :D
+              notificationToken: '',
+              notificationsEnabled: false,
+            }
+            const res = await db.collection('utentiApp').add(userToDB);
+            console.log("---utentiAppID-AGGIUNTO---", res.id);
+            return user.uid;
+          } else {
+            return alert("ERRORE REGISTRAZIONE FB SOCIAL 003-30-2")
+          }
+        } catch (error) {
+          var errorCode = error.code;
+          // var errorMessage = error.message;
+          // The email of the user's account used.
+          // var email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          // var credentialError = error.credential;
+          if (errorCode === 'auth/account-exists-with-different-credential') {
+            alert('Email già associata con un altro provider social.');
+          } else {
+            console.error(error);
+          }
+        }
+
+      }
+      console.info('Logged in!', `Ciao ${fbData.name}!`);
+    } else {
+      // type === 'cancel'
+      if (type === 'cancel') alert(`Hai deciso di annullare il login con Facebook`)
+    }
+  } catch ({ message }) {
+    alert(`Facebook Register Error: ${message}`);
+  }
+}
+
+export const logInWithFacebook = async () => {
+  try {
+    await Facebook.initializeAsync('3483388645055624');
+    //});
+    const {
+      type,
+      token,
+    } = await Facebook.logInWithReadPermissionsAsync({
+      permissions: ['public_profile'],
+    });
+    if (type === 'success') {
+      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      const credential = firebase.auth.FacebookAuthProvider.credential(token);
+      try {
+        let userId = await auth.signInWithCredential(credential);
+        let { user } = userId;
+        if (user.uid !== '') {
+          return user.uid;
+        } else {
+          return alert("ERRORE LOGIN FB SOCIAL 003-30-1")
+        }
+      } catch (error) {
+        var errorCode = error.code;
+        if (errorCode === 'auth/account-exists-with-different-credential') {
+          alert('Email già associata con un altro provider social.');
+        } else {
+          console.error(error);
+        }
+      }
+    } else {
+      // type === 'cancel'
+      if (type === 'cancel') alert(`Hai deciso di annullare il login con Facebook`)
+    }
+  } catch ({ message }) {
+    alert(`Facebook Register Error: ${message}`);
   }
 }
 

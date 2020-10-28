@@ -285,8 +285,8 @@ const Profilo = ({
             <BaseText size={14} weight={600} color={Colors.light.bianco}>{"Esci".toUpperCase()}</BaseText>
           </TouchableOpacity>
           <View style={{ alignContent: "center", alignItems: "center", justifyContent: "center", marginVertical: 20, bottom: 20 }}>
-            {/*<BaseText size={9} weight={700}>{`Versione App ${Constants.manifest.version} (${Constants.platform.ios.buildNumber || 0})`}</BaseText>*/}
-            <BaseText size={9} weight={700}>{`Versione App ${Constants.manifest.version} (3)`}</BaseText>
+            <BaseText size={9} weight={700}>{`Versione App ${Constants.manifest.version} (${Constants.platform.ios.buildNumber || 0})`}</BaseText>
+            {/*<BaseText size={9} weight={700}>{`Versione App ${Constants.manifest.version} (3)`}</BaseText>*/}
           </View>
         </View>
       </SafeAreaView>

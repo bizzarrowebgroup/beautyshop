@@ -55,6 +55,7 @@ const BaseText = ({ ...props }) => {
           backgroundColor: props.background || "transparent",
           textAlign: props.textAlign,
           lineHeight: props.lineHeight,
+          letterSpacing: props.letterSpacing,
           fontFamily: props.fontFamily || fontFamily,
           width: props.maxWidth,
           height: props.maxHeight,

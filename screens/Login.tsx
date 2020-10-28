@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, ScrollView, View, Image } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { StatusBar, Animated, StyleSheet, TouchableOpacity, ScrollView, View, Image, SafeAreaView } from 'react-native';
 import * as Yup from 'yup';
 import Colors from '../constants/Colors';
+import { Video } from 'expo-av';
 import Form from '../components/Form/Form';
 import FormField from '../components/Form/FormField';
 import FormButton from '../components/Form/FormButton';
 // import IconButton from '../components/IconButton';
-import { loginWithEmail } from '../network/Firebase';
+import { loginWithEmail, logInWithFacebook } from '../network/Firebase';
 import FormErrorMessage from '../components/Form/FormErrorMessage';
 import Loader from '../components/Loader';
 import BaseText from '../components/StyledText';
@@ -23,11 +24,14 @@ const validationSchema = Yup.object().shape({
     .min(6, 'La tua password deve avere 6 caratteri minimi')
     .label('Password')
 });
+
 const Login = ({ navigation }) => {
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [rightIcon, setRightIcon] = useState('eye');
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
+  const VideOpacity = useMemo(() => new Animated.Value(0), []);
+
   function handlePasswordVisibility() {
     if (rightIcon === 'eye') {
       setRightIcon('eye-off');
@@ -52,6 +56,27 @@ const Login = ({ navigation }) => {
       console.log(error, "error")
     }
   }
+
+  async function handleFacebookLogin() {
+    //const { email, password } = values;
+
+    setLoading(true);
+    try {
+      //await signInWithFacebook().then((id) => {
+      //  if (id !== undefined) console.log("---LOGIN OK---", id)
+      //  setLoading(false);
+      //});
+      await logInWithFacebook().then((id) => {
+        if (id !== undefined) console.log("---LOGIN OK---", id)
+        setLoading(false);
+      });
+    } catch (error) {
+      setLoading(false);
+      setLoginError(error.message);
+      console.log(error, "error")
+    }
+  }
+
   if (loading) {
     return (
       <Loader color={Colors.light.bianco} size={"large"} animating={true} />
@@ -59,25 +84,133 @@ const Login = ({ navigation }) => {
   }
   return (
     <View style={styles.container}>
-      <ScrollView>
-        <View style={[{
-          marginTop: 80,
-          //marginHorizontal: 30,
-        },]}>
-          <View style={{
-            paddingHorizontal: 25,
-          }}>
+      <StatusBar backgroundColor="white" barStyle="dark-content" />
+      <ScrollView contentContainerStyle={styles.background}>
+        <Animated.View
+          style={[
+            styles.backgroundViewWrapper,
+            { opacity: VideOpacity }
+          ]}
+        >
+          <Video
+            isLooping
+            isMuted
+            positionMillis={500}
+            onLoad={() => {
+              Animated.timing(VideOpacity, {
+                toValue: 1,
+                useNativeDriver: true,
+              }).start();
+            }}
+            resizeMode="cover"
+            shouldPlay
+            //source={{ uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
+            source={{ uri: 'https://ingass.space/images/bohdd.mp4' }}
+            style={{ flex: 1 }}
+          />
+        </Animated.View>
+        <View style={styles.overlay}>
+          {/*<BaseText styles={styles.title}>
+            This is where you might put a button or some other text on top of
+            the video
+          </BaseText>*/}
+          <View style={{ marginTop: 140, paddingHorizontal: 25 }}>
             <Image source={require('../assets/images/logoBS.png')} style={{
               width: 50,
               height: 50,
-              tintColor: Colors.light.newviola,
+              tintColor: Colors.light.bianco,
               alignSelf: "center",
             }} />
-            {/*<BaseText size={24} lineHeight={29} color="black">{"Gestisci\nil tuo profilo"}</BaseText>*/}
           </View>
+        </View>
+        <View style={{ position: "absolute", bottom: 140, width: "100%" }}>
           <View style={{
-            //backgroundColor: "white",
-            //borderRadius: 5,
+            paddingHorizontal: 20
+          }}>
+            <BaseText size={24} lineHeight={30} weight={700} letterSpacing={0.7} color={Colors.light.bianco}>{"Entra a far parte\ndel mondo del beauty"}</BaseText>
+            <BaseText size={12} lineHeight={22} letterSpacing={0.77} color={Colors.light.grigio}>{"Prenota facilmente ovunque ti trovi"}</BaseText>
+            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.nero }]}>
+              <IconFooterSocial type="apple" width={24} height={24} color={"white"} style={{ alignSelf: "center", marginLeft: 10 }} />
+              <BaseText size={13} weight={400} color={Colors.light.bianco}>{"Accedi con Apple"} </BaseText>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: "#1878F3" }]}>
+              <IconFooterSocial type="facebook" width={24} height={24} color={Colors.light.bianco} style={{ alignSelf: "center", marginLeft: 17 }} />
+              <BaseText color={Colors.light.bianco} size={13} weight={400}>{"Accedi con Facebook"} </BaseText>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.bianco }]}>
+              <IconFooterSocial type="google" width={24} height={24} style={{ alignSelf: "center", marginLeft: 10 }} />
+              <BaseText size={13} weight={400} color={Colors.light.nero}>{"Accedi con Google"} </BaseText>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.arancioDes }]}>
+              <BaseText color={Colors.light.bianco} size={13} weight={400}>{"Registrati con email"}</BaseText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
+  )
+}
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.light.bianco,
+  },
+  background: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: Colors.light.bianco,
+    //flex: 1,
+  },
+  backgroundViewWrapper: {
+    ...StyleSheet.absoluteFillObject
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    //flex: 1
+  },
+  title: {
+    color: 'white',
+    marginTop: 90,
+    paddingHorizontal: 20,
+    textAlign: 'center'
+  },
+  btn: {
+    borderRadius: 20,
+    justifyContent: "space-around",
+    alignItems: "center",
+    alignContent: "center",
+    flexDirection: "row",
+    height: 50,
+    width: '100%',
+    marginTop: 20
+  },
+  footerButtonContainer: {
+    marginBottom: 15,
+    marginTop: 35,
+  },
+  forgotPasswordButtonText: {
+    color: Colors.light.nero,
+  },
+  backButton: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  shadowBtn: {
+    shadowColor: Colors.light.nero,
+    shadowOpacity: 0.1,
+    shadowOffset: {
+      width: 0,
+      height: 10
+    },
+    shadowRadius: 10,
+  }
+});
+
+export default Login;
+
+
+{/**
+<View style={{
             marginTop: 20,
             padding: 10,
             paddingHorizontal: 25,
@@ -120,19 +253,13 @@ const Login = ({ navigation }) => {
             <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.btn}>
               <BaseText color={Colors.light.bianco} size={13} weight={400}>{"Registrati"}</BaseText>
             </TouchableOpacity>
-            {/*<View style={{
-              marginTop: 20,
-              width: 145,
-              height: 2,
-              backgroundColor: Colors.light.nero,
-              alignSelf: "center"
-            }} />*/}
+          
             <BaseText size={14} weight={400} styles={{ alignSelf: "center", marginVertical: 20 }}>{"oppure accedi con"}</BaseText>
             <View style={{ flexDirection: "row", alignItems: "center", alignContent: "center", justifyContent: "center" }}>
               <TouchableOpacity style={[styles.shadowBtn, { width: 87, height: 58, backgroundColor: "white", borderRadius: 5, justifyContent: "center", }]}>
                 <IconFooterSocial type="google" width={24} height={24} style={{ alignSelf: "center", }} />
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.shadowBtn, { width: 87, height: 58, backgroundColor: "white", borderRadius: 5, marginHorizontal: 12, justifyContent: "center" }]}>
+              <TouchableOpacity onPress={handleFacebookLogin} style={[styles.shadowBtn, { width: 87, height: 58, backgroundColor: "white", borderRadius: 5, marginHorizontal: 12, justifyContent: "center" }]}>
                 <IconFooterSocial type="facebook" width={24} height={24} style={{ alignSelf: "center", }} />
               </TouchableOpacity>
               <TouchableOpacity style={[styles.shadowBtn, { width: 87, height: 58, backgroundColor: "white", borderRadius: 5, justifyContent: "center" }]}>
@@ -140,12 +267,6 @@ const Login = ({ navigation }) => {
               </TouchableOpacity>
             </View>
             <View style={styles.footerButtonContainer}>
-              {/* <View style={{ flexDirection: "row", alignItems: "center", alignContent: "center", marginBottom: 5 }}>
-                  <BaseText color={Colors.light.nero} size={14} weight={400}>
-                      Hai già un account?
-                  </BaseText>
-                  <BaseText size={14} weight={700} color={Colors.light.arancioDes} styles={{ textDecorationLine: "underline", marginLeft: 10 }}>Accedi</BaseText>
-              </View> */}
               <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
                 <BaseText color={Colors.light.nero} size={14} weight={300} styles={{ textDecorationLine: "underline" }}>
                   {" Password dimenticata?"}
@@ -153,48 +274,8 @@ const Login = ({ navigation }) => {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
-      </ScrollView>
-    </View>
-  )
-}
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.light.bianco,
-  },
-  btn: {
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
-    width: '100%',
-    backgroundColor: Colors.light.newviola,
-    marginTop: 20
-  },
-  footerButtonContainer: {
-    marginBottom: 15,
-    marginTop: 35,
-  },
-  forgotPasswordButtonText: {
-    color: Colors.light.nero,
-  },
-  backButton: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  shadowBtn: {
-    shadowColor: Colors.light.nero,
-    shadowOpacity: 0.1,
-    shadowOffset: {
-      width: 0,
-      height: 10
-    },
-    shadowRadius: 10,
-  }
-});
+*/}
 
-export default Login;
 
 {/* <View>
     <Text style={[styles.text, { marginLeft: 20 }]}>Email</Text>
