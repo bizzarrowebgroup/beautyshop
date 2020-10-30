@@ -585,7 +585,8 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
               width: "100%",
               height: "100%",
               marginHorizontal: 20,
-              fontFamily: "WorkSans_600SemiBold",
+              //fontFamily: "WorkSans_600SemiBold",
+              fontFamily: "Gilroy_SemiBold",
               letterSpacing: 0.72
             }} />
           <Ionicons name="ios-search" color={Colors.light.nero} size={20} style={styles.iconSearch} />

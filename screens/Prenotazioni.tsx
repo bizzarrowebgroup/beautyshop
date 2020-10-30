@@ -432,13 +432,13 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   light: {
-    fontFamily: "Montserrat_300Light"
+    //fontFamily: "Montserrat_300Light"
   },
   text: {
-    fontFamily: "Montserrat_400Regular"
+    //fontFamily: "Montserrat_400Regular"
   },
   bold: {
-    fontFamily: "Montserrat_700Bold",
+    //fontFamily: "Montserrat_700Bold",
   },
   shadow: {
     shadowColor: "black",

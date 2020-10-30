@@ -463,7 +463,8 @@ export default function NotFoundScreen({
           textStyle: {
             color: "#969696",
             fontSize: 15,
-            fontFamily: 'WorkSans_700Bold',
+            //fontFamily: 'WorkSans_700Bold',
+            fontFamily: 'Gilroy_Bold',
           }
         };
       default:
@@ -473,7 +474,8 @@ export default function NotFoundScreen({
           textStyle: {
             color: Colors.light.nero,
             fontSize: 15,
-            fontFamily: 'WorkSans_700Bold',
+            //fontFamily: 'WorkSans_700Bold',
+            fontFamily: 'Gilroy_Bold',
           }
         }
     }
@@ -703,7 +705,12 @@ export default function NotFoundScreen({
           style={styles.searchBar}>
           <TextInput
             onChangeText={(t) => setSearchValue(t)}
-            style={{ fontSize: 15, paddingLeft: 10, fontFamily: searchValue ? "WorkSans_600SemiBold_Italic" : "WorkSans_600SemiBold" }}
+            style={{
+              fontSize: 15,
+              paddingLeft: 10,
+              //fontFamily: searchValue ? "WorkSans_600SemiBold_Italic" : "WorkSans_600SemiBold"
+              fontFamily: searchValue ? "Gilroy_SemiBoldItalic" : "Gilroy_SemiBold"
+            }}
             placeholderTextColor={"grey"}
             placeholder="Cosa vorresti fare?"
           />
@@ -801,7 +808,12 @@ export default function NotFoundScreen({
             onChangeText={(t) => setSalonValue(t)}
             placeholder="In quale salone?"
             placeholderTextColor={"grey"}
-            style={{ fontSize: 15, paddingLeft: 10, fontFamily: salonValue ? "WorkSans_600SemiBold_Italic" : "WorkSans_600SemiBold" }}
+            style={{
+              fontSize: 15,
+              paddingLeft: 10,
+              //fontFamily: salonValue ? "WorkSans_600SemiBold_Italic" : "WorkSans_600SemiBold"
+              fontFamily: salonValue ? "Gilroy_SemiBoldItalic" : "Gilroy_SemiBold"
+            }}
           />
           <Ionicons
             name="ios-search"
@@ -1023,7 +1035,8 @@ export default function NotFoundScreen({
                 enableDateChange={true}
                 restrictMonthNavigation={true}
                 textStyle={{
-                  fontFamily: 'WorkSans_400Regular',
+                  //fontFamily: 'WorkSans_400Regular',
+                  fontFamily: 'Gilroy_Regular',
                   color: 'black',
                 }}
                 customDayHeaderStyles={customDayHeaderStylesCallback}

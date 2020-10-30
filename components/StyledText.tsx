@@ -16,34 +16,66 @@ import fontSize from '../constants/fontSize';
  * @param fontFamily not needed string
  */
 const BaseText = ({ ...props }) => {
-  let fontFamily = "WorkSans_400Regular";
+  //let fontFamily = "WorkSans_400Regular";
+  //switch (props.weight) {
+  //  case 100:
+  //    fontFamily = props.italic ? "WorkSans_100Thin_Italic" : "WorkSans_100Thin"
+  //    break;
+  //  case 200:
+  //    fontFamily = props.italic ? "WorkSans_200ExtraLight_Italic" : "WorkSans_200ExtraLight"
+  //    break;
+  //  case 300:
+  //    fontFamily = props.italic ? "WorkSans_300Light_Italic" : "WorkSans_300Light"
+  //    break;
+  //  case 400:
+  //    fontFamily = props.italic ? "WorkSans_400Regular_Italic" : "WorkSans_400Regular"
+  //    break;
+  //  case 500:
+  //    fontFamily = props.italic ? "WorkSans_500Medium_Italic" : "WorkSans_500Medium"
+  //    break;
+  //  case 600:
+  //    fontFamily = props.italic ? "WorkSans_600SemiBold_Italic" : "WorkSans_600SemiBold"
+  //    break;
+  //  case 700:
+  //    fontFamily = props.italic ? "WorkSans_700Bold_Italic" : "WorkSans_700Bold"
+  //    break;
+  //  case 800:
+  //    fontFamily = props.italic ? "WorkSans_800ExtraBold_Italic" : "WorkSans_800ExtraBold"
+  //    break;
+  //  case 900:
+  //    fontFamily = props.italic ? "WorkSans_900Black_Italic" : "WorkSans_900Black"
+  //    break;
+  //}
+  //'Gilroy_Heavy'
+  //'Gilroy_HeavyItalic'
+  let fontFamily = "Gilroy_Regular";
   switch (props.weight) {
     case 100:
-      fontFamily = props.italic ? "WorkSans_100Thin_Italic" : "WorkSans_100Thin"
+      fontFamily = props.italic ? "Gilroy_ThinItalic" : "Gilroy_Thin"
       break;
     case 200:
-      fontFamily = props.italic ? "WorkSans_200ExtraLight_Italic" : "WorkSans_200ExtraLight"
+      fontFamily = props.italic ? "Gilroy_UltraLightItalic" : "Gilroy_UltraLight"
       break;
     case 300:
-      fontFamily = props.italic ? "WorkSans_300Light_Italic" : "WorkSans_300Light"
+      fontFamily = props.italic ? "Gilroy_LightItalic" : "Gilroy_Light"
       break;
     case 400:
-      fontFamily = props.italic ? "WorkSans_400Regular_Italic" : "WorkSans_400Regular"
+      fontFamily = props.italic ? "Gilroy_RegularItalic" : "Gilroy_Regular"
       break;
     case 500:
-      fontFamily = props.italic ? "WorkSans_500Medium_Italic" : "WorkSans_500Medium"
+      fontFamily = props.italic ? "Gilroy_MediumItalic" : "Gilroy_Medium"
       break;
     case 600:
-      fontFamily = props.italic ? "WorkSans_600SemiBold_Italic" : "WorkSans_600SemiBold"
+      fontFamily = props.italic ? "Gilroy_SemiBoldItalic" : "Gilroy_SemiBold"
       break;
     case 700:
-      fontFamily = props.italic ? "WorkSans_700Bold_Italic" : "WorkSans_700Bold"
+      fontFamily = props.italic ? "Gilroy_BoldItalic" : "Gilroy_Bold"
       break;
     case 800:
-      fontFamily = props.italic ? "WorkSans_800ExtraBold_Italic" : "WorkSans_800ExtraBold"
+      fontFamily = props.italic ? "Gilroy_ExtraBoldItalic" : "Gilroy_ExtraBold"
       break;
     case 900:
-      fontFamily = props.italic ? "WorkSans_900Black_Italic" : "WorkSans_900Black"
+      fontFamily = props.italic ? "Gilroy_BlackItalic" : "Gilroy_Black"
       break;
   }
   return (
