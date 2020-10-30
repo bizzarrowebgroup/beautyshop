@@ -110,10 +110,6 @@ const Login = ({ navigation }) => {
           />
         </Animated.View>
         <View style={styles.overlay}>
-          {/*<BaseText styles={styles.title}>
-            This is where you might put a button or some other text on top of
-            the video
-          </BaseText>*/}
           <View style={{ marginTop: 140, paddingHorizontal: 25 }}>
             <Image source={require('../assets/images/logoBS.png')} style={{
               width: 50,
@@ -130,24 +126,42 @@ const Login = ({ navigation }) => {
             <BaseText size={24} lineHeight={30} weight={700} letterSpacing={0.7} color={Colors.light.bianco}>{"Entra a far parte\ndel mondo del beauty"}</BaseText>
             <BaseText size={12} lineHeight={22} letterSpacing={0.77} color={Colors.light.grigio}>{"Prenota facilmente ovunque ti trovi"}</BaseText>
             <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.nero }]}>
-              <IconFooterSocial type="apple" width={24} height={24} color={"white"} style={{ alignSelf: "center", marginLeft: 10 }} />
-              <BaseText size={13} weight={400} color={Colors.light.bianco}>{"Accedi con Apple"} </BaseText>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: "#1878F3" }]}>
-              <IconFooterSocial type="facebook" width={24} height={24} color={Colors.light.bianco} style={{ alignSelf: "center", marginLeft: 17 }} />
-              <BaseText color={Colors.light.bianco} size={13} weight={400}>{"Accedi con Facebook"} </BaseText>
+              <View style={styles.btnInside}>
+                <IconFooterSocial type="apple" width={24} height={24} color={"white"} style={{ alignSelf: "center", marginRight: 20 }} />
+                <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.bianco}>{"Accedi con Apple"} </BaseText>
+              </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.bianco }]}>
-              <IconFooterSocial type="google" width={24} height={24} style={{ alignSelf: "center", marginLeft: 10 }} />
-              <BaseText size={13} weight={400} color={Colors.light.nero}>{"Accedi con Google"} </BaseText>
+              <View style={styles.btnInside}>
+                <IconFooterSocial type="google" width={24} height={24} style={{ alignSelf: "center", marginRight: 20 }} />
+                <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.nero}>{"Accedi con Google"} </BaseText>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleFacebookLogin()} style={[styles.btn, { backgroundColor: "#1878F3" }]}>
+              <View style={styles.btnInside}>
+                <IconFooterSocial type="facebook" width={24} height={24} color={Colors.light.bianco} style={{ alignSelf: "center", marginRight: 20 }} />
+                <BaseText color={Colors.light.bianco} size={13} weight={700} letterSpacing={0.77}>{"Accedi con Facebook"} </BaseText>
+              </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.arancioDes }]}>
-              <BaseText color={Colors.light.bianco} size={13} weight={400}>{"Registrati con email"}</BaseText>
+              <View style={styles.btnInside}>
+                <BaseText color={Colors.light.bianco} size={13} weight={700} letterSpacing={0.77}>{"Accedi con email"}</BaseText>
+              </View>
             </TouchableOpacity>
+            <View style={styles.footerButtonContainer}>
+              <TouchableOpacity onPress={() => navigation.navigate('Register')} style={{ flexDirection: "row" }}>
+                <BaseText color={Colors.light.bianco} size={14} weight={300}>
+                  {" Nuovo utente? "}
+                </BaseText>
+                <BaseText styles={{ textDecorationLine: "underline" }} color={Colors.light.bianco} size={14} weight={300}>
+                  {"Registrati ora"}
+                </BaseText>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </ScrollView>
-    </View>
+    </View >
   )
 }
 const styles = StyleSheet.create({
@@ -158,7 +172,6 @@ const styles = StyleSheet.create({
   background: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: Colors.light.bianco,
-    //flex: 1,
   },
   backgroundViewWrapper: {
     ...StyleSheet.absoluteFillObject
@@ -166,7 +179,6 @@ const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.4)',
-    //flex: 1
   },
   title: {
     color: 'white',
@@ -176,17 +188,18 @@ const styles = StyleSheet.create({
   },
   btn: {
     borderRadius: 20,
-    justifyContent: "space-around",
-    alignItems: "center",
-    alignContent: "center",
-    flexDirection: "row",
     height: 50,
-    width: '100%',
     marginTop: 20
   },
+  btnInside: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignContent: "center",
+    justifyContent: "center",
+  },
   footerButtonContainer: {
-    marginBottom: 15,
-    marginTop: 35,
+    marginTop: 15,
   },
   forgotPasswordButtonText: {
     color: Colors.light.nero,

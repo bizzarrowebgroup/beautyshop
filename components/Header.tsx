@@ -36,7 +36,7 @@ const Header = (props: HeaderProps) => {
         <View style={{ height: 190 }}>
           <Intro4 width="259" height="212" style={{ position: "absolute", top: 20, right: 0, bottom: 0 }} />
           <BaseText weight={700} styles={styles.titlo}>{props.title ? props.title : ""}</BaseText>
-          <Ionicons name="md-return-left" size={30} color="#181818" style={styles.icona} onPress={props.onPress} />
+          <Ionicons name="md-return-left" size={30} color={Colors.light.bianco} style={styles.icona} onPress={props.onPress} />
           <View style={{ width: 105, top: 0, left: 20 }}>
             <BaseText styles={styles.number}>{props.number ? props.number : "4.6"} / 5</BaseText>
             <View style={{ flexDirection: "row", marginTop: 5, justifyContent: "flex-start", alignItems: "center" }}>
