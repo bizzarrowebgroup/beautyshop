@@ -4,13 +4,13 @@ import { ImageStyle, StyleSheetProperties, ViewStyle } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
 interface Intro3 {
-    style?: ViewStyle | ImageStyle;
-    width?: string | number;
-    height?: string | number;
+  style?: any;
+  width?: string | number;
+  height?: string | number;
 };
 
 export default function Intro3({ style, width, height }: Intro3) {
-    const Intro3 = `
+  const Intro3 = `
     <svg width="316" height="311" viewBox="0 0 316 311" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <rect width="316" height="311" fill="url(#pattern0)"/>
     <defs>
@@ -21,5 +21,5 @@ export default function Intro3({ style, width, height }: Intro3) {
     </defs>
     </svg>
     `;
-    return <SvgXml style={style} xml={Intro3} width={width} height={height} />;
+  return <SvgXml style={style} xml={Intro3} width={width ? width : "100%"} height={height} />;
 }

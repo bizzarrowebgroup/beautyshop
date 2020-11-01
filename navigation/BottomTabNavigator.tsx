@@ -32,6 +32,7 @@ const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 //import Layout from '../constants/Layout';
 
 import { TabBar } from './TabBar';
+import Loader from '../components/Loader';
 //const TabBar = ({ state, descriptors, navigation, }) => {
 //  let width = Math.floor(Layout.window.width / state.routes.length);
 //  //console.log("---TabWidth", width)
@@ -133,28 +134,32 @@ import { TabBar } from './TabBar';
 
 export default function BottomTabNavigator() {
   //const colorScheme = useColorScheme();
-  const { user, setUser } = React.useContext(AuthUserContext);
-  const [isLoading, setIsLoading] = React.useState(true);
+  //const { user, setUser } = React.useContext(AuthUserContext);
+  //const [isLoading, setIsLoading] = React.useState(true);
 
-  React.useEffect(() => {
-    // onAuthStateChanged returns an unsubscriber
-    const unsubscribeAuth = auth.onAuthStateChanged(async authUser => {
-      try {
-        //console.log(authUser, "authUser")
-        await (authUser ? setUser(authUser) : setUser(null));
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    });
+  //React.useEffect(() => {
+  //  // onAuthStateChanged returns an unsubscriber
+  //  const unsubscribeAuth = auth.onAuthStateChanged(async authUser => {
+  //    try {
+  //      //console.log(authUser, "authUser")
+  //      await (authUser ? setUser(authUser) : setUser(null));
+  //      setIsLoading(false);
+  //    } catch (error) {
+  //      console.log(error);
+  //    }
+  //  });
 
-    // unsubscribe auth listener on unmount
-    return unsubscribeAuth;
-  }, []);
+  //  // unsubscribe auth listener on unmount
+  //  return unsubscribeAuth;
+  //}, []);
 
-  if (isLoading) {
-    return <Spinner />;
-  }
+  //if (isLoading) {
+  //  return (
+  //    <View style={{ flex: 1 }}>
+  //      <Loader size="large" />
+  //    </View>
+  //  );
+  //}
   return (
     <BottomTab.Navigator
       initialRouteName="Esplora"
@@ -202,14 +207,14 @@ export default function BottomTabNavigator() {
         //options={{
         //  tabBarIcon: (color, focused) => <TabBarIcon name="ios-calendar" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
         //}}
-      />*/}
+      />
       <BottomTab.Screen
         name="Profilo"
         component={user ? ProfiloNav : AuthNav}
-      //options={{
-      //  tabBarIcon: (color, focused) => <TabBarIcon name="ios-people" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
-      //}}
-      />
+        //options={{
+        //  tabBarIcon: (color, focused) => <TabBarIcon name="ios-people" color={color} size={focused ? 30 : 25} style={{ marginBottom: 0 }} />,
+        //}}
+      />*/}
     </BottomTab.Navigator>
   );
 }
@@ -343,26 +348,26 @@ function ProfiloNav() {
   );
 }
 
-const AuthStack = createStackNavigator();
+//const AuthStack = createStackNavigator();
 
-function AuthNav() {
-  return (
-    <AuthStack.Navigator initialRouteName="Login">
-      <AuthStack.Screen
-        name="Login"
-        component={Login}
-        options={{ headerShown: false }}
-      />
-      <AuthStack.Screen
-        name="Register"
-        component={Register}
-        options={{ headerShown: false }}
-      />
-      <AuthStack.Screen
-        name="ForgotPassword"
-        component={ForgotPasswordScreen}
-        options={{ headerShown: false }}
-      />
-    </AuthStack.Navigator>
-  );
-}
+//function AuthNav() {
+//  return (
+//    <AuthStack.Navigator initialRouteName="Login">
+//      <AuthStack.Screen
+//        name="Login"
+//        component={Login}
+//        options={{ headerShown: false }}
+//      />
+//      <AuthStack.Screen
+//        name="Register"
+//        component={Register}
+//        options={{ headerShown: false }}
+//      />
+//      <AuthStack.Screen
+//        name="ForgotPassword"
+//        component={ForgotPasswordScreen}
+//        options={{ headerShown: false }}
+//      />
+//    </AuthStack.Navigator>
+//  );
+//}

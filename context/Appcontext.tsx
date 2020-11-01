@@ -15,7 +15,8 @@ interface servizi {
     id: string,
     label: string,
     enabled: boolean,
-    order: number
+    order: number,
+    icon: string
 }
 
 interface commercianti {

@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useRef } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+//"backgroundColor": "#FB6E3B",
 
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
@@ -14,6 +15,7 @@ import NetInfo from "@react-native-community/netinfo";
 import Toast from "react-native-toast-message"
 import { db } from './network/Firebase';
 import { AppContext } from './context/Appcontext';
+import { View } from "react-native";
 
 // Sentry.init({
 //   dsn: "https://6f3d61d6211445b4a5af61e57aaecbaa@o421980.ingest.sentry.io/5342571",
@@ -37,7 +39,7 @@ export default function App() {
   const [servizi, setServizi] = React.useState([]);
   const [commercianti, setCommercianti] = React.useState([]);
   const [foto, setFoto] = React.useState([]);
-  const [fetching, setFetching] = React.useState(true);
+  const [fetching, setFetching] = React.useState(false);
 
   const errorToast = useRef(null);
 
@@ -152,14 +154,14 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <AppContext.Provider value={context}>
-        <StatusBar
+        {/*<StatusBar
           //animated
           style="dark"
           translucent={true}
           hideTransitionAnimation="fade"
           networkActivityIndicatorVisible={false}
           backgroundColor={Colors.light.arancio}
-        />
+        />*/}
         <Navigation colorScheme={colorScheme} />
         <Toast
           ref={errorToast}

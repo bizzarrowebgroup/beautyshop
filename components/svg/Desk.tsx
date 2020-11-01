@@ -3,7 +3,7 @@ import { ImageStyle, StyleSheetProperties, ViewStyle } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
 interface DeskProps {
-  style?: ViewStyle | ImageStyle;
+  style?: any;
   width?: string | number;
   height?: string | number;
   color?: string;
@@ -20,5 +20,5 @@ export default function Desk({ style, width, height, color }: DeskProps) {
     </defs>
     </svg>
     `;
-  return <SvgXml style={style} xml={desk} width={width} height={height} fill={color} />;
+  return <SvgXml style={style} xml={desk} width={width ? width : "100%"} height={height} fill={color} />;
 }

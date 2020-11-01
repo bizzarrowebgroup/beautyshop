@@ -1,15 +1,24 @@
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import * as React from 'react';
 import { ColorSchemeName, View } from 'react-native';
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 
-import { AuthUserProvider } from './AuthUserProvider';
-
-import NotFoundScreen from '../screens/NotFoundScreen';
 import { RootStackParamList } from '../types';
+import { AuthUserProvider } from './AuthUserProvider';
 import BottomTabNavigator from './BottomTabNavigator';
 import LinkingConfiguration from './LinkingConfiguration';
+
 import Colors from '../constants/Colors';
+import Loader from '../components/Loader';
+import { AuthUserContext } from './AuthUserProvider';
+import { auth } from '../network/Firebase';
+
+import NotFoundScreen from '../screens/NotFoundScreen';
+import Login from '../screens/Login';
+import Register from '../screens/Register';
+import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
+import IntroScreen from '../screens/IntroScreen';
+import NewHomePage from '../screens/NewHomePage';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -23,24 +32,103 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
   );
 }
 
-
-// A root stack navigator is often used for displaying modals on top of all other content
-// Read more here: https://reactnavigation.org/docs/modal
-const Stack = createStackNavigator<RootStackParamList>();
+//const Stack = createStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator();
 
 function RootNavigator() {
+  const { user, setUser } = React.useContext(AuthUserContext);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    // onAuthStateChanged returns an unsubscriber
+    const unsubscribeAuth = auth.onAuthStateChanged(async authUser => {
+      try {
+        //console.log(authUser, "authUser")
+        await (authUser ? setUser(authUser) : setUser(null));
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+
+    // unsubscribe auth listener on unmount
+    return unsubscribeAuth;
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors.light.ARANCIO, }}>
+        <Loader size="large" />
+      </View>
+    );
+  }
+
   return (
-    <View style={{ backgroundColor: Colors.light.arancioDes, flex: 1 }}>
-      <Stack.Navigator screenOptions={{ headerShown: false }} mode="modal">
-        <Stack.Screen name="Root" component={BottomTabNavigator} />
-        <Stack.Screen name="NotFound" component={NotFoundScreen} options={{
-          headerShown: false,
-          gestureEnabled: true,
-          cardOverlayEnabled: true,
-          cardStyle: { backgroundColor: 'black' },
-          ...TransitionPresets.ModalPresentationIOS,
-        }} />
+    <View style={{ flex: 1, backgroundColor: Colors.light.ARANCIO, }}>
+      <Stack.Navigator
+        initialRouteName="Homepage"
+        mode="modal"
+      >
+        {/*<Stack.Screen name="Root" component={BottomTabNavigator} />*/}
+        <Stack.Screen name="IntroScreen" component={IntroScreen}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen name="Homepage" component={NewHomePage}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+            cardOverlayEnabled: false,
+          }}
+        />
+        <Stack.Screen name="Auth" component={AuthNav}
+          options={{
+            ...TransitionPresets.ModalPresentationIOS,
+            gestureEnabled: true,
+            headerShown: false,
+            cardOverlayEnabled: false,
+          }}
+        />
+        <Stack.Screen name="NotFound" component={NotFoundScreen}
+          options={{
+            ...TransitionPresets.ModalPresentationIOS,
+            headerShown: false,
+            gestureEnabled: true,
+          }}
+        />
       </Stack.Navigator>
     </View>
+  );
+}
+
+const AuthStack = createStackNavigator();
+
+function AuthNav() {
+  return (
+    <AuthStack.Navigator initialRouteName="Login">
+      <AuthStack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <AuthStack.Screen
+        name="Register"
+        component={Register}
+        options={{
+          headerShown: false
+        }}
+      />
+      <AuthStack.Screen
+        name="ForgotPassword"
+        component={ForgotPasswordScreen}
+        options={{
+          headerShown: false
+        }}
+      />
+    </AuthStack.Navigator>
   );
 }

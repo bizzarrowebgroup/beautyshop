@@ -85,82 +85,82 @@ const Login = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="white" barStyle="dark-content" />
-      <ScrollView contentContainerStyle={styles.background}>
-        <Animated.View
-          style={[
-            styles.backgroundViewWrapper,
-            { opacity: VideOpacity }
-          ]}
-        >
-          <Video
-            isLooping
-            isMuted
-            positionMillis={500}
-            onLoad={() => {
-              Animated.timing(VideOpacity, {
-                toValue: 1,
-                useNativeDriver: true,
-              }).start();
-            }}
-            resizeMode="cover"
-            shouldPlay
-            //source={{ uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
-            source={{ uri: 'https://ingass.space/images/bohdd.mp4' }}
-            style={{ flex: 1 }}
-          />
-        </Animated.View>
-        <View style={styles.overlay}>
-          <View style={{ marginTop: 140, paddingHorizontal: 25 }}>
-            <Image source={require('../assets/images/logoBS.png')} style={{
-              width: 50,
-              height: 50,
-              tintColor: Colors.light.bianco,
-              alignSelf: "center",
-            }} />
-          </View>
+      {/*<ScrollView contentContainerStyle={styles.background}>*/}
+      <Animated.View
+        style={[
+          styles.backgroundViewWrapper,
+          { opacity: VideOpacity }
+        ]}
+      >
+        <Video
+          isLooping
+          isMuted
+          positionMillis={500}
+          onLoad={() => {
+            Animated.timing(VideOpacity, {
+              toValue: 1,
+              useNativeDriver: true,
+            }).start();
+          }}
+          resizeMode="cover"
+          shouldPlay
+          //source={{ uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
+          source={{ uri: 'https://ingass.space/images/bohdd.mp4' }}
+          style={{ flex: 1 }}
+        />
+      </Animated.View>
+      <View style={styles.overlay}>
+        <View style={{ marginTop: 140, paddingHorizontal: 25 }}>
+          <Image source={require('../assets/images/logoBS.png')} style={{
+            width: 50,
+            height: 50,
+            tintColor: Colors.light.bianco,
+            alignSelf: "center",
+          }} />
         </View>
-        <View style={{ position: "absolute", bottom: 140, width: "100%" }}>
-          <View style={{
-            paddingHorizontal: 20
-          }}>
-            <BaseText size={24} lineHeight={30} weight={700} letterSpacing={0.7} color={Colors.light.bianco}>{"Entra a far parte\ndel mondo del beauty"}</BaseText>
-            <BaseText size={12} lineHeight={22} letterSpacing={0.77} color={Colors.light.grigio}>{"Prenota facilmente ovunque ti trovi"}</BaseText>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.nero }]}>
-              <View style={styles.btnInside}>
-                <IconFooterSocial type="apple" width={24} height={24} color={"white"} style={{ alignSelf: "center", marginRight: 20 }} />
-                <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.bianco}>{"Accedi con Apple"} </BaseText>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.bianco }]}>
-              <View style={styles.btnInside}>
-                <IconFooterSocial type="google" width={24} height={24} style={{ alignSelf: "center", marginRight: 20 }} />
-                <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.nero}>{"Accedi con Google"} </BaseText>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleFacebookLogin()} style={[styles.btn, { backgroundColor: "#1878F3" }]}>
-              <View style={styles.btnInside}>
-                <IconFooterSocial type="facebook" width={24} height={24} color={Colors.light.bianco} style={{ alignSelf: "center", marginRight: 20 }} />
-                <BaseText color={Colors.light.bianco} size={13} weight={700} letterSpacing={0.77}>{"Accedi con Facebook"} </BaseText>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.arancioDes }]}>
-              <View style={styles.btnInside}>
-                <BaseText color={Colors.light.bianco} size={13} weight={700} letterSpacing={0.77}>{"Accedi con email"}</BaseText>
-              </View>
-            </TouchableOpacity>
-            <View style={styles.footerButtonContainer}>
-              <TouchableOpacity onPress={() => navigation.navigate('Register')} style={{ flexDirection: "row" }}>
-                <BaseText color={Colors.light.bianco} size={14} weight={300}>
-                  {" Nuovo utente? "}
-                </BaseText>
-                <BaseText styles={{ textDecorationLine: "underline" }} color={Colors.light.bianco} size={14} weight={300}>
-                  {"Registrati ora"}
-                </BaseText>
-              </TouchableOpacity>
+      </View>
+      <View style={{ position: "absolute", bottom: 140, width: "100%" }}>
+        <View style={{
+          paddingHorizontal: 20
+        }}>
+          <BaseText size={24} lineHeight={30} weight={700} letterSpacing={0.7} color={Colors.light.bianco}>{"Entra a far parte\ndel mondo del beauty"}</BaseText>
+          <BaseText size={12} lineHeight={22} letterSpacing={0.77} color={Colors.light.grigio}>{"Prenota facilmente ovunque ti trovi"}</BaseText>
+          <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.nero }]}>
+            <View style={styles.btnInside}>
+              <IconFooterSocial type="apple" width={24} height={24} color={"white"} style={{ alignSelf: "center", marginRight: 20 }} />
+              <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.bianco}>{"Accedi con Apple"} </BaseText>
             </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.bianco }]}>
+            <View style={styles.btnInside}>
+              <IconFooterSocial type="google" width={24} height={24} style={{ alignSelf: "center", marginRight: 20 }} />
+              <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.nero}>{"Accedi con Google"} </BaseText>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleFacebookLogin()} style={[styles.btn, { backgroundColor: "#1878F3" }]}>
+            <View style={styles.btnInside}>
+              <IconFooterSocial type="facebook" width={24} height={24} color={Colors.light.bianco} style={{ alignSelf: "center", marginRight: 20 }} />
+              <BaseText color={Colors.light.bianco} size={13} weight={700} letterSpacing={0.77}>{"Accedi con Facebook"} </BaseText>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.ARANCIO }]}>
+            <View style={styles.btnInside}>
+              <BaseText color={Colors.light.bianco} size={13} weight={700} letterSpacing={0.77}>{"Accedi con email"}</BaseText>
+            </View>
+          </TouchableOpacity>
+          <View style={styles.footerButtonContainer}>
+            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={{ flexDirection: "row" }}>
+              <BaseText color={Colors.light.bianco} size={14} weight={300}>
+                {" Nuovo utente? "}
+              </BaseText>
+              <BaseText styles={{ textDecorationLine: "underline" }} color={Colors.light.bianco} size={14} weight={300}>
+                {"Registrati ora"}
+              </BaseText>
+            </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
+      </View>
+      {/*</ScrollView>*/}
     </View >
   )
 }

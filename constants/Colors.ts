@@ -24,6 +24,9 @@ export default {
     //newviola: "#F8F32B", //giallognolo
     newviola: "#2B2D42", //blue scuro
     nero2: "#DEFA36",
+    ARANCIO: '#FB6E3B',
+    GRIGIO: '#EEEEEE',
+    FB: "#1878F3",
   },
   dark: {
     text: '#fff',
