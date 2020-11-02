@@ -610,13 +610,13 @@ function Shop({ navigation, route }) {
         }]}>
           <TouchableOpacity onPress={() => { navigation.goBack() }} style={[styles.iconShadow, { paddingHorizontal: 0, }]}>
             <View style={styles.backButton}>
-              <Ionicons name="ios-arrow-back" size={30} color={Colors.light.nero} />
+              <Ionicons name="ios-arrow-back" size={20} color={Colors.light.nero} />
             </View>
           </TouchableOpacity>
           <BaseText weight={700} size={10} color={"white"}>{data.title ? data.title : ""}</BaseText>
           <TouchableOpacity onPress={() => { console.warn("QUI CONDIVIDERAI IL NEGOZIO") }} style={[styles.iconShadow, { paddingHorizontal: 0 }]}>
             <View style={styles.backButton}>
-              <Ionicons name="ios-more" size={30} color={Colors.light.nero} style={{ transform: [{ rotate: "90deg" }] }} />
+              <Ionicons name="ios-more" size={20} color={Colors.light.nero} style={{ transform: [{ rotate: "90deg" }] }} />
             </View>
           </TouchableOpacity>
         </View>
@@ -678,11 +678,11 @@ const styles = StyleSheet.create({
     right: 0,
   },
   backButton: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     borderRadius: 40,
     backgroundColor: Colors.light.bianco,
-    shadowColor: Colors.light.nero,
+    shadowColor: Colors.light.bianco,
     justifyContent: 'center',
     alignItems: 'center',
     alignContent: 'center',
