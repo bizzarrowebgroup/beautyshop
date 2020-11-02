@@ -141,6 +141,8 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
     await getUserId();
     let parrucchieri = [];
     if (commercianti && foto) {
+      //console.log("---commercianti---",commercianti)
+      //console.log("---foto---",foto)
       const comFin = commercianti.map(com => ({
         ...com,
         mainPhoto: foto.find(fot => fot.commercianti === com.id && fot.isMain == true),
@@ -153,7 +155,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
           })
 
       }))
-      // console.log(comFin, "comFin");
+      //console.log(comFin, "comFin");
       comFin.map((item) => {
         if (item.tipo == 0) {
           parrucchieri.push(item);
@@ -458,8 +460,8 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
           <PinIcon type="normal" size={25} color={Colors.light.nero} />
         </TouchableOpacity>
       </View>
-      <View style={{ backgroundColor: "transparent", marginTop: 30, paddingBottom: 10, }}>
-        <BaseText weight={700} size={25} styles={{ paddingLeft: 25 }}>{"Le nostre Categorie"}</BaseText>
+      <View style={{ backgroundColor: "transparent", marginTop: 10, paddingBottom: 10, }}>
+        {/*<BaseText weight={700} size={25} styles={{ paddingLeft: 25 }}>{"Le nostre Categorie"}</BaseText>*/}
         <View style={{ marginTop: 15 }} />
         <ScrollView
           contentContainerStyle={{ paddingLeft: 10 }}

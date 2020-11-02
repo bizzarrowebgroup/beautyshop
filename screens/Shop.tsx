@@ -13,7 +13,7 @@ import StarsReview from '../components/StarsReview';
 import {
   SafeAreaView,
   StyleSheet,
-  Animated,
+  //Animated,
   ScrollView,
   Dimensions,
   SectionList,
@@ -22,7 +22,11 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity
 } from 'react-native';
-
+import Animated, {
+  interpolate,
+  concat,
+  Extrapolate,
+} from 'react-native-reanimated';
 import moment from 'moment';
 import Loader from '../components/Loader';
 import { Ionicons } from '@expo/vector-icons';
@@ -31,9 +35,10 @@ import { db } from '../network/Firebase';
 
 import BaseText from '../components/StyledText';
 import Colors from '../constants/Colors';
+import { StatusBar } from 'expo-status-bar';
 
 const HEADER_MAX_HEIGHT = 240;
-const HEADER_MIN_HEIGHT = 84;
+const HEADER_MIN_HEIGHT = 150;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 function Shop({ navigation, route }) {
@@ -47,12 +52,17 @@ function Shop({ navigation, route }) {
 
   const imageOpacity = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
-    outputRange: [1, 1, 0],
+    outputRange: [.76, .3, 0],
     extrapolate: 'clamp',
   });
   const imageTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE],
     outputRange: [0, 100],
+    extrapolate: 'clamp',
+  });
+  const dockTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [0, 55],
     extrapolate: 'clamp',
   });
 
@@ -61,9 +71,22 @@ function Shop({ navigation, route }) {
     outputRange: [1, 1, 0.9],
     extrapolate: 'clamp',
   });
+
+  //const titleSize = scrollY.interpolate({
+  //  inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+  //  outputRange: [2, 7, 15],
+  //  extrapolate: 'clamp',
+  //});
+
+  const titlePadding = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+    outputRange: [20, 10, -10],
+    extrapolate: 'clamp',
+  });
+
   const titleTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
-    outputRange: [0, 0, -50],
+    outputRange: [0, 0, -45],
     extrapolate: 'clamp',
   });
   const [indexX, setIndex] = React.useState(0);
@@ -409,70 +432,28 @@ function Shop({ navigation, route }) {
   };
   return (
     <SafeAreaView style={styles.saveArea}>
+      <StatusBar style="light"></StatusBar>
+
       <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingTop: HEADER_MAX_HEIGHT - 32,
-          zIndex: -100
+          paddingTop: HEADER_MAX_HEIGHT - 50,
+          paddingBottom: HEADER_MAX_HEIGHT - 70,
+          zIndex: -100,
+        }}
+        style={{
+          marginTop: dockTranslateY
+          //transform: [{
+          //  translateY: dockTranslateY
+          //}]
         }}
         scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true },
-        )}>
-        <View style={{
-          flex: 1,
-          height: 100,
-          backgroundColor: "white",
-          borderTopRightRadius: 50,
-          borderTopLeftRadius: 50,
-          width: "100%",
-          //position: "absolute",
-          top: -80,
-          left: 0,
-          right: 0,
-          //marginTop: 50,
-          //top: -160,
-          //zIndex: +20
-        }} />
-        <View style={styles.card}>
-          <BaseText size={12}>{data.desc}</BaseText>
-        </View>
-        <View style={styles.card}>
-          <BaseText size={12}>{data.desc}</BaseText>
-        </View>
-        <View style={styles.card}>
-          <BaseText size={12}>{data.desc}</BaseText>
-        </View>
-        <View style={styles.card}>
-          <BaseText size={12}>{data.desc}</BaseText>
-        </View>
-        <View style={styles.card}>
-          <BaseText size={12}>{data.desc}</BaseText>
-        </View>
-        <View style={styles.card}>
-          <BaseText size={12}>{data.desc}</BaseText>
-        </View>
-        <View style={styles.card}>
-          <BaseText size={12}>{data.desc}</BaseText>
-        </View>
-        <View style={styles.card}>
-          <BaseText size={12}>{data.desc}</BaseText>
-        </View>
-        <View style={styles.card}>
-          <BaseText size={12}>{data.desc}</BaseText>
-        </View>
-        <View style={styles.card}>
-          <BaseText size={12}>{data.desc}</BaseText>
-        </View>
-        <View style={styles.card}>
-          <BaseText size={12}>{data.desc}</BaseText>
-        </View>
-        <View style={styles.card}>
-          <BaseText size={12}>{data.desc}</BaseText>
-        </View>
-        <View style={styles.card}>
-          <BaseText size={12}>{data.desc}</BaseText>
-        </View>
+        onScroll={
+          Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true },
+          )
+        }>
         <View style={styles.card}>
           <BaseText size={12}>{data.desc}</BaseText>
         </View>
@@ -485,112 +466,18 @@ function Shop({ navigation, route }) {
         <View style={styles.card}>
           <BaseText size={12}>{data.via.toUpperCase()}</BaseText>
         </View>
-        {/**
-           * orario
-           */}
-        {!noOrari && (<View style={{ marginHorizontal: 20, marginVertical: 20 }}>
-          <TouchableWithoutFeedback onPress={() => setBool(!bool)} >
-            <Animated.View style={{
-              width: width - 40,
-              height: heightX,
-              borderRadius: 5,
-              backgroundColor: Colors.light.bianco,
-              alignSelf: "center",
-              justifyContent: bool ? "center" : "flex-start",
-              alignItems: "center",
-              flexDirection: "row"
-            }}>
-              <View style={{
-                justifyContent: "space-between",
-                alignContent: "space-between",
-                alignItems: "flex-end"
-              }}>
-                {day === 1 && !bool && (<BaseText weight={day === 1 ? 700 : 400} size={9} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
-                {bool && (<BaseText weight={day === 1 ? 700 : 400} size={9} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
-                {day === 2 && !bool && (<BaseText weight={day === 2 ? 700 : 400} size={9} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
-                {bool && (<BaseText weight={day === 2 ? 700 : 400} size={9} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
-                {day === 3 && !bool && (<BaseText weight={day === 3 ? 700 : 400} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
-                {bool && (<BaseText weight={day === 3 ? 700 : 400} size={9} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
-                {day === 4 && !bool && (<BaseText weight={day === 4 ? 700 : 400} size={9} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
-                {bool && (<BaseText weight={day === 4 ? 700 : 400} size={9} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
-              </View>
-              {bool && (<View style={{ height: "80%", width: 1, backgroundColor: "#181818", marginHorizontal: 20 }} />)}
-              <View style={{
-                alignItems: "flex-end",
-                marginTop: !bool ? 0 : 20 //0
-              }}>
-                {day === 5 && !bool && (<BaseText weight={day === 5 ? 700 : 400} size={9} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
-                {day === 6 && !bool && (<BaseText weight={day === 6 ? 700 : 400} size={9} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
-                {day === 0 && !bool && (<BaseText weight={day === 0 ? 700 : 400} size={9} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
-                {bool && (<BaseText weight={day === 5 ? 700 : 400} size={9} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
-                {bool && (<BaseText weight={day === 6 ? 700 : 400} size={9} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
-                {bool && (<BaseText weight={day === 0 ? 700 : 400} size={9} styles={{
-                  marginLeft: !bool ? 20 : 0,
-                  //fontSize: 13,
-                  color: "#181818"
-                }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
-              </View>
-              <Ionicons name="ios-arrow-down" size={24} color="#181818" style={{
-                position: "absolute",
-                right: 20,
-                top: 10,
-                transform: [{ rotate: bool ? '180deg' : '0deg' }]
-              }} />
-            </Animated.View>
-          </TouchableWithoutFeedback>
-        </View>)}
+        {!noOrari && (
+          <View style={styles.card}>
+            <BaseText weight={day === 1 ? 700 : 400} size={12}>{"LUN " + (lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end)}</BaseText>
+            <BaseText weight={day === 2 ? 700 : 400} size={12}>{"MAR " + (martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end)}</BaseText>
+            <BaseText weight={day === 3 ? 700 : 400} size={12}>{"MER " + (mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end)}</BaseText>
+            <BaseText weight={day === 4 ? 700 : 400} size={12}>{"GIO " + (giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end)}</BaseText>
+            <BaseText weight={day === 5 ? 700 : 400} size={12}>{"VEN " + (venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end)}</BaseText>
+            <BaseText weight={day === 6 ? 700 : 400} size={12}>{"SAB " + (sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end)}</BaseText>
+            <BaseText weight={day === 7 ? 700 : 400} size={12}>{"DOM " + (domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end)}</BaseText>
+          </View>
+        )}
+
         {/**
          * Valutazioni e recensioni
          */}
@@ -663,7 +550,7 @@ function Shop({ navigation, route }) {
       </Animated.ScrollView>
       <Animated.View
         style={[styles.header, {
-          zIndex: 100,
+          zIndex: -100,
           transform: [{
             translateY: headerTranslateY
           }]
@@ -681,49 +568,59 @@ function Shop({ navigation, route }) {
           ]}
           source={require('../assets/images/salon.jpeg')}
         />
-
+        <Animated.View
+          style={[
+            {
+              height: HEADER_MAX_HEIGHT,
+              backgroundColor: "white",
+              borderTopRightRadius: 50,
+              borderTopLeftRadius: 50,
+              width: "100%",
+              top: HEADER_MAX_HEIGHT - 50,
+              left: 0,
+              right: 0,
+              zIndex: 100,
+              opacity: 1,
+            }
+          ]}
+        />
       </Animated.View>
       <Animated.View
         style={[
           styles.topBar,
           {
-            zIndex: 120,
+            zIndex: 200,
+            margin: titlePadding,
             transform: [
               {
                 scale: titleScale
               },
               {
                 translateY: titleTranslateY
-              }
+              },
             ],
           },
         ]}>
         <View style={[{
-          //position: "absolute",
-          //top: -40,
-          //left: 0,
-          //right: 0,
-          flex: 1,
           width: "100%",
           justifyContent: "space-between",
           alignContent: "center",
           alignItems: "center",
           flexDirection: "row"
         }]}>
-          <TouchableOpacity onPress={() => { navigation.goBack() }} style={[styles.iconShadow, { paddingHorizontal: 20, paddingVertical: 60 }]}>
+          <TouchableOpacity onPress={() => { navigation.goBack() }} style={[styles.iconShadow, { paddingHorizontal: 0, }]}>
             <View style={styles.backButton}>
               <Ionicons name="ios-arrow-back" size={30} color={Colors.light.nero} />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { console.warn("QUI CONDIVIDERAI IL NEGOZIO") }} style={[styles.iconShadow, { paddingHorizontal: 20, paddingVertical: 60 }]}>
+          <BaseText weight={700} size={10} color={"white"}>{data.title ? data.title : ""}</BaseText>
+          <TouchableOpacity onPress={() => { console.warn("QUI CONDIVIDERAI IL NEGOZIO") }} style={[styles.iconShadow, { paddingHorizontal: 0 }]}>
             <View style={styles.backButton}>
               <Ionicons name="ios-more" size={30} color={Colors.light.nero} style={{ transform: [{ rotate: "90deg" }] }} />
             </View>
           </TouchableOpacity>
         </View>
-        {/*<BaseText>JONA TRISTE 🤕🤕</BaseText>*/}
       </Animated.View>
-
     </SafeAreaView>
   );
 }
@@ -736,17 +633,18 @@ const styles = StyleSheet.create({
   card: {
     //flexDirection: 'row',
     //alignItems: 'center',
-    shadowColor: '#402583',
     backgroundColor: '#ffffff',
+    shadowColor: '#402583',
     shadowOffset: {
       width: 0,
-      height: 0,
+      height: 5,
     },
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 1,
+    //backgroundColor: Colors.light.bianco,
     borderRadius: 10,
-    marginHorizontal: 12,
+    marginHorizontal: 40,
     marginTop: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -771,7 +669,7 @@ const styles = StyleSheet.create({
   },
   topBar: {
     marginTop: 100,
-    height: 50,
+    height: 20,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
@@ -780,8 +678,8 @@ const styles = StyleSheet.create({
     right: 0,
   },
   backButton: {
-    width: 70,
-    height: 70,
+    width: 50,
+    height: 50,
     borderRadius: 40,
     backgroundColor: Colors.light.bianco,
     shadowColor: Colors.light.nero,

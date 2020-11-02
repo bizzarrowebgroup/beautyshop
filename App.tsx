@@ -39,7 +39,7 @@ export default function App() {
   const [servizi, setServizi] = React.useState([]);
   const [commercianti, setCommercianti] = React.useState([]);
   const [foto, setFoto] = React.useState([]);
-  const [fetching, setFetching] = React.useState(false);
+  const [fetching, setFetching] = React.useState(true);
 
   const errorToast = useRef(null);
 
@@ -108,7 +108,7 @@ export default function App() {
   }
 
   React.useEffect(() => {
-    startDb()
+    startDb();
   }, [])
   // const [lang, setLang] = React.useState("it");
   // Listen for authentication state to change.
