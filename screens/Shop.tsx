@@ -1,95 +1,71 @@
-import * as React from 'react';
 /**
  * remove this log when all the ScrollView is moved to a renderHeaderComponent of the SectionList !
  */
+import React, { useRef } from 'react';
 import { YellowBox } from "react-native";
 YellowBox.ignoreWarnings([
   'VirtualizedLists should never be nested'
 ]);
 
+const { width } = Dimensions.get('window');
+import StarsReview from '../components/StarsReview';
+
 import {
-  //Animated,
+  SafeAreaView,
+  StyleSheet,
+  Animated,
   ScrollView,
   Dimensions,
   SectionList,
   View,
-  StyleSheet,
   Image,
   TouchableWithoutFeedback,
   TouchableOpacity
 } from 'react-native';
-import Header from '../components/Header';
-import { RootStackParamList } from '../types';
-import { StackScreenProps } from '@react-navigation/stack';
-import { Ionicons } from '@expo/vector-icons';
-import Colors from '../constants/Colors';
-import { db } from '../network/Firebase';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-
-const { width } = Dimensions.get('window');
 
 import moment from 'moment';
-
-//import Spinner from '../components/Spinner';
 import Loader from '../components/Loader';
+import { Ionicons } from '@expo/vector-icons';
+import { db } from '../network/Firebase';
+//import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+
 import BaseText from '../components/StyledText';
-import StarsReview from '../components/StarsReview';
+import Colors from '../constants/Colors';
 
-import { useValue } from 'react-native-redash';
-import { useHeaderHeight } from '@react-navigation/stack';
-import Animated, {
-  interpolate,
-  concat,
-  Extrapolate,
-} from 'react-native-reanimated';
+const HEADER_MAX_HEIGHT = 240;
+const HEADER_MIN_HEIGHT = 84;
+const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
-//import { AppContext } from '../context/Appcontext';
-import BottomSheet, { useBottomSheet } from '@gorhom/bottom-sheet';
-import Handle from '../components/handle';
-import BaseButton from '../components/BaseButton';
-import { User } from '../models/User';
+function Shop({ navigation, route }) {
+  const scrollY = useRef(new Animated.Value(0)).current;
 
-const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'>) => {
-  //  const {
-  //    //servizi,
-  //    //commercianti,
-  //    //foto
-  //  } = React.useContext(AppContext);
+  const headerTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [0, -HEADER_SCROLL_DISTANCE],
+    extrapolate: 'clamp',
+  });
 
-  const bottomSheetRef = React.useRef<BottomSheet>(null);
-  const headerHeight = useHeaderHeight();
+  const imageOpacity = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+    outputRange: [1, 1, 0],
+    extrapolate: 'clamp',
+  });
+  const imageTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [0, 100],
+    extrapolate: 'clamp',
+  });
 
-  // variables
-  const snapPoints = React.useMemo(() => [0, 220, 320], []);
-  const position = useValue<number>(0);
-
-  // styles
-  const shadowOverlayStyle = React.useMemo(
-    () => ({
-      ...styles.shadowOverlay,
-      opacity: interpolate(position, {
-        inputRange: [0, 220, 300],
-        outputRange: [0, 0.4, 1],
-        extrapolate: Extrapolate.CLAMP,
-      }),
-    }),
-    []
-  );
-
-  // callbacks
-  const handleSheetChanges = React.useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
-  }, []);
-
-  const handleSnapPress = React.useCallback(index => {
-    bottomSheetRef.current.snapTo(index);
-    console.log(index, "index--")
-  }, []);
-
-  //const handleClosePress = React.useCallback(() => {
-  //  bottomSheetRef.current?.close();
-  //}, []);
-
+  const titleScale = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+    outputRange: [1, 1, 0.9],
+    extrapolate: 'clamp',
+  });
+  const titleTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+    outputRange: [0, 0, -50],
+    extrapolate: 'clamp',
+  });
   const [indexX, setIndex] = React.useState(0);
   const [data, setData] = React.useState(undefined);
 
@@ -313,12 +289,12 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
   }, [route.params?.id]);
 
 
-  //if (data === undefined) {
-  //  return (
-  //    //<Spinner />
-  //    <Loader color={Colors.light.bianco} size={"large"} animating={true} />
-  //  )
-  //}
+  if (loading) {
+    return (
+      //<Spinner />
+      <Loader color={Colors.light.bianco} size={"large"} animating={true} />
+    )
+  }
 
   const serviziHeader = (title) => {
     return (
@@ -343,7 +319,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
     const chosenService = () => {
       if (indexChosenService == id) {
         setChosenService(undefined);
-        handleSnapPress(0);
+        //handleSnapPress(0);
         //bottomSheetRef.current.snapTo(0);
       } else {
         setChosenService(id);
@@ -351,7 +327,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
         setCostChosenService(cost);
         setDescChosenService(desc);
         setTitleChosenService(titolo)
-        handleSnapPress(1);
+        //handleSnapPress(1);
         //bottomSheetRef.current.snapTo(1.5);
       }
     }
@@ -364,7 +340,7 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
               borderTopLeftRadius: 5,
               borderTopRightRadius: 5,
               borderRadius: id != indexX ? 5 : 0,
-              backgroundColor: Colors.light.bianco, // grigio
+              backgroundColor: Colors.light.bianco,
             }}>
               <TouchableOpacity onPress={chosenService} style={{
                 position: "absolute",
@@ -376,26 +352,14 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
                   height: 20,
                   borderWidth: 1,
                   borderRadius: 4,
-                  borderColor: "#DE9182"
+                  borderColor: Colors.light.ARANCIO
                 }} />}
                 {id === indexChosenService && (
-                  <View style={{
-                    width: 20,
-                    height: 20,
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    borderColor: "#DE9182",
-                    backgroundColor: "#DE9182",
-                    alignContent: "center",
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}>
-                    <Ionicons name={"ios-checkbox-outline"} size={15} color={Colors.light.bianco} />
-                  </View>
+                  <Ionicons name={"ios-checkbox-outline"} size={25} color={Colors.light.ARANCIO} style={{ top: -2, borderRadius: 5 }} />
                 )}
               </TouchableOpacity>
               <TouchableOpacity onPress={openService}>
-                <Ionicons name="ios-arrow-down" size={18} color="#6D6E95" style={{
+                <Ionicons name="ios-arrow-down" size={18} color={Colors.light.nero} style={{
                   position: "absolute",
                   right: 15,
                   top: 10,
@@ -412,11 +376,9 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
                 marginRight: 40
               }}>
                 <BaseText size={13} styles={{
-                  color: "black",
+                  letterSpacing: 0.27
                 }}>{titolo}</BaseText>
-                <BaseText size={13} weight={800} styles={{
-                  color: "black",
-                }}>{cost} €</BaseText>
+                <BaseText size={13} weight={700} letterSpacing={0.27}>{cost} €</BaseText>
               </View>
             </View>
             {id === indexX &&
@@ -430,8 +392,9 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
               }}>
                 <BaseText styles={{
                   color: "#828282",
-                  textAlign: "center",
-                  fontSize: 10,
+                  textAlign: "left",
+                  fontSize: 13,
+                  letterSpacing: 0.27
                 }}>{desc}</BaseText>
               </View>
             }
@@ -444,452 +407,394 @@ const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'
       );
     }
   };
-  //if (data === undefined && loading) {
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <Header hasBack={true} title={""} onPress={() => { navigation.goBack() }} styles={{ zIndex: -1 }} />
-        <ShimmerPlaceholder
-          width={width}
-          height={250}
-          style={{ marginBottom: 10, }}
-          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
-          shimmerStyle={{ borderRadius: 0 }}
-        />
-        <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 20, }}>
-          <BaseText weight={300} styles={{
-            fontSize: 13,
-            textTransform: "uppercase"
-          }}>{"Informazioni"}</BaseText>
+  return (
+    <SafeAreaView style={styles.saveArea}>
+      <Animated.ScrollView
+        contentContainerStyle={{
+          paddingTop: HEADER_MAX_HEIGHT - 32,
+          zIndex: -100
+        }}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true },
+        )}>
+        <View style={{
+          flex: 1,
+          height: 100,
+          backgroundColor: "white",
+          borderTopRightRadius: 50,
+          borderTopLeftRadius: 50,
+          width: "100%",
+          //position: "absolute",
+          top: -80,
+          left: 0,
+          right: 0,
+          //marginTop: 50,
+          //top: -160,
+          //zIndex: +20
+        }} />
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
         </View>
-        <ShimmerPlaceholder
-          width={width - 40}
-          height={64}
-          style={{ marginHorizontal: 20, marginBottom: 20 }}
-          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
-          shimmerStyle={{ borderRadius: 10 }}
-        ></ShimmerPlaceholder>
-        <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
-          <BaseText weight={300} styles={{
-            fontSize: 13,
-            textTransform: "uppercase"
-          }}>{"Orario"}</BaseText>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
         </View>
-        <ShimmerPlaceholder
-          width={width - 40}
-          height={44}
-          style={{ marginVertical: 5, marginHorizontal: 20 }}
-          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
-          shimmerStyle={{ borderRadius: 10 }}
-        >
-        </ShimmerPlaceholder>
-        <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
-          <BaseText weight={300} styles={{
-            fontSize: 13,
-            textTransform: "uppercase"
-          }}>{"Valutazioni e recensioni"}</BaseText>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
         </View>
-        <ShimmerPlaceholder
-          width={width - 40}
-          height={118.5}
-          style={{ marginLeft: 20, marginTop: 5 }}
-          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
-          shimmerStyle={{ borderRadius: 10 }}
-        />
-        <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
-          <BaseText weight={300} styles={{
-            fontSize: 13,
-            textTransform: "uppercase"
-          }}>{"Servizi"}</BaseText>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
         </View>
-        <ShimmerPlaceholder
-          width={width - 40}
-          height={44}
-          style={{ marginTop: 5, marginVertical: 20, marginHorizontal: 20, alignSelf: "center" }}
-          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
-          shimmerStyle={{ borderRadius: 10 }}
-        />
-        <ShimmerPlaceholder
-          width={width - 40}
-          height={44}
-          style={{ marginTop: 5, marginVertical: 20, marginHorizontal: 20, alignSelf: "center" }}
-          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
-          shimmerStyle={{ borderRadius: 10 }}
-        />
-        <ShimmerPlaceholder
-          width={width - 40}
-          height={44}
-          style={{ marginTop: 5, marginVertical: 20, marginHorizontal: 20, alignSelf: "center" }}
-          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
-          shimmerStyle={{ borderRadius: 10 }}
-        />
-        <ShimmerPlaceholder
-          width={width - 40}
-          height={44}
-          style={{ marginTop: 5, marginVertical: 20, marginHorizontal: 20, alignSelf: "center" }}
-          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
-          shimmerStyle={{ borderRadius: 10 }}
-        />
-      </View>
-    );
-  } else {
-    return (
-      <View style={styles.container}>
-        {/*<Animated.View pointerEvents="none" style={shadowOverlayStyle} />*/}
-        <BottomSheet
-          ref={bottomSheetRef}
-          snapPoints={snapPoints}
-          initialSnapIndex={0}
-          //handleComponent={() => <Handle />}
-          handleComponent={() => <Handle style={{ backgroundColor: Colors.light.arancio }} />}
-          topInset={headerHeight}
-          animatedPosition={position}
-          onChange={handleSheetChanges}
-        >
-          <View style={{
-            backgroundColor: Colors.light.arancio,
-            height: 320,
-            paddingHorizontal: 50
-          }}>
-            <View style={{
-              justifyContent: "space-between",
-              alignContent: "center",
-              alignItems: "center",
-              flexDirection: "row",
-              marginTop: 15,
-            }}>
-              <View>
-                <BaseText size={15} weight={700} styles={{ flexWrap: 'wrap' }}>{titleChosenService}</BaseText>
-                <BaseText size={10} weight={300} styles={{ flexWrap: 'wrap', maxWidth: 250 }}>{descChosenService}</BaseText>
-              </View>
-              <BaseText size={14} weight={700} >{costChosenService} €</BaseText>
-            </View>
-            {/*<View style={{ alignSelf: "center", marginTop: 15 }}>
-              <BaseText size={10} weight={600}>
-                NB:
-              </BaseText>
-              <BaseText size={8} weight={300} italic styles={{ flexWrap: 'wrap' }}>
-                Ricordati che devi ricevere una conferma dal gestore prima di poter avere la prenotazione!
-              </BaseText>
-            </View>*/}
-            <View style={{ marginBottom: 20 }}>
-              <BaseButton title={"Avanti"} onPress={() => {
-                navigation.navigate("NotFound", {
-                  serviceId: indexChosenService,
-                  serviceDuration: durationChosenService,
-                  serviceCost: costChosenService,
-                  serviceDesc: descChosenService,
-                  serviceTitle: titleChosenService,
-                  serviceCustomer: data.title,
-                })
-              }} />
-            </View>
-          </View>
-        </BottomSheet>
-        <Header hasBack={true} title={""} onPress={() => { navigation.goBack() }} styles={{ zIndex: -1 }} />
-        <ScrollView
-          contentContainerStyle={{
-            paddingBottom: 200
-          }}
-          style={{
-            zIndex: -1
-          }}
-          showsVerticalScrollIndicator={false}
-          decelerationRate="fast"
-          scrollEventThrottle={1}
-        >
-          {/**
-                   * mainINFO
-                   */}
-          <Image style={{ width: "100%", height: 250, }} source={require('../assets/images/salon.jpeg')} />
-
-          {/*<View style={{ flexDirection: "row", alignContent: "center", alignItems: "flex-start", justifyContent: "space-between", marginTop: 15 }}>
-              <Image style={{ width: 76, height: 61, borderRadius: 5, marginRight: 4 }} source={require('../assets/images/salon.jpeg')} />
-              <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
-              <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
-              <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
-            </View>*/}
-          {/*{!noOrari && <View style={[styles.btn, { backgroundColor: Colors.light.arancioDes, }]}>
-              <BaseText weight={400} styles={{ fontSize: 15, textTransform: "uppercase" }}>Prenota</BaseText>
-            </View>}*/}
-          {/**
-         * DESCRIZIONE
-           */}
-          {/*<View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginTop: 20, }}>
-            <BaseText weight={300} styles={{
-              fontSize: 30,
-              //textTransform: "uppercase"
-            }}>{"Informazioni"}</BaseText>
-          </View>*/}
-          <View style={{
-            width: 65,
-            height: 15,
-            borderRadius: 5,
-            backgroundColor: status ? "rgba(133, 194, 170, 0.4)" : "#C4C4C4",
-            justifyContent: "center",
-            alignItems: "center",
-            alignContent: "center",
-            marginLeft: 20,
-            marginTop: 10,
-          }}>
-            <BaseText weight={700} styles={{ color: status ? "#008D56" : "#525252" }} size={8}>{status ? "APERTO" : "CHIUSO"}</BaseText>
-          </View>
-          <View style={{
-            justifyContent: "space-around",
-            alignContent: "flex-start",
-            alignItems: "flex-start",
-            flexDirection: "column",
-            backgroundColor: Colors.light.bianco,
-            marginHorizontal: 20,
-            borderRadius: 10,
-            marginTop: 10,
-            paddingVertical: 5,
-            paddingHorizontal: 5
-          }}>
-            <View style={[styles.row, { padding: 0 }]}>
-              <Ionicons name="ios-phone-portrait" size={40} color="#6D6E95" style={{ width: 40, textAlign: "center" }} />
-              <BaseText size={12} styles={[styles.text, { marginLeft: 5 }]}>{data.phone}</BaseText>
-            </View>
-            <View style={[styles.row, { padding: 0 }]}>
-              <Ionicons name="ios-mail" size={40} color="#6D6E95" style={{ width: 40, textAlign: "center" }} />
-              <BaseText size={12} styles={[styles.text, { marginLeft: 5 }]}>{data.email}</BaseText>
-            </View>
-            <View style={[styles.row, { padding: 0 }]}>
-              <Ionicons name="ios-pin" size={40} color="#6D6E95" style={{ width: 40, textAlign: "center" }} />
-              <BaseText size={12} styles={[styles.text, { marginLeft: 5, maxWidth: 250 }]}>{data.via.toUpperCase()}</BaseText>
-            </View>
-          </View>
-          <View style={{
-            marginHorizontal: 20,
-            marginVertical: 10,
-            borderRadius: 5,
-            backgroundColor: Colors.light.bianco,
-            paddingHorizontal: 20,
-            paddingVertical: 10,
-          }}>
-            <BaseText size={12} styles={[styles.text]}>{data.desc}</BaseText>
-          </View>
-          {/**
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
+        </View>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
+        </View>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
+        </View>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
+        </View>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
+        </View>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
+        </View>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
+        </View>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
+        </View>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
+        </View>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.desc}</BaseText>
+        </View>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.email}</BaseText>
+        </View>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.phone}</BaseText>
+        </View>
+        <View style={styles.card}>
+          <BaseText size={12}>{data.via.toUpperCase()}</BaseText>
+        </View>
+        {/**
            * orario
            */}
-          {!noOrari && (<>
-            <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
-              <BaseText weight={300} size={13} styles={{
-                textTransform: "uppercase"
-              }}>{"Orario"}</BaseText>
-            </View>
-            <TouchableWithoutFeedback onPress={() => setBool(!bool)} style={{}}>
-              <Animated.View style={{
-                width: width - 40,
-                height: heightX,
-                borderRadius: 5,
-                backgroundColor: Colors.light.bianco,
-                alignSelf: "center",
-                justifyContent: bool ? "center" : "flex-start",
-                alignItems: "center",
-                flexDirection: "row"
-              }}>
-                <View style={{
-                  justifyContent: "space-between",
-                  alignContent: "space-between",
-                  alignItems: "flex-end"
-                }}>
-                  {day === 1 && !bool && (<BaseText weight={day === 1 ? 700 : 400} size={9} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 1 ? 700 : 400} size={9} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
-                  {day === 2 && !bool && (<BaseText weight={day === 2 ? 700 : 400} size={9} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 2 ? 700 : 400} size={9} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
-                  {day === 3 && !bool && (<BaseText weight={day === 3 ? 700 : 400} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 3 ? 700 : 400} size={9} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
-                  {day === 4 && !bool && (<BaseText weight={day === 4 ? 700 : 400} size={9} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 4 ? 700 : 400} size={9} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
-                </View>
-                {bool && (<View style={{ height: "80%", width: 1, backgroundColor: "#181818", marginHorizontal: 20 }} />)}
-                <View style={{
-                  alignItems: "flex-end",
-                  marginTop: !bool ? 0 : 20 //0
-                }}>
-                  {day === 5 && !bool && (<BaseText weight={day === 5 ? 700 : 400} size={9} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
-                  {day === 6 && !bool && (<BaseText weight={day === 6 ? 700 : 400} size={9} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
-                  {day === 0 && !bool && (<BaseText weight={day === 0 ? 700 : 400} size={9} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 5 ? 700 : 400} size={9} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 6 ? 700 : 400} size={9} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
-                  {bool && (<BaseText weight={day === 0 ? 700 : 400} size={9} styles={{
-                    marginLeft: !bool ? 20 : 0,
-                    //fontSize: 13,
-                    color: "#181818"
-                  }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
-                </View>
-                <Ionicons name="ios-arrow-down" size={24} color="#181818" style={{
-                  position: "absolute",
-                  right: 20,
-                  top: 10,
-                  transform: [{ rotate: bool ? '180deg' : '0deg' }]
-                }} />
-              </Animated.View>
-            </TouchableWithoutFeedback>
-          </>)}
-          {/**
-         * Valutazioni e recensioni
-         */}
-          {recensioni !== undefined && (<View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginTop: 10 }}>
-            <BaseText weight={300} size={13} styles={{
-              textTransform: "uppercase"
-            }}>{"alutazioni e recensioni"}</BaseText>
-            <View style={{
-              flexDirection: "row",
-              marginTop: 10
+        {!noOrari && (<View style={{ marginHorizontal: 20, marginVertical: 20 }}>
+          <TouchableWithoutFeedback onPress={() => setBool(!bool)} >
+            <Animated.View style={{
+              width: width - 40,
+              height: heightX,
+              borderRadius: 5,
+              backgroundColor: Colors.light.bianco,
+              alignSelf: "center",
+              justifyContent: bool ? "center" : "flex-start",
+              alignItems: "center",
+              flexDirection: "row"
             }}>
               <View style={{
-                flexDirection: "column",
-                justifyContent: 'center',
-                alignItems: "center",
-                alignContent: "center",
-                marginHorizontal: 15
+                justifyContent: "space-between",
+                alignContent: "space-between",
+                alignItems: "flex-end"
               }}>
-                <BaseText styles={{
-                  fontSize: 40,
-                  textTransform: "uppercase"
-                }}>4,6</BaseText>
-                <Ionicons name="ios-star" size={30} color={Colors.light.giallo} />
+                {day === 1 && !bool && (<BaseText weight={day === 1 ? 700 : 400} size={9} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
+                {bool && (<BaseText weight={day === 1 ? 700 : 400} size={9} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Lunedì {lunedi.closed ? "CHIUSO" : lunedi.start + " - " + lunedi.end}</BaseText>)}
+                {day === 2 && !bool && (<BaseText weight={day === 2 ? 700 : 400} size={9} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
+                {bool && (<BaseText weight={day === 2 ? 700 : 400} size={9} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Martedì {martedi.closed ? "CHIUSO" : martedi.start + " - " + martedi.end}</BaseText>)}
+                {day === 3 && !bool && (<BaseText weight={day === 3 ? 700 : 400} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
+                {bool && (<BaseText weight={day === 3 ? 700 : 400} size={9} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Mercoledì {mercoledi.closed ? "CHIUSO" : mercoledi.start + " - " + mercoledi.end}</BaseText>)}
+                {day === 4 && !bool && (<BaseText weight={day === 4 ? 700 : 400} size={9} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
+                {bool && (<BaseText weight={day === 4 ? 700 : 400} size={9} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Giovedì {giovedi.closed ? "CHIUSO" : giovedi.start + " - " + giovedi.end}</BaseText>)}
               </View>
-              <TouchableWithoutFeedback onPress={() => navigation.navigate("Review")}>
-                <View style={{
-                  backgroundColor: "#FBFBFB",
-                  borderRadius: 5,
-                  flex: 1,
-                }}>
-                  <Ionicons name="ios-arrow-down" size={24} color="black" style={{
-                    position: "absolute",
-                    right: 10,
-                    top: 5,
-                    transform: [{ rotate: '-90deg' }]
-                  }} />
-                  <View style={{
-                    flexDirection: "row",
-                    alignContent: "center",
-                    alignItems: "center",
-                    marginLeft: 15,
-                    marginTop: 10,
-                  }}>
-                    <BaseText styles={{
-                      fontSize: 15,
-                    }}>{recensioni && recensioni.length > 0 ? recensioni[0].user : "Utente d'esempio"}</BaseText>
-                    <StarsReview />
-                  </View>
-                  <BaseText weight={300} styles={{
-                    marginTop: 5,
-                    marginHorizontal: 15,
-                    fontSize: 15,
-                    marginBottom: 15
-                  }}>{recensioni && recensioni.length > 0 ? recensioni[0].desc : "Descrizione d'esempio"}</BaseText>
-                </View>
-              </TouchableWithoutFeedback>
+              {bool && (<View style={{ height: "80%", width: 1, backgroundColor: "#181818", marginHorizontal: 20 }} />)}
+              <View style={{
+                alignItems: "flex-end",
+                marginTop: !bool ? 0 : 20 //0
+              }}>
+                {day === 5 && !bool && (<BaseText weight={day === 5 ? 700 : 400} size={9} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
+                {day === 6 && !bool && (<BaseText weight={day === 6 ? 700 : 400} size={9} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
+                {day === 0 && !bool && (<BaseText weight={day === 0 ? 700 : 400} size={9} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
+                {bool && (<BaseText weight={day === 5 ? 700 : 400} size={9} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Venerdì {venerdi.closed ? "CHIUSO" : venerdi.start + " - " + venerdi.end}</BaseText>)}
+                {bool && (<BaseText weight={day === 6 ? 700 : 400} size={9} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Sabato {sabato.closed ? "CHIUSO" : sabato.start + " - " + sabato.end}</BaseText>)}
+                {bool && (<BaseText weight={day === 0 ? 700 : 400} size={9} styles={{
+                  marginLeft: !bool ? 20 : 0,
+                  //fontSize: 13,
+                  color: "#181818"
+                }}>Domenica {domenica.closed ? "CHIUSO" : domenica.start + " - " + domenica.end}</BaseText>)}
+              </View>
+              <Ionicons name="ios-arrow-down" size={24} color="#181818" style={{
+                position: "absolute",
+                right: 20,
+                top: 10,
+                transform: [{ rotate: bool ? '180deg' : '0deg' }]
+              }} />
+            </Animated.View>
+          </TouchableWithoutFeedback>
+        </View>)}
+        {/**
+         * Valutazioni e recensioni
+         */}
+        {recensioni !== undefined && (<View style={{ backgroundColor: "transparent", marginHorizontal: 20 }}>
+          {/*<BaseText weight={300} size={13} styles={{
+              textTransform: "uppercase"
+            }}>{"alutazioni e recensioni"}</BaseText>*/}
+          <View style={{
+            flexDirection: "row",
+            marginTop: 10
+          }}>
+            <View style={{
+              flexDirection: "column",
+              justifyContent: 'center',
+              alignItems: "center",
+              alignContent: "center",
+              marginHorizontal: 15
+            }}>
+              <BaseText styles={{
+                fontSize: 40,
+                textTransform: "uppercase"
+              }}>4,6</BaseText>
+              <Ionicons name="ios-star" size={30} color={Colors.light.giallo} />
             </View>
-          </View>)}
-          <SectionList
-            sections={servizi}
-            style={{
-              //marginTop: 20,
-              marginHorizontal: 20,
-            }}
-            //ListHeaderComponent={()=>}
-            renderItem={({ item }) => <ItemService item={item} />}
-            renderSectionHeader={({ section: { title } }) => serviziHeader(title)}
-            keyExtractor={(item, index) => item.id}
-          />
-        </ScrollView>
+            <TouchableWithoutFeedback onPress={() => navigation.navigate("Review")}>
+              <View style={{
+                backgroundColor: "#FBFBFB",
+                borderRadius: 5,
+                flex: 1,
+              }}>
+                <Ionicons name="ios-arrow-down" size={24} color="black" style={{
+                  position: "absolute",
+                  right: 10,
+                  top: 5,
+                  transform: [{ rotate: '-90deg' }]
+                }} />
+                <View style={{
+                  flexDirection: "row",
+                  alignContent: "center",
+                  alignItems: "center",
+                  marginLeft: 15,
+                  marginTop: 10,
+                }}>
+                  <BaseText styles={{
+                    fontSize: 15,
+                  }}>{recensioni && recensioni.length > 0 ? recensioni[0].user : "Utente d'esempio"}</BaseText>
+                  <StarsReview />
+                </View>
+                <BaseText weight={300} styles={{
+                  marginTop: 5,
+                  marginHorizontal: 15,
+                  fontSize: 15,
+                  marginBottom: 15
+                }}>{recensioni && recensioni.length > 0 ? recensioni[0].desc : "Descrizione d'esempio"}</BaseText>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </View>)}
+        <SectionList
+          sections={servizi}
+          style={{
+            //marginTop: 20,
+            marginHorizontal: 20,
+          }}
+          //ListHeaderComponent={()=>}
+          renderItem={({ item }) => <ItemService item={item} />}
+          renderSectionHeader={({ section: { title } }) => serviziHeader(title)}
+          keyExtractor={(item, index) => item.id}
+        />
+      </Animated.ScrollView>
+      <Animated.View
+        style={[styles.header, {
+          zIndex: 100,
+          transform: [{
+            translateY: headerTranslateY
+          }]
+        }]}>
+        <Animated.Image
+          style={[
+            styles.headerBackground,
+            {
+              zIndex: -1,
+              opacity: imageOpacity,
+              transform: [{
+                translateY: imageTranslateY
+              }],
+            },
+          ]}
+          source={require('../assets/images/salon.jpeg')}
+        />
 
-      </View>
-    );
-  }
-};
+      </Animated.View>
+      <Animated.View
+        style={[
+          styles.topBar,
+          {
+            zIndex: 120,
+            transform: [
+              {
+                scale: titleScale
+              },
+              {
+                translateY: titleTranslateY
+              }
+            ],
+          },
+        ]}>
+        <View style={[{
+          //position: "absolute",
+          //top: -40,
+          //left: 0,
+          //right: 0,
+          flex: 1,
+          width: "100%",
+          justifyContent: "space-between",
+          alignContent: "center",
+          alignItems: "center",
+          flexDirection: "row"
+        }]}>
+          <TouchableOpacity onPress={() => { navigation.goBack() }} style={[styles.iconShadow, { paddingHorizontal: 20, paddingVertical: 60 }]}>
+            <View style={styles.backButton}>
+              <Ionicons name="ios-arrow-back" size={30} color={Colors.light.nero} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { console.warn("QUI CONDIVIDERAI IL NEGOZIO") }} style={[styles.iconShadow, { paddingHorizontal: 20, paddingVertical: 60 }]}>
+            <View style={styles.backButton}>
+              <Ionicons name="ios-more" size={30} color={Colors.light.nero} style={{ transform: [{ rotate: "90deg" }] }} />
+            </View>
+          </TouchableOpacity>
+        </View>
+        {/*<BaseText>JONA TRISTE 🤕🤕</BaseText>*/}
+      </Animated.View>
 
-export default Shop;
+    </SafeAreaView>
+  );
+}
 
 const styles = StyleSheet.create({
-  container: {
+  saveArea: {
     flex: 1,
-    //backgroundColor: Colors.light.bg
-    //backgroundColor: Colors.light.bianco
-    backgroundColor: "white"
+    backgroundColor: 'white',
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignContent: "center",
-    justifyContent: "flex-start",
+  card: {
+    //flexDirection: 'row',
+    //alignItems: 'center',
+    shadowColor: '#402583',
+    backgroundColor: '#ffffff',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 1,
+    borderRadius: 10,
+    marginHorizontal: 12,
+    marginTop: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
-  text: {
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: Colors.light.ARANCIO,
+    overflow: 'hidden',
+    height: HEADER_MAX_HEIGHT,
   },
-  textBold: {
+  headerBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    width: null,
+    height: HEADER_MAX_HEIGHT,
+    resizeMode: 'cover',
   },
-  btn: {
-    marginTop: 15,
-    height: 35,
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    alignContent: "center",
-    // shadowColor: Colors.light.nero,
-    // shadowOpacity: 0.25,
-    // shadowOffset: {
-    //     width: 0,
-    //     height: 4
-    // },
-    // shadowRadius: 4,
-    borderRadius: 5
+  topBar: {
+    marginTop: 100,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+  },
+  backButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 40,
+    backgroundColor: Colors.light.bianco,
+    shadowColor: Colors.light.nero,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: .2,
+    shadowRadius: 2,
+    elevation: 1,
   },
   shadowOverlay: {
     position: 'absolute',
@@ -899,4 +804,317 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.55)',
   },
+  iconShadow: {
+    shadowColor: Colors.light.nero,
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
+    shadowOpacity: .4,
+    shadowRadius: 10,
+    elevation: 1,
+  }
 });
+
+export default Shop;
+
+
+
+//import { useValue } from 'react-native-redash';
+//import { useHeaderHeight } from '@react-navigation/stack';
+//import Animated, {
+//  interpolate,
+//  concat,
+//  Extrapolate,
+//} from 'react-native-reanimated';
+
+////import { AppContext } from '../context/Appcontext';
+//import BottomSheet, { useBottomSheet } from '@gorhom/bottom-sheet';
+//import Handle from '../components/handle';
+//import BaseButton from '../components/BaseButton';
+//import { User } from '../models/User';
+//import { StatusBar } from 'expo-status-bar';
+
+//const Shop = ({ navigation, route }: StackScreenProps<RootStackParamList, 'Shop'>) => {
+//  //  const {
+//  //    //servizi,
+//  //    //commercianti,
+//  //    //foto
+//  //  } = React.useContext(AppContext);
+
+//  const bottomSheetRef = React.useRef<BottomSheet>(null);
+//  const headerHeight = useHeaderHeight();
+
+//  // variables
+//  const snapPoints = React.useMemo(() => [0, 80, 220], []);
+//  const position = useValue<number>(0);
+
+//  // styles
+//  const shadowOverlayStyle = React.useMemo(
+//    () => ({
+//      ...styles.shadowOverlay,
+//      opacity: interpolate(position, {
+//        inputRange: [0, 220, 300],
+//        outputRange: [0, 0.4, 1],
+//        extrapolate: Extrapolate.CLAMP,
+//      }),
+//    }),
+//    []
+//  );
+
+//  // callbacks
+//  const handleSheetChanges = React.useCallback((index: number) => {
+//    console.log('handleSheetChanges', index);
+//  }, []);
+
+//  const handleSnapPress = React.useCallback(index => {
+//    bottomSheetRef.current.snapTo(index);
+//    console.log(index, "index--")
+//  }, []);
+
+//  //const handleClosePress = React.useCallback(() => {
+//  //  bottomSheetRef.current?.close();
+//  //}, []);
+
+
+//  //if (data === undefined && loading) {
+//  if (loading) {
+//    return (
+//      <View style={styles.container}>
+//        {/*<Header hasBack={true} title={""} onPress={() => { navigation.goBack() }} styles={{ zIndex: -1 }} />*/}
+//        <ShimmerPlaceholder
+//          width={width}
+//          height={250}
+//          style={{ marginBottom: 10, }}
+//          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+//          shimmerStyle={{ borderRadius: 0 }}
+//        />
+//        <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 20, }}>
+//          <BaseText weight={300} styles={{
+//            fontSize: 13,
+//            textTransform: "uppercase"
+//          }}>{"Informazioni"}</BaseText>
+//        </View>
+//        <ShimmerPlaceholder
+//          width={width - 40}
+//          height={64}
+//          style={{ marginHorizontal: 20, marginBottom: 20 }}
+//          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+//          shimmerStyle={{ borderRadius: 10 }}
+//        ></ShimmerPlaceholder>
+//        <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
+//          <BaseText weight={300} styles={{
+//            fontSize: 13,
+//            textTransform: "uppercase"
+//          }}>{"Orario"}</BaseText>
+//        </View>
+//        <ShimmerPlaceholder
+//          width={width - 40}
+//          height={44}
+//          style={{ marginVertical: 5, marginHorizontal: 20 }}
+//          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+//          shimmerStyle={{ borderRadius: 10 }}
+//        >
+//        </ShimmerPlaceholder>
+//        <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
+//          <BaseText weight={300} styles={{
+//            fontSize: 13,
+//            textTransform: "uppercase"
+//          }}>{"Valutazioni e recensioni"}</BaseText>
+//        </View>
+//        <ShimmerPlaceholder
+//          width={width - 40}
+//          height={118.5}
+//          style={{ marginLeft: 20, marginTop: 5 }}
+//          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+//          shimmerStyle={{ borderRadius: 10 }}
+//        />
+//        <View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginVertical: 5 }}>
+//          <BaseText weight={300} styles={{
+//            fontSize: 13,
+//            textTransform: "uppercase"
+//          }}>{"Servizi"}</BaseText>
+//        </View>
+//        <ShimmerPlaceholder
+//          width={width - 40}
+//          height={44}
+//          style={{ marginTop: 5, marginVertical: 20, marginHorizontal: 20, alignSelf: "center" }}
+//          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+//          shimmerStyle={{ borderRadius: 10 }}
+//        />
+//        <ShimmerPlaceholder
+//          width={width - 40}
+//          height={44}
+//          style={{ marginTop: 5, marginVertical: 20, marginHorizontal: 20, alignSelf: "center" }}
+//          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+//          shimmerStyle={{ borderRadius: 10 }}
+//        />
+//        <ShimmerPlaceholder
+//          width={width - 40}
+//          height={44}
+//          style={{ marginTop: 5, marginVertical: 20, marginHorizontal: 20, alignSelf: "center" }}
+//          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+//          shimmerStyle={{ borderRadius: 10 }}
+//        />
+//        <ShimmerPlaceholder
+//          width={width - 40}
+//          height={44}
+//          style={{ marginTop: 5, marginVertical: 20, marginHorizontal: 20, alignSelf: "center" }}
+//          shimmerColors={["#DEDEDE", "#c5c5c5", "#DEDEDE"]}
+//          shimmerStyle={{ borderRadius: 10 }}
+//        />
+//      </View>
+//    );
+//  } else {
+//    return (
+//      <View style={styles.container}>
+//        {/*<Animated.View pointerEvents="none" style={shadowOverlayStyle} />*/}
+//        <BottomSheet
+//          ref={bottomSheetRef}
+//          snapPoints={snapPoints}
+//          initialSnapIndex={0}
+//          //handleComponent={() => <Handle />}
+//          handleComponent={() => <Handle style={{ backgroundColor: Colors.light.ARANCIO }} />}
+//          topInset={headerHeight}
+//          animatedPosition={position}
+//          onChange={handleSheetChanges}
+//        >
+//          <View style={{
+//            backgroundColor: Colors.light.ARANCIO,
+//            height: 320,
+//            paddingHorizontal: 50,
+//            zIndex: 100,
+//          }}>
+//            <View style={{
+//              justifyContent: "space-between",
+//              alignContent: "center",
+//              alignItems: "center",
+//              flexDirection: "row",
+//              marginTop: 15,
+//            }}>
+//              <View>
+//                <BaseText size={15} weight={700} styles={{ flexWrap: 'wrap' }}>{titleChosenService}</BaseText>
+//                <BaseText size={10} weight={300} styles={{ flexWrap: 'wrap', maxWidth: 200 }}>{descChosenService}</BaseText>
+//              </View>
+//              <BaseText size={14} weight={700} >{costChosenService} €</BaseText>
+//            </View>
+//            {/*<View style={{ alignSelf: "center", marginTop: 15 }}>
+//              <BaseText size={10} weight={600}>
+//                NB:
+//              </BaseText>
+//              <BaseText size={8} weight={300} italic styles={{ flexWrap: 'wrap' }}>
+//                Ricordati che devi ricevere una conferma dal gestore prima di poter avere la prenotazione!
+//              </BaseText>
+//            </View>*/}
+//            <View style={{ marginBottom: 20 }}>
+//              <BaseButton title={"Procedi"} onPress={() => {
+//                navigation.navigate("NotFound", {
+//                  serviceId: indexChosenService,
+//                  serviceDuration: durationChosenService,
+//                  serviceCost: costChosenService,
+//                  serviceDesc: descChosenService,
+//                  serviceTitle: titleChosenService,
+//                  serviceCustomer: data.title,
+//                })
+//              }} />
+//            </View>
+//          </View>
+//        </BottomSheet>
+//        <Image style={{ width: "100%", height: 250, zIndex: -1 }} source={require('../assets/images/salon.jpeg')} />
+
+//        <ScrollView
+//          contentContainerStyle={{
+//            paddingBottom: 200,
+//          }}
+//          style={{
+//            flex: 1,
+//            //height: "100%",
+//            //top: -160,
+//            backgroundColor: "red",
+//            zIndex: -1
+//          }}
+//          showsVerticalScrollIndicator={false}
+//          decelerationRate="fast"
+//          scrollEventThrottle={1}
+//        >
+
+//          {/**
+//                   * mainINFO
+//                   */}
+
+//          {/*<View style={{ flexDirection: "row", alignContent: "center", alignItems: "flex-start", justifyContent: "space-between", marginTop: 15 }}>
+//              <Image style={{ width: 76, height: 61, borderRadius: 5, marginRight: 4 }} source={require('../assets/images/salon.jpeg')} />
+//              <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
+//              <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
+//              <Image style={{ width: 76, height: 61, borderRadius: 5, marginHorizontal: 4 }} source={require('../assets/images/salon.jpeg')} />
+//            </View>*/}
+//          {/*{!noOrari && <View style={[styles.btn, { backgroundColor: Colors.light.arancioDes, }]}>
+//              <BaseText weight={400} styles={{ fontSize: 15, textTransform: "uppercase" }}>Prenota</BaseText>
+//            </View>}*/}
+//          {/**
+//         * DESCRIZIONE
+//           */}
+//          {/*<View style={{ backgroundColor: "transparent", marginHorizontal: 20, marginTop: 20, }}>
+//            <BaseText weight={300} styles={{
+//              fontSize: 30,
+//              //textTransform: "uppercase"
+//            }}>{"Informazioni"}</BaseText>
+//          </View>*/}
+//          {/*<View style={{
+//            width: 65,
+//            height: 15,
+//            borderRadius: 5,
+//            backgroundColor: status ? "rgba(133, 194, 170, 0.4)" : "#C4C4C4",
+//            justifyContent: "center",
+//            alignItems: "center",
+//            alignContent: "center",
+//            marginLeft: 20,
+//            marginTop: 10,
+//          }}>
+//            <BaseText weight={700} styles={{ color: status ? "#008D56" : "#525252" }} size={8}>{status ? "APERTO" : "CHIUSO"}</BaseText>
+//          </View>*/}
+
+
+//        </ScrollView>
+//      </View>
+//    );
+//  }
+//};
+
+//export default Shop;
+
+//const styles = StyleSheet.create({
+//  container: {
+//    flex: 1,
+//    //backgroundColor: Colors.light.bg
+//    //backgroundColor: Colors.light.bianco
+//    backgroundColor: "white"
+//  },
+//  row: {
+//    flexDirection: "row",
+//    alignItems: "center",
+//    alignContent: "center",
+//    justifyContent: "flex-start",
+//  },
+//  text: {
+//  },
+//  textBold: {
+//  },
+//  btn: {
+//    marginTop: 15,
+//    height: 35,
+//    width: "100%",
+//    justifyContent: "center",
+//    alignItems: "center",
+//    alignContent: "center",
+//    // shadowColor: Colors.light.nero,
+//    // shadowOpacity: 0.25,
+//    // shadowOffset: {
+//    //     width: 0,
+//    //     height: 4
+//    // },
+//    // shadowRadius: 4,
+//    borderRadius: 5
+//  },
+
+//});

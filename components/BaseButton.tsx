@@ -7,8 +7,8 @@ import Colors from '../constants/Colors';
 
 const BaseButton = ({ title, onPress }) => {
   //const onPress = React.useCallback(() => console.log('pressed'), []);
-  return <TouchableScale onPress={onPress} style={[styles.button, { backgroundColor: Colors.light.arancioDes }]}>
-    <BaseText color={Colors.light.nero} size={13} weight={400} styles={styles.buttonText} textAlign="center">{title}</BaseText>
+  return <TouchableScale onPress={onPress} style={[styles.button, { backgroundColor: Colors.light.bianco }]}>
+    <BaseText color={Colors.light.nero} size={10} weight={700} styles={styles.buttonText} textAlign="center">{title}</BaseText>
   </TouchableScale>;
 }
 

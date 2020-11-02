@@ -45,11 +45,11 @@ import BottomIcon from '../components/svg/BottomIcon';
 
 //const { width, height } = Dimensions.get('window');
 
-//const wait = timeout => {
-//  return new Promise(resolve => {
-//    setTimeout(resolve, timeout);
-//  });
-//};
+const wait = timeout => {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout);
+  });
+};
 
 export default function HomePage({ navigation }: StackScreenProps<RootStackParamList, 'Shop'>) {
   const {
@@ -60,34 +60,34 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
   const { user, setUser } = useContext(AuthUserContext);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setCategory] = useState(0);
-  //const [parrucchieri, setPar] = React.useState(undefined);
-  //const [userDocId, setUserDocId] = React.useState(null);
+  const [parrucchieri, setPar] = React.useState(undefined);
+  const [userDocId, setUserDocId] = React.useState(null);
   //const [favoritesFB, setFavorites] = React.useState(undefined);
 
   const [refreshing, setRefreshing] = useState(false);
 
-  //const onRefresh = React.useCallback(() => {
-  //  setRefreshing(true);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    loading();
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
 
-  //  wait(2000).then(() => setRefreshing(false));
-  //}, []);
-
-  //const getUserId = async () => {
-  //  //get a unique key
-  //  //console.log("---getUserId[called]---")
-  //  if (user !== null) {
-  //    //console.log("---getUserId[user-present]---")
-  //    var databaseRef = await db.collection('utentiApp').where("userId", "==", user.uid).get();
-  //    if (!databaseRef.empty) {
-  //      //console.log("---getUserId[databaseRef-notEmpty]---")
-  //      databaseRef.forEach(doc => {
-  //        //console.log("---getUserId[databaseRef-forEach]---", doc.data());
-  //        //console.log("---getUserId[docID]---", doc.id);
-  //        setUserDocId(doc.id);
-  //      });
-  //    };
-  //  }
-  //}
+  const getUserId = async () => {
+    //get a unique key
+    //console.log("---getUserId[called]---")
+    if (user !== null) {
+      //console.log("---getUserId[user-present]---")
+      var databaseRef = await db.collection('utentiApp').where("userId", "==", user.uid).get();
+      if (!databaseRef.empty) {
+        //console.log("---getUserId[databaseRef-notEmpty]---")
+        databaseRef.forEach(doc => {
+          //console.log("---getUserId[databaseRef-forEach]---", doc.data());
+          //console.log("---getUserId[docID]---", doc.id);
+          setUserDocId(doc.id);
+        });
+      };
+    }
+  }
 
   //const getFavorites = async () => {
   //  try {
@@ -137,239 +137,255 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
   //    console.log("---[getFavorites]ERROR---", error)
   //  }
   //}
+  const loading = async () => {
+    await getUserId();
+    let parrucchieri = [];
+    if (commercianti && foto) {
+      const comFin = commercianti.map(com => ({
+        ...com,
+        mainPhoto: foto.find(fot => fot.commercianti === com.id && fot.isMain == true),
+        photos:
+          foto.map(item => {
+            // .find(fot => fot.commercianti === com.id)
+            if (item.commercianti == com.id) {
+              return item;
+            }
+          })
 
-  //React.useEffect(() => {
-  //  // setTimeout(() => {
-  //  //     setModal(!modalShow);
-  //  // }, 5000);
-  //  getUserId();
-  //  let parrucchieri = [];
-  //  if (commercianti && foto) {
-  //    const comFin = commercianti.map(com => ({
-  //      ...com,
-  //      mainPhoto: foto.find(fot => fot.commercianti === com.id && fot.isMain == true),
-  //      photos:
-  //        foto.map(item => {
-  //          // .find(fot => fot.commercianti === com.id)
-  //          if (item.commercianti == com.id) {
-  //            return item;
-  //          }
-  //        })
+      }))
+      // console.log(comFin, "comFin");
+      comFin.map((item) => {
+        if (item.tipo == 0) {
+          parrucchieri.push(item);
+        }
+      })
+      setPar(parrucchieri);
+    }
+    if (user !== null && userDocId !== null) {
+      //getFavorites();
+    }
+  }
 
-  //    }))
-  //    // console.log(comFin, "comFin");
-  //    comFin.map((item) => {
-  //      if (item.tipo == 0) {
-  //        parrucchieri.push(item);
-  //      }
-  //    })
-  //    setPar(parrucchieri);
-  //  }
-  //  if (user !== null && userDocId !== null) {
-  //    getFavorites();
-  //  }
-  //}, [user, userDocId]);
+  React.useEffect(() => {
+    // setTimeout(() => {
+    //     setModal(!modalShow);
+    // }, 5000);
+    loading()
+  }, [user, userDocId]);
 
-  //React.useEffect(() => {
-  //  navigation.addListener('focus', () => {
-  //    if (user !== undefined && userDocId !== null) {
-  //      //getUserId();
-  //      getFavorites();
-  //    }
-  //  });
-  //}, []);
+  React.useEffect(() => {
+    navigation.addListener('focus', () => {
+      if (user !== undefined && userDocId !== null) {
+        getUserId();
+        //getFavorites();
+      }
+    });
+  }, []);
 
-  //const renderCards = (item, index) => {
-  //  //console.log("item", item)
-  //  //console.log("index", index)
-  //  //console.log("\n")
-  //  let { title, stars, via, desc, mainPhoto, economy, id } = item;
-  //  let economyColor = "rgba(133, 194, 170, 0.4)", economyTitle = "€", economyTColor = "#008D56";
-  //  if (economy) {
-  //    switch (economy) {
-  //      case 1:
-  //        economyColor = "rgba(244, 195, 108, 0.4)";
-  //        economyTitle = "€€";
-  //        economyTColor = "#CB860B";
-  //        break;
-  //      case 2:
-  //        economyColor = "rgba(244, 195, 108, 0.4)";
-  //        economyTitle = "€€€";
-  //        economyTColor = "#CB860B";
-  //        break;
-  //    }
-  //  }
-  //  if (desc.length > 25) {
-  //    desc = desc.slice(0, 25) + " ...";
-  //  }
-  //  let isFavorite = false;
-  //  if (favoritesFB !== undefined) {
-  //    isFavorite = favoritesFB.includes(id);
-  //  }
-  //  const setFavorite = async () => {
-  //    if (user !== null && userDocId !== null) {
-  //      console.log("---hoPremuto---", id)
-  //      try {
-  //        var databaseRefReal = await db.collection('utentiApp').doc(userDocId);
-  //        await db.runTransaction(async (t) => {
-  //          const doc = await t.get(databaseRefReal);
-  //          console.log("---favoritesOnDB---", doc.data()?.favorites)
-  //          let favorites = doc.data().favorites;
-  //          // DOC: se ho preferiti entro per capire come rimuoverlo
-  //          if (favorites && favorites !== undefined) {
-  //            favorites.forEach((element) => {
-  //              if (element.id === id) {
-  //                // DOC SE HO GIA LO STESSO PREFERITO PREMUTO LO RIMUOVO
-  //                var deletedList = favorites.filter(x => {
-  //                  return x.id != id;
-  //                })
-  //                console.log("---deletedList[FAVORITES]---", deletedList);
-  //                if (deletedList.length <= 0) {
-  //                  // rimuovo la lista completa
-  //                  //isFavorite = false;
-  //                  t.update(databaseRefReal, { favorites: dbVal.FieldValue.delete() });
-  //                } else {
-  //                  // rimuovo il commerciante
-  //                  //isFavorite = false;
-  //                  t.update(databaseRefReal, { favorites: deletedList });
-  //                }
-  //              } else {
-  //                // aggiungo il commerciante
-  //                let newFavorites = [...favorites, { id }];
-  //                var list = newFavorites.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
-  //                //isFavorite = true;
-  //                t.update(databaseRefReal, {
-  //                  favorites: list
-  //                });
-  //              }
-  //            });
-  //          } else {
-  //            // aggiungo il commerciante per la prima volta
-  //            //isFavorite = true;
-  //            t.update(databaseRefReal, {
-  //              favorites: [
-  //                { id }
-  //              ]
-  //            });
-  //          }
-  //        });
-  //        getFavorites();
-  //      } catch (error) {
-  //        console.log("---setFavorite[Error]", error);
-  //      }
-  //    } else {
-  //      console.warn("non ho un utente per aggiugnere questo commerciante ai preferiti");
-  //    }
-  //  }
-  //  return (
-  //    <TouchableOpacity
-  //      key={index}
-  //      onPress={() => {
-  //        Vibration.impactTouch("Light");
-  //        navigation.navigate("Shop", { id: id });
-  //      }}>
-
-  //      <View style={{
-  //      }}>
-  //        <ImageBackground
-  //          style={{
-  //            flex: 1,
-  //            height: 145,
-  //            marginVertical: 10,
-  //            flexDirection: "row",
-  //          }}
-  //          imageStyle={{
-  //            backgroundColor: Colors.light.bianco,
-  //            resizeMode: "cover"
-  //          }}
-  //          source={mainPhoto ? { uri: mainPhoto.url } : require('../assets/images/salon.jpeg')}
-  //        >
-  //          {user !== null && (
-  //            <TouchableOpacity onPress={setFavorite} style={{
-  //              position: "absolute",
-  //              right: 15,
-  //              top: 10,
-  //              zIndex: 10
-  //            }}>
-  //              <Ionicons name={isFavorite ? "ios-heart" : "ios-heart-empty"} size={20} color={Colors.light.bianco} />
-  //            </TouchableOpacity>
-  //          )}
-  //          <View style={{
-  //            position: "absolute",
-  //            top: 0,
-  //            bottom: 0,
-  //            left: 0,
-  //            width: "100%",
-  //            height: "100%",
-  //            backgroundColor: "#8D99AE",
-  //            opacity: .15,
-  //            zIndex: 1
-  //          }} />
-  //        </ImageBackground>
-  //        <View style={{ marginHorizontal: 20, marginBottom: 10 }}>
-  //          <BaseText size={14} weight={400} color={Colors.light.nero} styles={{
-  //            letterSpacing: 0.5,
-  //          }}>{title}</BaseText>
-  //          <View style={{
-  //            marginTop: 5,
-  //            flexDirection: "row",
-  //            alignItems: "center",
-  //            justifyContent: "flex-start",
-  //            alignContent: "center"
-  //          }}>
-  //            {stars > 0 && (
-  //              <View style={{
-  //                flexDirection: "row",
-  //                justifyContent: "flex-start",
-  //                alignItems: "center",
-  //                alignContent: "center",
-  //                marginRight: 10
-  //              }}>
-  //                <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
-  //                <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
-  //                <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
-  //                <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
-  //                <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
-  //                <BaseText size={9} styles={{ marginLeft: 5 }}>({stars})</BaseText>
-  //              </View>
-  //            )}
-  //            <View style={{
-  //              minWidth: 25,
-  //              minHeight: 14,
-  //              paddingHorizontal: 5,
-  //              borderRadius: 5,
-  //              backgroundColor: economyColor,
-  //              justifyContent: "center",
-  //              alignItems: "center"
-  //            }}>
-  //              <BaseText weight={700} color={economyTColor} size={8}>{economyTitle}</BaseText>
-  //            </View>
-  //            <View style={{
-  //              width: 65,
-  //              height: 14,
-  //              borderRadius: 5,
-  //              backgroundColor: false ? "rgba(133, 194, 170, 0.4)" : "#C4C4C4",
-  //              justifyContent: "center",
-  //              alignItems: "center",
-  //              marginLeft: 10
-  //            }}>
-  //              <BaseText weight={700} styles={{
-  //                color: false ? "#008D56" : "#525252",
-  //                fontSize: 8,
-  //              }}>{false ? "APERTO" : "CHIUSO"}</BaseText>
-  //            </View>
-  //          </View>
-  //        </View>
-  //      </View>
-  //    </TouchableOpacity>
-  //  )
-  //}
+  const renderCards = (item, index) => {
+    //console.log("item", item)
+    //console.log("index", index)
+    //console.log("\n")
+    let { title, stars, via, desc, mainPhoto, economy, id } = item;
+    let economyColor = "rgba(133, 194, 170, 0.4)", economyTitle = "€", economyTColor = "#008D56";
+    if (economy) {
+      switch (economy) {
+        case 1:
+          economyColor = "rgba(244, 195, 108, 0.4)";
+          economyTitle = "€€";
+          economyTColor = "#CB860B";
+          break;
+        case 2:
+          economyColor = "rgba(244, 195, 108, 0.4)";
+          economyTitle = "€€€";
+          economyTColor = "#CB860B";
+          break;
+      }
+    }
+    if (desc.length > 25) {
+      desc = desc.slice(0, 25) + " ...";
+    }
+    let isFavorite = false;
+    //if (favoritesFB !== undefined) {
+    //  isFavorite = favoritesFB.includes(id);
+    //}
+    const setFavorite = async () => {
+      if (user !== null && userDocId !== null) {
+        //console.log("---hoPremuto---", id)
+        try {
+          var databaseRefReal = await db.collection('utentiApp').doc(userDocId);
+          await db.runTransaction(async (t) => {
+            const doc = await t.get(databaseRefReal);
+            console.log("---favoritesOnDB---", doc.data()?.favorites)
+            let favorites = doc.data().favorites;
+            // DOC: se ho preferiti entro per capire come rimuoverlo
+            if (favorites && favorites !== undefined) {
+              favorites.forEach((element) => {
+                if (element.id === id) {
+                  // DOC SE HO GIA LO STESSO PREFERITO PREMUTO LO RIMUOVO
+                  var deletedList = favorites.filter(x => {
+                    return x.id != id;
+                  })
+                  console.log("---deletedList[FAVORITES]---", deletedList);
+                  if (deletedList.length <= 0) {
+                    // rimuovo la lista completa
+                    //isFavorite = false;
+                    t.update(databaseRefReal, { favorites: dbVal.FieldValue.delete() });
+                  } else {
+                    // rimuovo il commerciante
+                    //isFavorite = false;
+                    t.update(databaseRefReal, { favorites: deletedList });
+                  }
+                } else {
+                  // aggiungo il commerciante
+                  let newFavorites = [...favorites, { id }];
+                  var list = newFavorites.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
+                  //isFavorite = true;
+                  t.update(databaseRefReal, {
+                    favorites: list
+                  });
+                }
+              });
+            } else {
+              // aggiungo il commerciante per la prima volta
+              //isFavorite = true;
+              t.update(databaseRefReal, {
+                favorites: [
+                  { id }
+                ]
+              });
+            }
+          });
+          //getFavorites();
+        } catch (error) {
+          console.log("---setFavorite[Error]", error);
+        }
+      } else {
+        navigation.navigate("Auth");
+        //console.warn("non ho un utente per aggiugnere questo commerciante ai preferiti");
+      }
+    }
+    return (
+      <TouchableOpacity
+        key={index}
+        onPress={() => {
+          Vibration.impactTouch("Light");
+          navigation.navigate("Shop", { id: id });
+        }}>
+        <View style={{
+        }}>
+          <ImageBackground
+            style={{
+              flex: 1,
+              height: 145,
+              marginVertical: 10,
+              flexDirection: "row",
+              borderRadius: 30,
+            }}
+            imageStyle={{
+              backgroundColor: Colors.light.background,
+              resizeMode: "cover",
+              borderRadius: 30,
+            }}
+            source={mainPhoto ? { uri: mainPhoto.url } : require('../assets/images/salon.jpeg')}
+          >
+            {user !== null && (
+              <TouchableOpacity onPress={setFavorite} style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                backgroundColor: Colors.light.background,
+                height: 40,
+                width: 48,
+                borderBottomLeftRadius: 30,
+                alignContent: "center",
+                justifyContent: "center",
+                alignItems: "center"
+                //zIndex: 10
+              }}>
+                <BottomIcon type={"ios-heart-empty"} color={Colors.light.ARANCIO} size={25} />
+                {/*<Ionicons name={isFavorite ? "ios-heart" : "ios-heart-empty"} size={20} color={Colors.light.bianco} />*/}
+              </TouchableOpacity>
+            )}
+            {/*<View style={{
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "#8D99AE",
+              opacity: .15,
+              zIndex: 1
+            }} />*/}
+          </ImageBackground>
+          <View style={{ marginHorizontal: 20, marginBottom: 10 }}>
+            <BaseText size={14} weight={700} color={Colors.light.nero} styles={{
+              letterSpacing: 0.5,
+            }}>{title}</BaseText>
+            <View style={{
+              //marginTop: 5,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              alignContent: "center"
+            }}>
+              {stars > 0 && (
+                <View style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  alignContent: "center",
+                  marginRight: 10
+                }}>
+                  <Ionicons name="ios-star" size={20} color={Colors.light.ARANCIO} />
+                  {/*<Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+                  <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+                  <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+                  <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />*/}
+                  <BaseText size={10} weight={700} styles={{ marginLeft: 5, marginTop: 5 }}>{stars}</BaseText>
+                </View>
+              )}
+              {/*<View style={{
+                minWidth: 25,
+                minHeight: 14,
+                paddingHorizontal: 5,
+                borderRadius: 5,
+                backgroundColor: economyColor,
+                justifyContent: "center",
+                alignItems: "center"
+              }}>*/}
+              {/*<BaseText weight={700} color={economyTColor} size={8}>{economyTitle}</BaseText>*/}
+              {/*</View>*/}
+              <BaseText weight={300} color={Colors.light.nero} styles={{ marginTop: 5 }} size={8}>{via}</BaseText>
+              <BaseText weight={700} color={Colors.light.nero} styles={{ marginLeft: 5, marginTop: 5 }} size={8}>·  {economyTitle}</BaseText>
+              {/*<View style={{
+                width: 65,
+                height: 14,
+                borderRadius: 5,
+                backgroundColor: false ? "rgba(133, 194, 170, 0.4)" : "#C4C4C4",
+                justifyContent: "center",
+                alignItems: "center",
+                marginLeft: 10
+              }}>
+                <BaseText weight={700} styles={{
+                  color: false ? "#008D56" : "#525252",
+                  fontSize: 8,
+                }}>{false ? "APERTO" : "CHIUSO"}</BaseText>
+              </View>*/}
+            </View>
+          </View>
+        </View>
+      </TouchableOpacity>
+    )
+  }
 
   //useEffect(() => {
   //  navigation.navigate('IntroScreen');
   //}, [])
+
   const cateogryPressed = (index) => {
-    setCategory(index)
+    setCategory(index);
   }
 
   if (isLoading) {
@@ -379,10 +395,10 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <MaskedView
-        style={{ height: 50, marginVertical: 20 }}
+        style={{ height: 50, marginTop: 60, marginVertical: 20 }}
         maskElement={
           <View
             style={{
@@ -396,7 +412,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
               weight={700}
               size={30}
             >
-              BeautyShop
+              {"BeautyShop"}
             </BaseText>
           </View>
         }
@@ -442,7 +458,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
           <PinIcon type="normal" size={25} color={Colors.light.nero} />
         </TouchableOpacity>
       </View>
-      <View style={{ backgroundColor: "transparent", marginTop: 30 }}>
+      <View style={{ backgroundColor: "transparent", marginTop: 30, paddingBottom: 10, }}>
         <BaseText weight={700} size={25} styles={{ paddingLeft: 25 }}>{"Le nostre Categorie"}</BaseText>
         <View style={{ marginTop: 15 }} />
         <ScrollView
@@ -500,36 +516,27 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
         </ScrollView>
       </View>
       {/*<Desk style={styles.image} width="262" height="258" color={"white"} />*/}
-      {/*<ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.light.arancio]} />}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ backgroundColor: "transparent", paddingBottom: 100 }}>
-        
-        <View style={{ backgroundColor: "transparent", marginLeft: 20, marginTop: 20 }}>
-          <BaseText weight={700} styles={{
-            fontSize: 13,
-            letterSpacing: 0.72,
-            textTransform: "uppercase",
-          }}>{"I nostri Commercianti"}</BaseText>
-        </View>
-        <View style={{ backgroundColor: "transparent" }} >
-          {parrucchieri !== undefined && (
-            <FlatList
-              data={parrucchieri}
-              contentContainerStyle={{
-                backgroundColor: "transparent"
-              }}
-              style={{
-                backgroundColor: "transparent"
-              }}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item, index }) => renderCards(item, index)}
-            />
-          )}
-        </View>
-      </ScrollView>*/}
-    </SafeAreaView>
+      <View style={{ flex: 1, backgroundColor: "transparent" }} >
+        {parrucchieri !== undefined && (
+          <FlatList
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.light.arancio]} />}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              marginHorizontal: 30,
+              backgroundColor: "transparent",
+              paddingBottom: 100
+            }}
+            data={parrucchieri}
+            style={{
+              backgroundColor: "transparent"
+            }}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item, index }) => renderCards(item, index)}
+          />
+        )}
+      </View>
+    </View>
   );
 }
 

@@ -19,6 +19,11 @@ import Register from '../screens/Register';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import IntroScreen from '../screens/IntroScreen';
 import NewHomePage from '../screens/NewHomePage';
+import Profilo from '../screens/Profilo';
+import Review from '../screens/Review';
+import Shop from '../screens/Shop';
+import Preferiti from '../screens/Preferiti';
+import Prenotazioni from '../screens/Prenotazioni';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -69,8 +74,20 @@ function RootNavigator() {
         initialRouteName="Homepage"
         mode="modal"
       >
-        {/*<Stack.Screen name="Root" component={BottomTabNavigator} />*/}
+        <Stack.Screen name="Root" component={BottomTabNavigator} />
         <Stack.Screen name="IntroScreen" component={IntroScreen}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen name="Review" component={Review}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen name="Shop" component={Shop}
           options={{
             headerShown: false,
             gestureEnabled: false,
@@ -128,6 +145,21 @@ function AuthNav() {
         options={{
           headerShown: false
         }}
+      />
+      <AuthStack.Screen
+        name="Profilo"
+        component={Profilo}
+        options={{ headerShown: false }}
+      />
+      <AuthStack.Screen
+        name="Preferiti"
+        component={Preferiti}
+        options={{ headerShown: false }}
+      />
+      <AuthStack.Screen
+        name="Prenotazioni"
+        component={Prenotazioni}
+        options={{ headerShown: false }}
       />
     </AuthStack.Navigator>
   );

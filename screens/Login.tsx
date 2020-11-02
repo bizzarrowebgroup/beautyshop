@@ -109,25 +109,32 @@ const Login = ({ navigation }) => {
           style={{ flex: 1 }}
         />
       </Animated.View>
-      <View style={styles.overlay}>
-        <View style={{ marginTop: 140, paddingHorizontal: 25 }}>
+      {/*<View style={styles.overlay}>*/}
+      {/*<View style={{ marginTop: 140, paddingHorizontal: 25 }}>*/}
+      {/*</View>*/}
+      {/*</View>*/}
+      <View style={[styles.overlay, { flex: 1, width: "100%", }]}>
+        <View style={{
+          paddingHorizontal: 20
+        }}>
           <Image source={require('../assets/images/logoBS.png')} style={{
             width: 50,
             height: 50,
             tintColor: Colors.light.bianco,
             alignSelf: "center",
+            marginVertical: 50
           }} />
-        </View>
-      </View>
-      <View style={{ position: "absolute", bottom: 140, width: "100%" }}>
-        <View style={{
-          paddingHorizontal: 20
-        }}>
           <BaseText size={24} lineHeight={30} weight={700} letterSpacing={0.7} color={Colors.light.bianco}>{"Entra a far parte\ndel mondo del beauty"}</BaseText>
           <BaseText size={12} lineHeight={22} letterSpacing={0.77} color={Colors.light.grigio}>{"Prenota facilmente ovunque ti trovi"}</BaseText>
+          {/*<TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.bianco }]}>
+            <View style={styles.btnInside}>
+              <IconFooterSocial type="apple" width={24} height={24} color={Colors.light.nero} style={{ alignSelf: "center", marginRight: 20 }} />
+              <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.nero}>{"Accedi con Apple"} </BaseText>
+            </View>
+          </TouchableOpacity>*/}
           <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.nero }]}>
             <View style={styles.btnInside}>
-              <IconFooterSocial type="apple" width={24} height={24} color={"white"} style={{ alignSelf: "center", marginRight: 20 }} />
+              <IconFooterSocial type="apple" width={24} height={24} color={Colors.light.bianco} style={{ alignSelf: "center", marginRight: 20 }} />
               <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.bianco}>{"Accedi con Apple"} </BaseText>
             </View>
           </TouchableOpacity>
@@ -167,18 +174,18 @@ const Login = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.bianco,
+    backgroundColor: Colors.light.nero,
   },
   background: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: Colors.light.bianco,
+    backgroundColor: Colors.light.nero,
   },
   backgroundViewWrapper: {
     ...StyleSheet.absoluteFillObject
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.2)',
   },
   title: {
     color: 'white',
@@ -266,7 +273,7 @@ export default Login;
             <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.btn}>
               <BaseText color={Colors.light.bianco} size={13} weight={400}>{"Registrati"}</BaseText>
             </TouchableOpacity>
-          
+
             <BaseText size={14} weight={400} styles={{ alignSelf: "center", marginVertical: 20 }}>{"oppure accedi con"}</BaseText>
             <View style={{ flexDirection: "row", alignItems: "center", alignContent: "center", justifyContent: "center" }}>
               <TouchableOpacity style={[styles.shadowBtn, { width: 87, height: 58, backgroundColor: "white", borderRadius: 5, justifyContent: "center", }]}>

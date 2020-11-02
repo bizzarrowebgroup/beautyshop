@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     shadowOpacity: .2,
     shadowRadius: 2,
     elevation: 1,
-  }
+  }, 
 });
 //backButton: {
 //  justifyContent: 'center',
