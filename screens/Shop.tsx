@@ -47,29 +47,29 @@ function Shop({ navigation, route }) {
   const headerTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE],
     outputRange: [0, -HEADER_SCROLL_DISTANCE],
-    extrapolate: 'clamp',
+    extrapolate: Extrapolate.CLAMP,
   });
 
   const imageOpacity = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
     outputRange: [.76, .3, 0],
-    extrapolate: 'clamp',
+    extrapolate: Extrapolate.CLAMP,
   });
   const imageTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE],
     outputRange: [0, 100],
-    extrapolate: 'clamp',
+    extrapolate: Extrapolate.CLAMP,
   });
   const dockTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE],
     outputRange: [0, 55],
-    extrapolate: 'clamp',
+    extrapolate: Extrapolate.CLAMP,
   });
 
   const titleScale = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
     outputRange: [1, 1, 0.9],
-    extrapolate: 'clamp',
+    extrapolate: Extrapolate.CLAMP,
   });
 
   //const titleSize = scrollY.interpolate({
@@ -81,13 +81,13 @@ function Shop({ navigation, route }) {
   const titlePadding = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
     outputRange: [20, 10, -10],
-    extrapolate: 'clamp',
+    extrapolate: Extrapolate.CLAMP,
   });
 
   const titleTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
     outputRange: [0, 0, -45],
-    extrapolate: 'clamp',
+    extrapolate: Extrapolate.CLAMP,
   });
   const [indexX, setIndex] = React.useState(0);
   const [data, setData] = React.useState(undefined);

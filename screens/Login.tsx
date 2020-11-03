@@ -67,7 +67,13 @@ const Login = ({ navigation }) => {
       //  setLoading(false);
       //});
       await logInWithFacebook().then((id) => {
-        if (id !== undefined) console.log("---LOGIN OK---", id)
+        if (id !== undefined) {
+          // check se è login social
+          if(id.type == 'login_facebook')
+          // check se è registrazione social
+          // se registrazione mando l'utente alla complete screen 
+          console.log("---LOGIN OK---", id)
+        }
         setLoading(false);
       });
     } catch (error) {

@@ -179,26 +179,27 @@ export const logInWithFacebook = async () => {
       const credential = firebase.auth.FacebookAuthProvider.credential(token);
       try {
         let userId = await auth.signInWithCredential(credential);
-        let { additionalUserInfo, operationType, user, } = userId;
-        return console.log("---userGOT---", userId)
-        if (user.uid !== '') {
-          return user.uid;
+        let { additionalUserInfo, operationType, user } = userId;
+        //return console.log("---userGOT---", userId)
+        console.log("----additionalUserInfo----", additionalUserInfo)
+        console.log("----operationType----", operationType)
+        console.log("----user----", user)
+        let isRegistered = await db.collection('utentiApp').doc(user.uid).get();
+        if (isRegistered.exists) {
+          // the user is already registered
+          //return user.uid;
+          return { type: "login_facebook", userid: user.uid };
         } else {
-          return alert("ERRORE LOGIN FB SOCIAL 003-30-1")
-        }
-      } catch (error) {
-        var errorCode = error.code;
-        if (errorCode === 'auth/account-exists-with-different-credential') {
-          alert('Email già associata con un altro provider social.');
-        } else if (errorCode === 'auth/user-not-found') {
+          // the user is not registered yet
           const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,birthday,picture.type(large)`);
           let fbData = await response.json();
           if (fbData) {
-            const { picture, name, birthday } = fbData;
+            const { picture, name } = fbData;
             //console.log("---picture---", picture.data.url)
             //console.log("---fbData---", fbData)
             try {
-              let userId = await auth.signInWithCredential(credential);
+              // i dont need it
+              //let userId = await auth.signInWithCredential(credential);
               await auth.currentUser.updateProfile({
                 displayName: name,
                 photoURL: picture.data.url
@@ -207,26 +208,40 @@ export const logInWithFacebook = async () => {
               }).catch((error) => {
                 console.log("---logInWithFB-updateProfile-error---", error);
               });
+              let userToDB = {
+                userId: user.uid,
+                phone: '',
+                pwd: '',
+                loyalitypoints: 150, // when we register a new user we give him 150 points :D
+                notificationToken: '',
+                notificationsEnabled: false,
+                displayName: name,
+                photoURL: picture.data.url
+              }
+              const res = await db.collection('utentiApp').doc(user.uid).set(userToDB);
+              console.log("---utentiAppID creato--", res);
               //console.log("---token---", token)
               //console.log("---credential---", credential)
               //console.log("---signInWithCredential---", userId)
-              let { user } = userId;
-              if (user.uid !== '') {
-                let userToDB = {
-                  //birthday: birthday,
-                  userId: user.uid,
-                  phone: '',
-                  pwd: '',
-                  loyalitypoints: 150, // when we register a new user we give him 150 points :D
-                  notificationToken: '',
-                  notificationsEnabled: false,
-                }
-                const res = await db.collection('utentiApp').add(userToDB);
-                console.log("---utentiAppID-AGGIUNTO---", res.id);
-                return user.uid;
-              } else {
-                return alert("ERRORE Registrazione post login FB SOCIAL")
-              }
+              //let { user } = userId;
+              //if (user.uid !== '') {
+              //  let userToDB = {
+              //    //birthday: birthday,
+              //    userId: user.uid,
+              //    phone: '',
+              //    pwd: '',
+              //    loyalitypoints: 150, // when we register a new user we give him 150 points :D
+              //    notificationToken: '',
+              //    notificationsEnabled: false,
+              //  }
+              //  const res = await db.collection('utentiApp').add(userToDB);
+              //  console.log("---utentiAppID-AGGIUNTO---", res.id);
+              //  return user.uid;
+              //} else {
+              //  return alert("ERRORE Registrazione post login FB SOCIAL")
+              //}
+              console.info('Registrato post login in!', `Benvenuto ${fbData.name}!`);
+              return { type: "register_facebook", userid: user.uid };
             } catch (error) {
               var errorCode = error.code;
               // var errorMessage = error.message;
@@ -240,9 +255,74 @@ export const logInWithFacebook = async () => {
               console.error(error);
               //}
             }
-
+          } else {
+            console.log("----fbData error fetching from graph.facebook----", token)
           }
-          console.info('Registrato post login in!', `Benvenuto ${fbData.name}!`);
+          //if (user.uid !== '') {
+          //  return user.uid;
+          //} else {
+          //  return alert("ERRORE LOGIN FB SOCIAL 003-30-1")
+          //}
+        }
+        //return user.uid;
+      } catch (error) {
+        var errorCode = error.code;
+        if (errorCode === 'auth/account-exists-with-different-credential') {
+          alert('Email già associata con un altro provider social.');
+        } else if (errorCode === 'auth/user-not-found') {
+          console.log("----error----", errorCode)
+          //const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,birthday,picture.type(large)`);
+          //let fbData = await response.json();
+          //if (fbData) {
+          //  const { picture, name, birthday } = fbData;
+          //  //console.log("---picture---", picture.data.url)
+          //  //console.log("---fbData---", fbData)
+          //  try {
+          //    let userId = await auth.signInWithCredential(credential);
+          //    await auth.currentUser.updateProfile({
+          //      displayName: name,
+          //      photoURL: picture.data.url
+          //    }).then((result) => {
+          //      console.log(result, "---logInWithFB-updateProfile---");
+          //    }).catch((error) => {
+          //      console.log("---logInWithFB-updateProfile-error---", error);
+          //    });
+          //    //console.log("---token---", token)
+          //    //console.log("---credential---", credential)
+          //    //console.log("---signInWithCredential---", userId)
+          //    let { user } = userId;
+          //    if (user.uid !== '') {
+          //      let userToDB = {
+          //        //birthday: birthday,
+          //        userId: user.uid,
+          //        phone: '',
+          //        pwd: '',
+          //        loyalitypoints: 150, // when we register a new user we give him 150 points :D
+          //        notificationToken: '',
+          //        notificationsEnabled: false,
+          //      }
+          //      const res = await db.collection('utentiApp').add(userToDB);
+          //      console.log("---utentiAppID-AGGIUNTO---", res.id);
+          //      return user.uid;
+          //    } else {
+          //      return alert("ERRORE Registrazione post login FB SOCIAL")
+          //    }
+          //  } catch (error) {
+          //    var errorCode = error.code;
+          //    // var errorMessage = error.message;
+          //    // The email of the user's account used.
+          //    // var email = error.email;
+          //    // The firebase.auth.AuthCredential type that was used.
+          //    // var credentialError = error.credential;
+          //    //if (errorCode === 'auth/account-exists-with-different-credential') {
+          //    //alert('Email già associata con un altro provider social.');
+          //    //} else {
+          //    console.error(error);
+          //    //}
+          //  }
+
+          //}
+          //console.info('Registrato post login in!', `Benvenuto ${fbData.name}!`);
         } else {
           console.error(error);
         }
