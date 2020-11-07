@@ -16,6 +16,7 @@ import Toast from "react-native-toast-message"
 import { db } from './network/Firebase';
 import { AppContext } from './context/Appcontext';
 import { View } from "react-native";
+import { withSecurityScreen } from "./components/withSecurityScreen";
 
 // Sentry.init({
 //   dsn: "https://6f3d61d6211445b4a5af61e57aaecbaa@o421980.ingest.sentry.io/5342571",
@@ -33,7 +34,7 @@ import { View } from "react-native";
 //   appId: "1:470013044742:web:c5cabae0efe0f2da96bb87"
 // }
 
-export default function App() {
+function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
   const [servizi, setServizi] = React.useState([]);
@@ -170,3 +171,6 @@ export default function App() {
     </SafeAreaProvider>
   );
 }
+
+
+export default withSecurityScreen(App);
