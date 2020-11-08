@@ -181,9 +181,9 @@ export const logInWithFacebook = async () => {
         let userId = await auth.signInWithCredential(credential);
         let { additionalUserInfo, operationType, user } = userId;
         //return console.log("---userGOT---", userId)
-        console.log("----additionalUserInfo----", additionalUserInfo)
-        console.log("----operationType----", operationType)
-        console.log("----user----", user)
+        //console.log("----additionalUserInfo----", additionalUserInfo)
+        //console.log("----operationType----", operationType)
+        //console.log("----user----", user)
         let isRegistered = await db.collection('utentiApp').doc(user.uid).get();
         if (isRegistered.exists) {
           // the user is already registered
@@ -201,6 +201,8 @@ export const logInWithFacebook = async () => {
               console.log(error, token)
               return { type: "error", message: error }
             }
+          } else {
+            return { type: "login_facebook", userid: user.uid };
           }
         } else {
           // the user is not registered yet
@@ -364,6 +366,34 @@ export const logInWithFacebook = async () => {
   } catch ({ message }) {
     //alert(`Facebook Login Error: ${message}`);
     console.log("login FB annullato", message)
+  }
+}
+
+export const completeSocialProfile = async ({ email, phone, name, userId, newsletter, privacy, cookie }) => {
+  try {
+    await auth.currentUser.updateProfile({
+      displayName: name,
+    });
+    let userToUpdate = {
+      phone,
+      email,
+      newsletter,
+      privacy,
+      cookie,
+      displayName: name,
+      toBecompleted: false,
+    }
+    await db.collection('utentiApp').doc(userId).update(userToUpdate);
+    return {
+      type: "complete_social",
+      userId,
+    };
+  } catch (error) {
+    return {
+      type: "error",
+      userId,
+      error
+    };
   }
 }
 

@@ -73,8 +73,9 @@ const Login = ({ navigation }) => {
       //  setLoading(false);
       //});
       await logInWithFacebook().then((id) => {
+        //console.log("id", id)
         if (id !== undefined) {
-          console.log("id", id)
+          //console.log("id", id)
           // check se è login social
           if (id.type == 'login_facebook' && !id.toBecompleted) {
             // check se è registrazione social
@@ -90,6 +91,8 @@ const Login = ({ navigation }) => {
           } else if (id.type == 'error') {
             showToast("LOGIN CON FACEBOOK", id.message, "error", "bottom", 4000);
           }
+        } else {
+          showToast("LOGIN CON FACEBOOK", "errore nel login", "error", "bottom", 4000);
         }
         //setLoading(false);
         setLoadingFB(false)
@@ -131,7 +134,7 @@ const Login = ({ navigation }) => {
           shouldPlay
           //source={{ uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
           source={{ uri: 'https://ingass.space/images/bohdd.mp4' }}
-          style={{ flex: 1 }}
+          style={{ flex: 1, backgroundColor: Colors.light.nero }}
         />
       </Animated.View>
       {/*<View style={styles.overlay}>*/}
@@ -149,28 +152,22 @@ const Login = ({ navigation }) => {
             alignSelf: "center",
             marginVertical: 50
           }} />
-          <BaseText size={24} lineHeight={30} weight={700} letterSpacing={0.7} color={Colors.light.bianco}>{"Entra a far parte\ndel mondo del beauty"}</BaseText>
-          <BaseText size={12} lineHeight={22} letterSpacing={0.77} color={Colors.light.grigio}>{"Prenota facilmente ovunque ti trovi"}</BaseText>
-          {/*<TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.bianco }]}>
-            <View style={styles.btnInside}>
-              <IconFooterSocial type="apple" width={24} height={24} color={Colors.light.nero} style={{ alignSelf: "center", marginRight: 20 }} />
-              <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.nero}>{"Accedi con Apple"} </BaseText>
-            </View>
-          </TouchableOpacity>*/}
-          <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.nero }]}>
+          <BaseText styles={{ textAlign: "center" }} size={24} lineHeight={30} weight={700} letterSpacing={0.7} color={Colors.light.bianco}>{"Entra a far parte\ndel mondo del beauty"}</BaseText>
+          <BaseText styles={{ textAlign: "center" }} size={12} lineHeight={22} letterSpacing={0.77} color={Colors.light.grigio}>{"Prenota facilmente ovunque ti trovi"}</BaseText>
+          {/*<TouchableOpacity onPress={() => { }} style={[styles.btn, { backgroundColor: Colors.light.nero }]}>
             {!loadingApple && (<View style={styles.btnInside}>
               <IconFooterSocial type="apple" width={24} height={24} color={Colors.light.bianco} style={{ alignSelf: "center", marginRight: 20 }} />
               <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.bianco}>{"Accedi con Apple"} </BaseText>
             </View>)}
             {loadingApple && (<ActivityIndicator size="large" color={Colors.light.bianco} style={{ alignSelf: "center", flex: 1 }} />)}
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.bianco }]}>
+          </TouchableOpacity>*/}
+          {/*<TouchableOpacity onPress={() => { }} style={[styles.btn, { backgroundColor: Colors.light.bianco }]}>
             {!loadingGoogle && (<View style={styles.btnInside}>
               <IconFooterSocial type="google" width={24} height={24} style={{ alignSelf: "center", marginRight: 20 }} />
               <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.nero}>{"Accedi con Google"} </BaseText>
             </View>)}
             {loadingGoogle && (<ActivityIndicator size="large" color={Colors.light.bianco} style={{ alignSelf: "center", flex: 1 }} />)}
-          </TouchableOpacity>
+          </TouchableOpacity>*/}
           <TouchableOpacity onPress={() => handleFacebookLogin()} style={[styles.btn, { backgroundColor: "#1878F3" }]}>
             {!loadingFB && (<View style={styles.btnInside}>
               <IconFooterSocial type="facebook" width={24} height={24} color={Colors.light.bianco} style={{ alignSelf: "center", marginRight: 20 }} />
@@ -178,12 +175,12 @@ const Login = ({ navigation }) => {
             </View>)}
             {loadingFB && (<ActivityIndicator size="large" color={Colors.light.bianco} style={{ alignSelf: "center", flex: 1 }} />)}
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.ARANCIO }]}>
+          {/*<TouchableOpacity onPress={() => { }} style={[styles.btn, { backgroundColor: Colors.light.ARANCIO }]}>
             <View style={styles.btnInside}>
               <BaseText color={Colors.light.bianco} size={13} weight={700} letterSpacing={0.77}>{"Accedi con email"}</BaseText>
             </View>
-          </TouchableOpacity>
-          <View style={styles.footerButtonContainer}>
+          </TouchableOpacity>*/}
+          {/*<View style={styles.footerButtonContainer}>
             <TouchableOpacity onPress={() => navigation.navigate('Register')} style={{ flexDirection: "row" }}>
               <BaseText color={Colors.light.bianco} size={14} weight={300}>
                 {" Nuovo utente? "}
@@ -192,7 +189,7 @@ const Login = ({ navigation }) => {
                 {"Registrati ora"}
               </BaseText>
             </TouchableOpacity>
-          </View>
+          </View>*/}
         </View>
       </View>
       {/*</ScrollView>*/}
@@ -214,10 +211,12 @@ const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.2)',
+    alignItems: "center",
+    justifyContent: "center"
   },
   title: {
     color: 'white',
-    marginTop: 90,
+    //marginTop: 90,
     paddingHorizontal: 20,
     textAlign: 'center'
   },
@@ -234,7 +233,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   footerButtonContainer: {
-    marginTop: 15,
+    marginTop: 35,
+    alignSelf: "center"
   },
   forgotPasswordButtonText: {
     color: Colors.light.nero,

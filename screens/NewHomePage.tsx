@@ -62,6 +62,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
   const [selectedCategory, setCategory] = useState(0);
   const [parrucchieri, setPar] = React.useState(undefined);
   const [userDocId, setUserDocId] = React.useState(null);
+  const [userData, setUserData] = React.useState(undefined);
   //const [favoritesFB, setFavorites] = React.useState(undefined);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -84,6 +85,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
           //console.log("---getUserId[databaseRef-forEach]---", doc.data());
           //console.log("---getUserId[docID]---", doc.id);
           setUserDocId(doc.id);
+          setUserData(doc.data())
         });
       };
     }
@@ -391,8 +393,12 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
   }
 
   const presseProfile = () => {
+    console.log("--userData--", userData)
     if (user) {
-      navigation.navigate('Profilo');
+      const { toBecompleted, userId, displayName } = userData;
+      if (toBecompleted === true) {
+        navigation.navigate('Auth', { screen: 'CompleteSocial', params: { userid: userId, nomecognome: displayName } })
+      } else navigation.navigate('Profilo');
     } else navigation.navigate('Auth')
   }
 

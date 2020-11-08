@@ -151,6 +151,7 @@ function AuthNav() {
         component={Login}
         options={{
           headerShown: false,
+          gestureEnabled: false
         }}
       />
       <AuthStack.Screen
@@ -171,7 +172,8 @@ function AuthNav() {
         name="CompleteSocial"
         component={CompleteSocial}
         options={{
-          headerShown: false
+          headerShown: false,
+          gestureEnabled: false
         }}
       />
 

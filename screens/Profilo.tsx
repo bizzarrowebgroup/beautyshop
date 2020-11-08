@@ -90,7 +90,7 @@ const Profilo = ({
       console.log('Non trovo il telefono per questo utente a db.');
     }
     snapshot.forEach(doc => {
-      console.log(doc.id, '=>', doc.data());
+      //console.log(doc.id, '=>', doc.data());
       let data = doc.data();
       setPhone(data.phone);
     });
