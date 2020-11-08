@@ -24,6 +24,7 @@ import Review from '../screens/Review';
 import Shop from '../screens/Shop';
 import Preferiti from '../screens/Preferiti';
 import Prenotazioni from '../screens/Prenotazioni';
+import CompleteSocial from '../screens/CompleteSocial';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -108,6 +109,26 @@ function RootNavigator() {
             cardOverlayEnabled: false,
           }}
         />
+        <Stack.Screen
+          name="Profilo"
+          component={Profilo}
+          options={{
+            ...TransitionPresets.ModalPresentationIOS,
+            gestureEnabled: true,
+            headerShown: false,
+            cardOverlayEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="Preferiti"
+          component={Preferiti}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Prenotazioni"
+          component={Prenotazioni}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="NotFound" component={NotFoundScreen}
           options={{
             ...TransitionPresets.ModalPresentationIOS,
@@ -147,20 +168,13 @@ function AuthNav() {
         }}
       />
       <AuthStack.Screen
-        name="Profilo"
-        component={Profilo}
-        options={{ headerShown: false }}
+        name="CompleteSocial"
+        component={CompleteSocial}
+        options={{
+          headerShown: false
+        }}
       />
-      <AuthStack.Screen
-        name="Preferiti"
-        component={Preferiti}
-        options={{ headerShown: false }}
-      />
-      <AuthStack.Screen
-        name="Prenotazioni"
-        component={Prenotazioni}
-        options={{ headerShown: false }}
-      />
+
     </AuthStack.Navigator>
   );
 }

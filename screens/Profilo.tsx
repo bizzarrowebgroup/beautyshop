@@ -115,6 +115,7 @@ const Profilo = ({
   async function handleSignOut() {
     try {
       await logout();
+      navigation.goBack();
     } catch (error) {
       console.log(error);
     }
@@ -129,9 +130,9 @@ const Profilo = ({
             profile={true}
             loggedIn={true}
             image={photoUrl ? photoUrl : "https://api.adorable.io/avatars/100/abott@adorable.png"}
-            username={name ? name : "Nome undefined"}
-            email={email ? email : "email undefined"}
-            phonenumber={phone ? phone : "phone undefined"}
+            username={name ? name : "-"}
+            email={email ? email : "-"}
+            phonenumber={phone ? phone : "-"}
           />
           <View style={{
             zIndex: -2,

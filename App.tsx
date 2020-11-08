@@ -173,4 +173,5 @@ function App() {
 }
 
 
-export default withSecurityScreen(App);
+//export default withSecurityScreen(App);
+export default App;

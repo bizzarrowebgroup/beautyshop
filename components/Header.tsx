@@ -84,11 +84,12 @@ const Header = (props: HeaderProps) => {
                 </View>
                 <View style={{
                   flexDirection: "row",
-                  justifyContent: "space-around",
+                  justifyContent: "space-between",
                   //alignContent: "center",
                   //alignItems: "center"
                 }}>
                   <View style={{
+                    marginLeft: 20
                   }}>
                     <Circle width="154" height="115" style={{
                       position: "absolute",
@@ -108,9 +109,12 @@ const Header = (props: HeaderProps) => {
                     top: 30,
                     flexDirection: "column",
                     alignItems: "flex-end",
+                    maxWidth: 250,
+                    marginRight: 20,
                   }}>
                     <BaseText size={18 - 2} weight={700} styles={{
-                      marginBottom: 10,
+                      //marginBottom: 10,
+                      textAlign: "right",
                       color: Colors.light.bianco
                     }}>{props.username}</BaseText>
                     <BaseText size={13 - 2} styles={{

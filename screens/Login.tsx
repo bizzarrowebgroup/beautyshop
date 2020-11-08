@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { StatusBar, Animated, StyleSheet, TouchableOpacity, ScrollView, View, Image, SafeAreaView } from 'react-native';
+import React, { useState, useMemo, useContext } from 'react';
+import { StatusBar, Animated, StyleSheet, TouchableOpacity, ScrollView, View, Image, SafeAreaView, ActivityIndicator } from 'react-native';
 import * as Yup from 'yup';
 import Colors from '../constants/Colors';
 import { Video } from 'expo-av';
@@ -12,6 +12,7 @@ import FormErrorMessage from '../components/Form/FormErrorMessage';
 import Loader from '../components/Loader';
 import BaseText from '../components/StyledText';
 import IconFooterSocial from '../components/svg/IconFooterSocial';
+import { AppContext } from '../context/Appcontext';
 // import useStatusBar from '../hooks/useStatusBar';
 
 const validationSchema = Yup.object().shape({
@@ -26,10 +27,14 @@ const validationSchema = Yup.object().shape({
 });
 
 const Login = ({ navigation }) => {
+  const { showToast } = useContext(AppContext);
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [rightIcon, setRightIcon] = useState('eye');
   const [loginError, setLoginError] = useState('');
-  const [loading, setLoading] = useState(false);
+  //const [loading, setLoading] = useState(false);
+  const [loadingFB, setLoadingFB] = useState(false);
+  const [loadingApple, setLoadingA] = useState(false);
+  const [loadingGoogle, setLoadingG] = useState(false);
   const VideOpacity = useMemo(() => new Animated.Value(0), []);
 
   function handlePasswordVisibility() {
@@ -45,13 +50,13 @@ const Login = ({ navigation }) => {
   async function handleOnLogin(values) {
     const { email, password } = values;
 
-    setLoading(true);
+    //setLoading(true);
     try {
       await loginWithEmail(email, password).then(() => {
-        setLoading(false);
+        //setLoading(false);
       });
     } catch (error) {
-      setLoading(false);
+      //setLoading(false);
       setLoginError(error.message);
       console.log(error, "error")
     }
@@ -60,7 +65,8 @@ const Login = ({ navigation }) => {
   async function handleFacebookLogin() {
     //const { email, password } = values;
 
-    setLoading(true);
+    //setLoading(true);
+    setLoadingFB(true)
     try {
       //await signInWithFacebook().then((id) => {
       //  if (id !== undefined) console.log("---LOGIN OK---", id)
@@ -68,26 +74,39 @@ const Login = ({ navigation }) => {
       //});
       await logInWithFacebook().then((id) => {
         if (id !== undefined) {
+          console.log("id", id)
           // check se è login social
-          if(id.type == 'login_facebook')
-          // check se è registrazione social
-          // se registrazione mando l'utente alla complete screen 
-          console.log("---LOGIN OK---", id)
+          if (id.type == 'login_facebook' && !id.toBecompleted) {
+            // check se è registrazione social
+            // id.userid
+            // se registrazione mando l'utente alla complete screen 
+            //console.log("---LOGIN OK---", id)
+            navigation.goBack();
+            showToast("LOGIN CON FACEBOOK", "Sei riuscito ad entrare con successo", "success", "bottom", 2000);
+          } else if (id.type == 'login_facebook' && id.toBecompleted) {
+            navigation.navigate("CompleteSocial", { userid: id.userid, nomecognome: id.nomecognome })
+          } else if (id.type == "register_facebook") {
+            navigation.navigate("CompleteSocial", { userid: id.userid, nomecognome: id.nomecognome })
+          } else if (id.type == 'error') {
+            showToast("LOGIN CON FACEBOOK", id.message, "error", "bottom", 4000);
+          }
         }
-        setLoading(false);
+        //setLoading(false);
+        setLoadingFB(false)
       });
     } catch (error) {
-      setLoading(false);
+      //setLoading(false);
+      setLoadingFB(false)
       setLoginError(error.message);
       console.log(error, "error")
     }
   }
-
-  if (loading) {
-    return (
-      <Loader color={Colors.light.bianco} size={"large"} animating={true} />
-    )
-  }
+  // old
+  //if (loading) {
+  //  return (
+  //    <Loader color={Colors.light.bianco} size={"large"} animating={true} />
+  //  )
+  //}
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="white" barStyle="dark-content" />
@@ -139,22 +158,25 @@ const Login = ({ navigation }) => {
             </View>
           </TouchableOpacity>*/}
           <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.nero }]}>
-            <View style={styles.btnInside}>
+            {!loadingApple && (<View style={styles.btnInside}>
               <IconFooterSocial type="apple" width={24} height={24} color={Colors.light.bianco} style={{ alignSelf: "center", marginRight: 20 }} />
               <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.bianco}>{"Accedi con Apple"} </BaseText>
-            </View>
+            </View>)}
+            {loadingApple && (<ActivityIndicator size="large" color={Colors.light.bianco} style={{ alignSelf: "center", flex: 1 }} />)}
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.bianco }]}>
-            <View style={styles.btnInside}>
+            {!loadingGoogle && (<View style={styles.btnInside}>
               <IconFooterSocial type="google" width={24} height={24} style={{ alignSelf: "center", marginRight: 20 }} />
               <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.nero}>{"Accedi con Google"} </BaseText>
-            </View>
+            </View>)}
+            {loadingGoogle && (<ActivityIndicator size="large" color={Colors.light.bianco} style={{ alignSelf: "center", flex: 1 }} />)}
           </TouchableOpacity>
           <TouchableOpacity onPress={() => handleFacebookLogin()} style={[styles.btn, { backgroundColor: "#1878F3" }]}>
-            <View style={styles.btnInside}>
+            {!loadingFB && (<View style={styles.btnInside}>
               <IconFooterSocial type="facebook" width={24} height={24} color={Colors.light.bianco} style={{ alignSelf: "center", marginRight: 20 }} />
               <BaseText color={Colors.light.bianco} size={13} weight={700} letterSpacing={0.77}>{"Accedi con Facebook"} </BaseText>
-            </View>
+            </View>)}
+            {loadingFB && (<ActivityIndicator size="large" color={Colors.light.bianco} style={{ alignSelf: "center", flex: 1 }} />)}
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Register')} style={[styles.btn, { backgroundColor: Colors.light.ARANCIO }]}>
             <View style={styles.btnInside}>

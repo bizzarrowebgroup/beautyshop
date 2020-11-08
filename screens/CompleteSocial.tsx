@@ -16,20 +16,27 @@ import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import AppTextInput from '../components/TextInput';
 
-const CompleteSocial = ({ navigation }) => {
+const CompleteSocial = ({ navigation, route }) => {
+  //console.log("route.params", route.params)
   const [schermata, setSchermata] = useState(1)
-  const [nomecognome, setNome] = useState('');
+  const [userId, setUserId] = useState(route.params?.userid);
+  const [nomecognome, setNome] = useState(route.params?.nomecognome);
   const [email, setEmail] = useState('');
-  const [validatore1, setValidatore1] = useState(false); // validatore1, setValidatore1
-  const [validatore2, setValidatore2] = useState(false); // validatore1, setValidatore1
 
-  const checkNome = () => { if (!nomecognome.trim()) setValidatore1(false); }
-  const checkEmail = () => { if (!email.trim()) setValidatore2(false); }
+  const [validatore1, setValidatore1] = useState(false); // 
+  const [validatore2, setValidatore2] = useState(false); // 
+
+  const checkNome = () => {
+    if (!nomecognome.trim()) setValidatore1(false);
+  }
+  const checkEmail = () => {
+    if (!email.trim()) setValidatore2(false);
+  }
 
   function changeNome(value) {
     if (!nomecognome.trim()) setValidatore1(false);
     setValidatore1(true);
-    setNome(value);
+    if (value) setNome(value);
   }
 
   function changeEmail(value) {
@@ -54,6 +61,10 @@ const CompleteSocial = ({ navigation }) => {
         break;
     }
   }
+
+  React.useEffect(() => {
+    changeNome()
+  }, [])
   //async function handleOnSignUp(values) {
   //  const { email, password } = values;
   //  try {
@@ -65,7 +76,10 @@ const CompleteSocial = ({ navigation }) => {
 
   const goBack = () => {
     if (schermata !== 1) return setSchermata(schermata - 1);
-    navigation.goBack();
+    if (schermata == 1) {
+      // chiedi per andare indietro e in caso fai log-out
+    }
+    //navigation.goBack();
   }
 
   return (
@@ -84,16 +98,16 @@ const CompleteSocial = ({ navigation }) => {
             {schermata === 1 && (
               <>
                 <View style={{ paddingLeft: 20 }}>
-                  <BaseText size={30} weight={600} fontSpacing={0.77}>{"Inserisci il tuo \nNome e Cognome"}</BaseText>
-                  <BaseText fontSpacing={0.77} color={"#8E8E8E"} styles={{ marginTop: 30 }}>{"Per iniziare incominciamo dalle basi"}</BaseText>
+                  <BaseText size={30} weight={600} fontSpacing={0.77}>{"Completa il tuo \nprofilo"}</BaseText>
+                  <BaseText fontSpacing={0.77} color={"#8E8E8E"} styles={{ marginTop: 30 }}>{"Per registrarti conferma il tuo nome e cognome"}</BaseText>
                   <AppTextInput
                     name="name"
                     leftIcon="account"
-                    placeholder="Paolo Rossi"
+                    placeholder="Nome cognome"
                     autoFocus={true}
                     value={nomecognome}
                     onChangeText={value => changeNome(value)}
-                    onEndEditing={() => checkNome()}
+                  //onEndEditing={() => checkNome()}
                   />
                 </View>
                 <View style={{ position: "absolute", bottom: 40, left: 0, right: 0 }}>
@@ -115,8 +129,8 @@ const CompleteSocial = ({ navigation }) => {
             {schermata === 2 && (
               <>
                 <View style={{ paddingLeft: 20 }}>
-                  <BaseText size={30} weight={600} fontSpacing={0.77}>{"Inserisci la tua \nEmail"}</BaseText>
-                  <BaseText fontSpacing={0.77} color={"#8E8E8E"} styles={{ marginTop: 30 }}>{"Per invarti comunicazioni riguardanti le tue prenotazioni"}</BaseText>
+                  <BaseText size={30} weight={600} fontSpacing={0.77}>{"Completa il tuo \nprofilo"}</BaseText>
+                  <BaseText fontSpacing={0.77} color={"#8E8E8E"} styles={{ marginTop: 30 }}>{"Inserisci la tua email per invarti comunicazioni riguardanti le tue prenotazioni"}</BaseText>
                   <AppTextInput
                     name="Email"
                     placeholder="paolo@libero.it"

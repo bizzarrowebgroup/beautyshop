@@ -390,6 +390,12 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
     setCategory(index);
   }
 
+  const presseProfile = () => {
+    if (user) {
+      navigation.navigate('Profilo');
+    } else navigation.navigate('Auth')
+  }
+
   if (isLoading) {
     return (
       <Loader color={Colors.light.bianco} size={"large"} animating={true} />
@@ -439,7 +445,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
         marginHorizontal: 20,
         backgroundColor: "transparent"
       }}>
-        <TouchableOpacity onPress={() => navigation.navigate('Auth')}>
+        <TouchableOpacity onPress={presseProfile}>
           <BottomIcon type={"ios-people"} color={Colors.light.nero} size={30} />
         </TouchableOpacity>
         <View style={[styles.searchBar, {

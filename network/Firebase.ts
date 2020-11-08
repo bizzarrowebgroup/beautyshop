@@ -188,7 +188,20 @@ export const logInWithFacebook = async () => {
         if (isRegistered.exists) {
           // the user is already registered
           //return user.uid;
-          return { type: "login_facebook", userid: user.uid };
+          let data = isRegistered.data();
+          let toBecompleted = data.toBecompleted;
+          if (toBecompleted) {
+            const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name`);
+            let fbData = await response.json();
+            if (fbData) {
+              const { name } = fbData;
+              return { type: "login_facebook", userid: user.uid, toBecompleted, nomecognome: name };
+            } {
+              let error = "fbData error fetching from graph.facebook";
+              console.log(error, token)
+              return { type: "error", message: error }
+            }
+          }
         } else {
           // the user is not registered yet
           const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,birthday,picture.type(large)`);
@@ -203,11 +216,12 @@ export const logInWithFacebook = async () => {
               await auth.currentUser.updateProfile({
                 displayName: name,
                 photoURL: picture.data.url
-              }).then((result) => {
-                console.log(result, "---logInWithFB-updateProfile---");
-              }).catch((error) => {
-                console.log("---logInWithFB-updateProfile-error---", error);
               });
+              //.then((result) => {
+              //  //console.log(result, "---logInWithFB-updateProfile---");
+              //}).catch((error) => {
+              //  //console.log("---logInWithFB-updateProfile-error---", error);
+              //});
               let userToDB = {
                 userId: user.uid,
                 phone: '',
@@ -216,10 +230,12 @@ export const logInWithFacebook = async () => {
                 notificationToken: '',
                 notificationsEnabled: false,
                 displayName: name,
+                toBecompleted: true,
                 photoURL: picture.data.url
               }
-              const res = await db.collection('utentiApp').doc(user.uid).set(userToDB);
-              console.log("---utentiAppID creato--", res);
+              await db.collection('utentiApp').doc(user.uid).set(userToDB);
+              //const res = await db.collection('utentiApp').doc(user.uid).set(userToDB);
+              //console.log("---utentiAppID creato--", res);
               //console.log("---token---", token)
               //console.log("---credential---", credential)
               //console.log("---signInWithCredential---", userId)
@@ -240,8 +256,12 @@ export const logInWithFacebook = async () => {
               //} else {
               //  return alert("ERRORE Registrazione post login FB SOCIAL")
               //}
-              console.info('Registrato post login in!', `Benvenuto ${fbData.name}!`);
-              return { type: "register_facebook", userid: user.uid };
+              //console.info('Registrato post login in!', `Benvenuto ${fbData.name}!`);
+              return {
+                type: "register_facebook",
+                userid: user.uid,
+                nomecognome: name,
+              };
             } catch (error) {
               var errorCode = error.code;
               // var errorMessage = error.message;
@@ -252,11 +272,15 @@ export const logInWithFacebook = async () => {
               //if (errorCode === 'auth/account-exists-with-different-credential') {
               //alert('Email già associata con un altro provider social.');
               //} else {
-              console.error(error);
+              //console.error(error);
+              console.log(error, token)
+              return { type: "error", message: error }
               //}
             }
           } else {
-            console.log("----fbData error fetching from graph.facebook----", token)
+            let error = "fbData error fetching from graph.facebook";
+            console.log(error, token)
+            return { type: "error", message: error }
           }
           //if (user.uid !== '') {
           //  return user.uid;
@@ -268,9 +292,11 @@ export const logInWithFacebook = async () => {
       } catch (error) {
         var errorCode = error.code;
         if (errorCode === 'auth/account-exists-with-different-credential') {
-          alert('Email già associata con un altro provider social.');
+          //alert('Email già associata con un altro provider social.');
+          return { type: "error", message: 'Email già associata con un altro provider social.' }
         } else if (errorCode === 'auth/user-not-found') {
-          console.log("----error----", errorCode)
+          //console.log("----error----", errorCode)
+          return { type: "error", message: error }
           //const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,birthday,picture.type(large)`);
           //let fbData = await response.json();
           //if (fbData) {
@@ -324,15 +350,20 @@ export const logInWithFacebook = async () => {
           //}
           //console.info('Registrato post login in!', `Benvenuto ${fbData.name}!`);
         } else {
+          return { type: "error", message: error }
           console.error(error);
         }
       }
     } else {
       // type === 'cancel'
-      if (type === 'cancel') alert(`Hai deciso di annullare il login con Facebook`)
+      if (type === 'cancel') {
+        //alert(`Hai deciso di annullare il login con Facebook`)
+        console.log("login FB annullato")
+      }
     }
   } catch ({ message }) {
-    alert(`Facebook Register Error: ${message}`);
+    //alert(`Facebook Login Error: ${message}`);
+    console.log("login FB annullato", message)
   }
 }
 

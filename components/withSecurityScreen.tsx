@@ -1,7 +1,7 @@
 import React from 'react'
-import { AppState, Platform, View } from 'react-native'
+import { AppState, Image, Platform, View } from 'react-native'
 import Colors from '../constants/Colors';
-import BaseText from './StyledText';
+//import BaseText from './StyledText';
 
 const SecurityScreen = () => {
   return (
@@ -11,13 +11,20 @@ const SecurityScreen = () => {
       alignItems: "center",
       justifyContent: "center"
     }}>
-      <BaseText
+      <Image source={require('../assets/images/logoBS.png')} style={{
+        width: 50,
+        height: 50,
+        tintColor: Colors.light.bianco,
+        alignSelf: "center",
+        marginVertical: 50
+      }} />
+      {/*<BaseText
         weight={700}
         size={30}
         color={Colors.light.bianco}
       >
         {"BeautyShop"}
-      </BaseText>
+      </BaseText>*/}
     </View>
   );
 }
