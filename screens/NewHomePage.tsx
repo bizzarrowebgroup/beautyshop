@@ -394,7 +394,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
 
   const presseProfile = () => {
     console.log("--userData--", userData)
-    if (user) {
+    if (user && userData) {
       const { toBecompleted, userId, displayName } = userData;
       if (toBecompleted === true) {
         navigation.navigate('Auth', { screen: 'CompleteSocial', params: { userid: userId, nomecognome: displayName } })

@@ -7,7 +7,7 @@ import Form from '../components/Form/Form';
 import FormField from '../components/Form/FormField';
 import FormButton from '../components/Form/FormButton';
 // import IconButton from '../components/IconButton';
-import { loginWithEmail, logInWithFacebook } from '../network/Firebase';
+import { loginWithEmail, logInWithFacebook, loginWithGoogle } from '../network/Firebase';
 import FormErrorMessage from '../components/Form/FormErrorMessage';
 import Loader from '../components/Loader';
 import BaseText from '../components/StyledText';
@@ -104,6 +104,34 @@ const Login = ({ navigation }) => {
       console.log(error, "error")
     }
   }
+
+  async function handleGoogleLogin() {
+    setLoadingG(true)
+    try {
+      await loginWithGoogle().then((id) => {
+        //console.log("id", id)
+        if (id !== undefined) {
+          if (id.type == 'login_google' && !id.toBecompleted) {
+            navigation.goBack();
+            showToast("LOGIN CON GOOGLE", "Sei riuscito ad entrare con successo", "success", "bottom", 2000);
+          } else if (id.type == 'login_google' && id.toBecompleted) {
+            navigation.navigate("CompleteSocial", { userid: id.userid, nomecognome: id.nomecognome })
+          } else if (id.type == "register_google") {
+            navigation.navigate("CompleteSocial", { userid: id.userid, nomecognome: id.nomecognome })
+          } else if (id.type == 'error') {
+            showToast("LOGIN CON GOOGLE", id.message, "error", "bottom", 4000);
+          }
+        } else {
+          showToast("LOGIN CON GOOGLE", "errore nel login", "error", "bottom", 4000);
+        }
+        setLoadingG(false)
+      });
+    } catch (error) {
+      setLoadingG(false)
+      setLoginError(error.message);
+      console.log(error, "error")
+    }
+  }
   // old
   //if (loading) {
   //  return (
@@ -161,18 +189,22 @@ const Login = ({ navigation }) => {
             </View>)}
             {loadingApple && (<ActivityIndicator size="large" color={Colors.light.bianco} style={{ alignSelf: "center", flex: 1 }} />)}
           </TouchableOpacity>*/}
-          {/*<TouchableOpacity onPress={() => { }} style={[styles.btn, { backgroundColor: Colors.light.bianco }]}>
-            {!loadingGoogle && (<View style={styles.btnInside}>
-              <IconFooterSocial type="google" width={24} height={24} style={{ alignSelf: "center", marginRight: 20 }} />
-              <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.nero}>{"Accedi con Google"} </BaseText>
-            </View>)}
-            {loadingGoogle && (<ActivityIndicator size="large" color={Colors.light.bianco} style={{ alignSelf: "center", flex: 1 }} />)}
-          </TouchableOpacity>*/}
+          <TouchableOpacity onPress={() => handleGoogleLogin()} style={[styles.btn, { backgroundColor: Colors.light.bianco }]}>
+            {!loadingGoogle && (
+              <View style={styles.btnInside}>
+                <IconFooterSocial type="google" width={24} height={24} style={{ alignSelf: "center", marginRight: 20 }} />
+                <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.nero}>{"Accedi con Google"} </BaseText>
+              </View>
+            )}
+            {loadingGoogle && (<ActivityIndicator size="large" color={Colors.light.nero} style={{ alignSelf: "center", flex: 1 }} />)}
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => handleFacebookLogin()} style={[styles.btn, { backgroundColor: "#1878F3" }]}>
-            {!loadingFB && (<View style={styles.btnInside}>
-              <IconFooterSocial type="facebook" width={24} height={24} color={Colors.light.bianco} style={{ alignSelf: "center", marginRight: 20 }} />
-              <BaseText color={Colors.light.bianco} size={13} weight={700} letterSpacing={0.77}>{"Accedi con Facebook"} </BaseText>
-            </View>)}
+            {!loadingFB && (
+              <View style={styles.btnInside}>
+                <IconFooterSocial type="facebook" width={24} height={24} color={Colors.light.bianco} style={{ alignSelf: "center", marginRight: 20 }} />
+                <BaseText color={Colors.light.bianco} size={13} weight={700} letterSpacing={0.77}>{"Accedi con Facebook"} </BaseText>
+              </View>
+            )}
             {loadingFB && (<ActivityIndicator size="large" color={Colors.light.bianco} style={{ alignSelf: "center", flex: 1 }} />)}
           </TouchableOpacity>
           {/*<TouchableOpacity onPress={() => { }} style={[styles.btn, { backgroundColor: Colors.light.ARANCIO }]}>
@@ -193,7 +225,7 @@ const Login = ({ navigation }) => {
         </View>
       </View>
       {/*</ScrollView>*/}
-    </View >
+    </View>
   )
 }
 const styles = StyleSheet.create({

@@ -2,9 +2,12 @@ import * as firebase from 'firebase';
 import 'firebase/auth';
 import 'firebase/firestore';
 import * as Facebook from 'expo-facebook';
+//import * as GoogleSignIn from 'expo-google-sign-in';
+import * as Google from 'expo-google-app-auth';
+import * as AppAuth from 'expo-app-auth';
+import * as Application from 'expo-application';
 
 //import { resolvePlugin } from '@babel/core';
-
 // import firebaseConfig from './firebaseConfig';
 
 // Initialize Firebase App
@@ -366,6 +369,123 @@ export const logInWithFacebook = async () => {
   } catch ({ message }) {
     //alert(`Facebook Login Error: ${message}`);
     console.log("login FB annullato", message)
+  }
+}
+
+export const loginWithGoogle = async () => {
+  //console.log("--redirectURl--", AppAuth.OAuthRedirect)
+  console.log("Application", Application.applicationId);
+  let clientId = Application.applicationId === "dev.expo.client.bmizxpyk6upow5r7ckcrd4u36e6e66o57ohbzsux7vuka" ? "470013044742-nfbf3icicc1ro6udt1l1tnhh8m70ofa8.apps.googleusercontent.com" : "470013044742-69pbts2tm4280vunsoekk4ebkf5l3t8s.apps.googleusercontent.com"
+  try {
+    const result = await Google.logInAsync({
+      iosClientId: clientId, 
+      scopes: ['openid', 'profile', 'email'],
+      redirectUrl: `${AppAuth.OAuthRedirect}:/oauthredirect`
+    });
+    if (result.type === 'success') {
+      console.log("--resultOK--", result)
+      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      const credential = firebase.auth.GoogleAuthProvider.credential(result.idToken);
+      try {
+
+        // i can use result.user 
+        /*
+         "user": Object {
+    "email": "jon.canevese@gmail.com",
+    "familyName": "Derewith",
+    "givenName": "Jonathan",
+    "id": "115015219048164220061",
+    "name": "Jonathan Derewith",
+    "photoUrl": "https://lh4.googleusercontent.com/-W6BG8FgkGlM/AAAAAAAAAAI/AAAAAAAAAqk/AMZuucn4KK5Z_DlDAfDOBhcRjx9_kpfR8A/s96-c/photo.jpg",
+  }, 
+
+        */
+        let userId = await auth.signInWithCredential(credential);
+        let { user } = userId;
+        console.log("----user----", user)
+        let isRegistered = await db.collection('utentiApp').doc(user.uid).get();
+        if (isRegistered.exists) {
+          // the user is already registered
+          let data = isRegistered.data();
+          let toBecompleted = data.toBecompleted;
+          if (toBecompleted) {
+            let userInfoResponse = await fetch('https://www.googleapis.com/userinfo/v2/me', {
+              headers: { Authorization: `Bearer ${result.accessToken}` },
+            });
+            //const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name`);
+            let gData = await userInfoResponse.json();
+            if (gData) {
+              console.log("--fbData--", gData)
+              const { name } = gData;
+              return { type: "login_google", userid: user.uid, toBecompleted, nomecognome: name };
+            } {
+              let error = "gData error fetching from graph.facebook";
+              console.log(error, result.accessToken)
+              return { type: "error", message: error }
+            }
+          } else {
+            return { type: "login_google", userid: user.uid };
+          }
+        } else {
+          // the user is not registered yet
+          let userInfoResponse = await fetch('https://www.googleapis.com/userinfo/v2/me', {
+            headers: { Authorization: `Bearer ${result.accessToken}` },
+          });
+          //const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,birthday,picture.type(large)`);
+          let fbData = await userInfoResponse.json();
+          if (fbData) {
+            console.log("---fbData--",fbData);
+            const { picture, name, email } = fbData;
+            try {
+              await auth.currentUser.updateProfile({
+                displayName: name,
+                photoURL: picture
+              });
+              let userToDB = {
+                userId: user.uid,
+                email: email,
+                phone: '',
+                pwd: '',
+                loyalitypoints: 150, // when we register a new user we give him 150 points :D
+                notificationToken: '',
+                notificationsEnabled: false,
+                displayName: name,
+                toBecompleted: true,
+                photoURL: picture
+              }
+              await db.collection('utentiApp').doc(user.uid).set(userToDB);
+              return {
+                type: "register_google",
+                userid: user.uid,
+                nomecognome: name,
+              };
+            } catch (error) {
+              var errorCode = error.code;
+              console.log(error)
+              return { type: "error", message: error }
+            }
+          } else {
+            let error = "fbData error fetching from graph.facebook";
+            console.log(error)
+            return { type: "error", message: error }
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        var errorCode = error.code;
+        if (errorCode === 'auth/account-exists-with-different-credential') {
+          return { type: "error", message: 'Email già associata con un altro provider social.' }
+        } else if (errorCode === 'auth/user-not-found') {
+          return { type: "error", message: error }
+        } else {
+          return { type: "error", message: error }
+        }
+      }
+    } else {
+      console.log("login G annullato -- result", result)
+    }
+  } catch ({ message }) {
+    console.log("login G annullato", message)
   }
 }
 

@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "beautyshop",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -28,8 +28,14 @@
       "supportsTablet": false,
       "usesAppleSignIn": true,
       "bundleIdentifier": "it.bizzarro.beautyshop",
-      "buildNumber": "4",
-      "userInterfaceStyle": "light"
+      "buildNumber": "5",
+      "userInterfaceStyle": "light",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.470013044742-69pbts2tm4280vunsoekk4ebkf5l3t8s"
+        }
+      },
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "facebookScheme": "fb3483388645055624",
     "facebookAppId": "3483388645055624",

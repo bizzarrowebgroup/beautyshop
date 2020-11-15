@@ -1,7 +1,7 @@
-import { StatusBar } from "expo-status-bar";
+//import { StatusBar } from "expo-status-bar";
 import React, { useRef } from "react";
+//import * as Device from 'expo-device';
 import { SafeAreaProvider } from "react-native-safe-area-context";
-//"backgroundColor": "#FB6E3B",
 
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
