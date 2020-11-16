@@ -21,7 +21,8 @@ import IntroScreen from '../screens/IntroScreen';
 import NewHomePage from '../screens/NewHomePage';
 import Profilo from '../screens/Profilo';
 import Review from '../screens/Review';
-import Shop from '../screens/Shop';
+//import Shop from '../screens/Shop';
+import Shop from '../screens/Commerciante/Home';
 import Preferiti from '../screens/Preferiti';
 import Prenotazioni from '../screens/Prenotazioni';
 import CompleteSocial from '../screens/CompleteSocial';
@@ -90,8 +91,10 @@ function RootNavigator() {
         />
         <Stack.Screen name="Shop" component={Shop}
           options={{
+            ...TransitionPresets.ModalPresentationIOS,
+            gestureEnabled: true,
             headerShown: false,
-            gestureEnabled: false,
+            cardOverlayEnabled: false,
           }}
         />
         <Stack.Screen name="Homepage" component={NewHomePage}

@@ -28,7 +28,7 @@
       "supportsTablet": false,
       "usesAppleSignIn": true,
       "bundleIdentifier": "it.bizzarro.beautyshop",
-      "buildNumber": "6",
+      "buildNumber": "7",
       "userInterfaceStyle": "light",
       "config": {
         "googleSignIn": {
@@ -43,9 +43,7 @@
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
-    "experiments": {
-      "redesignedLogBox": true
-    },
+    "experiments": {},
     "packagerOpts": {
       "config": "metro.config.js",
       "sourceExts": [

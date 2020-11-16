@@ -2,29 +2,30 @@
  * remove this log when all the ScrollView is moved to a renderHeaderComponent of the SectionList !
  */
 import React, { useRef } from 'react';
-import { YellowBox } from "react-native";
-YellowBox.ignoreWarnings([
+
+import { LogBox } from "react-native";
+LogBox.ignoreLogs([
   'VirtualizedLists should never be nested'
 ]);
 
-const { width } = Dimensions.get('window');
+//const { width } = Dimensions.get('window');
 import StarsReview from '../components/StarsReview';
 
 import {
   SafeAreaView,
   StyleSheet,
   //Animated,
-  ScrollView,
+  //ScrollView,
   Dimensions,
   SectionList,
   View,
-  Image,
+  //Image,
   TouchableWithoutFeedback,
   TouchableOpacity
 } from 'react-native';
 import Animated, {
-  interpolate,
-  concat,
+  //interpolate,
+  //concat,
   Extrapolate,
 } from 'react-native-reanimated';
 import moment from 'moment';
@@ -89,6 +90,7 @@ function Shop({ navigation, route }) {
     outputRange: [0, 0, -45],
     extrapolate: Extrapolate.CLAMP,
   });
+
   const [indexX, setIndex] = React.useState(0);
   const [data, setData] = React.useState(undefined);
 
@@ -302,7 +304,6 @@ function Shop({ navigation, route }) {
 
   React.useEffect(() => {
     if (route.params?.id) {
-      //console.log("--idONSHOP", route.params?.id)
       getServizi(route.params?.id);
       getCommerciante(route.params?.id);
       const date = moment();
@@ -314,7 +315,6 @@ function Shop({ navigation, route }) {
 
   if (loading) {
     return (
-      //<Spinner />
       <Loader color={Colors.light.bianco} size={"large"} animating={true} />
     )
   }
