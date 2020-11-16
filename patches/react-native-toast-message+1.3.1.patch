@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-toast-message/src/index.js b/node_modules/react-native-toast-message/src/index.js
+index 7847aed..572713e 100644
+--- a/node_modules/react-native-toast-message/src/index.js
++++ b/node_modules/react-native-toast-message/src/index.js
+@@ -136,7 +136,7 @@ class Toast extends Component {
+     if (value < 0.65) {
+       Animated.spring(animation, {
+         toValue: -2,
+-        speed: -vy,
++        speed: vy,
+         useNativeDriver: true
+       }).start(() => {
+         const { onHide } = this.state;
