@@ -373,14 +373,15 @@ export const logInWithFacebook = async () => {
 }
 
 export const loginWithGoogle = async () => {
-  //console.log("--redirectURl--", AppAuth.OAuthRedirect)
-  console.log("Application", Application.applicationId);
-  let clientId = Application.applicationId === "dev.expo.client.bmizxpyk6upow5r7ckcrd4u36e6e66o57ohbzsux7vuka" ? "470013044742-nfbf3icicc1ro6udt1l1tnhh8m70ofa8.apps.googleusercontent.com" : "470013044742-69pbts2tm4280vunsoekk4ebkf5l3t8s.apps.googleusercontent.com"
+  //alert(AppAuth.OAuthRedirect);
+  //alert(Application.applicationId);
   try {
     const result = await Google.logInAsync({
-      iosClientId: clientId, 
+      iosClientId: "470013044742-nfbf3icicc1ro6udt1l1tnhh8m70ofa8.apps.googleusercontent.com",
+      iosStandaloneAppClientId: "470013044742-69pbts2tm4280vunsoekk4ebkf5l3t8s.apps.googleusercontent.com",
       scopes: ['openid', 'profile', 'email'],
       redirectUrl: `${AppAuth.OAuthRedirect}:/oauthredirect`
+      //redirectUrl: `${AppAuth.OAuthRedirect}:/oauth2redirect/google`
     });
     if (result.type === 'success') {
       console.log("--resultOK--", result)
@@ -390,14 +391,14 @@ export const loginWithGoogle = async () => {
 
         // i can use result.user 
         /*
-         "user": Object {
-    "email": "jon.canevese@gmail.com",
-    "familyName": "Derewith",
-    "givenName": "Jonathan",
-    "id": "115015219048164220061",
-    "name": "Jonathan Derewith",
-    "photoUrl": "https://lh4.googleusercontent.com/-W6BG8FgkGlM/AAAAAAAAAAI/AAAAAAAAAqk/AMZuucn4KK5Z_DlDAfDOBhcRjx9_kpfR8A/s96-c/photo.jpg",
-  }, 
+                "user": Object {
+            "email": "jon.canevese@gmail.com",
+            "familyName": "Derewith",
+            "givenName": "Jonathan",
+            "id": "115015219048164220061",
+            "name": "Jonathan Derewith",
+            "photoUrl": "https://lh4.googleusercontent.com/-W6BG8FgkGlM/AAAAAAAAAAI/AAAAAAAAAqk/AMZuucn4KK5Z_DlDAfDOBhcRjx9_kpfR8A/s96-c/photo.jpg",
+          }, 
 
         */
         let userId = await auth.signInWithCredential(credential);
@@ -434,7 +435,7 @@ export const loginWithGoogle = async () => {
           //const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,birthday,picture.type(large)`);
           let fbData = await userInfoResponse.json();
           if (fbData) {
-            console.log("---fbData--",fbData);
+            console.log("---fbData--", fbData);
             const { picture, name, email } = fbData;
             try {
               await auth.currentUser.updateProfile({
@@ -483,9 +484,11 @@ export const loginWithGoogle = async () => {
       }
     } else {
       console.log("login G annullato -- result", result)
+      return { type: "error", message: "login con Google annullato" }
     }
   } catch ({ message }) {
     console.log("login G annullato", message)
+    return { type: "error", message: "login con Google annullato" + message }
   }
 }
 
