@@ -14,8 +14,16 @@ import {
   TextInput,
   StatusBar,
   Text,
+  UIManager,
+  LogBox
 } from 'react-native';
 import MaskedView from '@react-native-community/masked-view';
+import Constants from 'expo-constants';
+import LottieView from 'lottie-react-native';
+import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
+LogBox.ignoreLogs([
+  'VirtualizedLists should never be nested'
+]);
 
 import { AppContext } from '../context/Appcontext';
 import { AuthUserContext } from '../navigation/AuthUserProvider';
@@ -42,6 +50,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import HeartIcon from '../components/svg/HeartIcon';
 import PinIcon from '../components/svg/PinIcon';
 import BottomIcon from '../components/svg/BottomIcon';
+import Layout from '../constants/Layout';
 
 //const { width, height } = Dimensions.get('window');
 
@@ -51,6 +60,54 @@ const wait = timeout => {
   });
 };
 
+const ENTRIES = [
+  {
+    illustration: 'https://i.postimg.cc/65NHzk9d/New-Project.png',
+    navigationAction: undefined,
+    linkUrl: undefined
+  },
+  {
+    illustration: 'https://i.postimg.cc/1z4MfPHZ/New-Project-1.png',
+    navigationAction: undefined,
+    linkUrl: undefined
+  },
+];
+
+const ENTRIES1 = [
+  {
+    title: "Capelli",
+    bg: "#FD6C38",
+    model: "https://content.web-repository.com/s/48771825654323693/uploads/Images/500908947-model-compresso.png"
+  },
+  {
+    title: "Uomo",
+    bg: "#9D006D",
+    model: "https://i.postimg.cc/1RTnDFZT/best-medium-length-hairstyles-men-slicked-back-undercut-luxe-digital-preview-rev-1.png"
+  },
+  {
+    title: "Unghie",
+    bg: "#F9BD01",
+    model: "https://i.postimg.cc/MZRMbTKp/ss-min-preview-rev-2.png"
+  },
+  {
+    title: "Depilazione",
+    bg: "#FA5057",
+    model: "https://i.postimg.cc/qq9NrPL0/icons-wax-sports-cap-navy-model-preview-rev-1.png"
+  },
+  {
+    title: "Viso",
+    bg: "#5095FA"
+  },
+  {
+    title: "Massaggi",
+    bg: "#FD6C38"
+  },
+  {
+    title: "Corpo",
+    bg: "#9D006D"
+  },
+];
+
 export default function HomePage({ navigation }: StackScreenProps<RootStackParamList, 'Shop'>) {
   const {
     servizi,
@@ -58,12 +115,15 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
     foto
   } = useContext(AppContext);
   const { user, setUser } = useContext(AuthUserContext);
+  //let profileRef = null;
+  const profileRefanimation = React.useRef(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setCategory] = useState(0);
   const [parrucchieri, setPar] = React.useState(undefined);
   const [userDocId, setUserDocId] = React.useState(null);
   const [userData, setUserData] = React.useState(undefined);
   //const [favoritesFB, setFavorites] = React.useState(undefined);
+  const [searchModal, setSearchModal] = React.useState(false);
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -184,6 +244,8 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
         //getFavorites();
       }
     });
+    //UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+    //if (profileRefanimation) profileRefanimation.current.play();
   }, []);
 
   const renderCards = (item, index) => {
@@ -277,19 +339,23 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
           navigation.navigate("Shop", { id: id });
         }}>
         <View style={{
+          width: Layout.window.width ,
+          paddingLeft: 20,
+          paddingRight: 20,
+          backgroundColor: "white"
+          //marginRight: 20,
         }}>
           <ImageBackground
             style={{
-              flex: 1,
-              height: 145,
-              marginVertical: 10,
+              height: 185,
+              //marginVertical: 10,
               flexDirection: "row",
-              borderRadius: 30,
+              borderRadius: 5,
             }}
             imageStyle={{
               backgroundColor: Colors.light.background,
               resizeMode: "cover",
-              borderRadius: 30,
+              borderRadius: 5,
             }}
             source={mainPhoto ? { uri: mainPhoto.url } : require('../assets/images/salon.jpeg')}
           >
@@ -298,16 +364,16 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
                 position: "absolute",
                 top: 0,
                 right: 0,
-                backgroundColor: Colors.light.background,
+                //backgroundColor: "rgba(255, 255, 255, .7)",
                 height: 40,
                 width: 48,
-                borderBottomLeftRadius: 30,
+                borderBottomLeftRadius: 5,
                 alignContent: "center",
                 justifyContent: "center",
                 alignItems: "center"
                 //zIndex: 10
               }}>
-                <BottomIcon type={"ios-heart-empty"} color={Colors.light.ARANCIO} size={25} />
+                <BottomIcon type={"ios-heart-empty"} color={Colors.light.bianco} size={25} />
                 {/*<Ionicons name={isFavorite ? "ios-heart" : "ios-heart-empty"} size={20} color={Colors.light.bianco} />*/}
               </TouchableOpacity>
             )}
@@ -323,12 +389,13 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
               zIndex: 1
             }} />*/}
           </ImageBackground>
-          <View style={{ marginHorizontal: 20, marginBottom: 10 }}>
+          <View style={{ marginTop: 10, marginBottom: 10, marginRight: 20, backgroundColor: "white" }}>
             <BaseText size={14} weight={700} color={Colors.light.nero} styles={{
               letterSpacing: 0.5,
             }}>{title}</BaseText>
             <View style={{
               //marginTop: 5,
+              backgroundColor: "white",
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "flex-start",
@@ -340,7 +407,8 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
                   justifyContent: "center",
                   alignItems: "center",
                   alignContent: "center",
-                  marginRight: 10
+                  marginRight: 10,
+                  backgroundColor: "white"
                 }}>
                   <Ionicons name="ios-star" size={20} color={Colors.light.ARANCIO} />
                   {/*<Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
@@ -402,15 +470,8 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
     } else navigation.navigate('Auth')
   }
 
-  if (isLoading) {
+  const renderTitle = () => {
     return (
-      <Loader color={Colors.light.bianco} size={"large"} animating={true} />
-    )
-  }
-
-  return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
       <MaskedView
         style={{ height: 50, marginTop: 60, marginVertical: 20 }}
         maskElement={
@@ -443,30 +504,153 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
         >
         </LinearGradient>
       </MaskedView>
+    )
+  }
+
+  const renderItem1 = ({ item, index }) => {
+    const { title, bg, model } = item;
+    return (
+      <TouchableOpacity
+        activeOpacity={1}
+        style={{
+          width: 90,
+          height: 90,
+          marginRight: 10,
+          //borderWidth: 1,
+          //borderColor: "black",
+          borderRadius: 8,
+          overflow: "hidden"
+        }}
+        onPress={() => { alert(`You've clicked '${index}'`); }}
+      >
+        <View style={{
+          backgroundColor: bg ? bg : "black",
+          ...StyleSheet.absoluteFillObject,
+        }}>
+          {model && (
+            <View style={{ flex: 1, backgroundColor: "transparent", left: 40, top: 10 }}>
+              <Image source={{ uri: model }} style={{ ...StyleSheet.absoluteFillObject, resizeMode: "contain" }} />
+            </View>
+          )}
+          <View style={{ backgroundColor: "transparent", position: "absolute", bottom: 10, left: 10 }}>
+            <BaseText size={10.5} weight={800} letterSpacing={.4} color={"white"}>{title.length > 7 ? `${title.substring(0, 7)}...` : title}</BaseText>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
+  const _renderItem = ({ item, index }) => {
+    const { illustration } = item;
+    return (
+      <TouchableOpacity
+        activeOpacity={1}
+        style={{
+          width: Layout.wp(90) + Layout.wp(2) * 2,
+          height: 200,
+          paddingHorizontal: Layout.wp(2),
+          paddingBottom: 18,
+          //borderWidth: 1,
+          //borderColor: "black",
+          //borderRadius: 8
+        }}
+        onPress={() => { alert(`You've clicked '${index}'`); }}
+      >
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: Layout.wp(2),
+            right: Layout.wp(2),
+            bottom: 18,
+            shadowColor: "black",
+            shadowOpacity: 0.1,
+            shadowOffset: { width: 0, height: 10 },
+            shadowRadius: 10,
+            borderRadius: 8
+          }}
+        />
+        <View style={[{
+          flex: 1,
+          //marginBottom: true ? 0 : -1, // Prevent a random Android rendering issue
+          //backgroundColor: "white",
+          borderRadius: 8
+        }]}>
+          <Image
+            source={{ uri: illustration }}
+            style={{
+              ...StyleSheet.absoluteFillObject,
+              resizeMode: "stretch",
+              borderRadius: 8,
+            }}
+          />
+          {/*
+            <View style={[{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 8,
+              backgroundColor: "white"
+            }]} />
+          */}
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Loader color={Colors.light.bianco} size={"large"} animating={true} />
+    )
+  }
+
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      {/*{renderTitle()}*/}
       <View style={{
         flexDirection: "row",
         justifyContent: "space-between",
         alignContent: "center",
         alignItems: "center",
         marginHorizontal: 20,
-        backgroundColor: "transparent"
+        backgroundColor: "transparent",
+        marginTop: Constants.statusBarHeight
       }}>
         <TouchableOpacity onPress={presseProfile}>
           <BottomIcon type={"ios-people"} color={Colors.light.nero} size={30} />
         </TouchableOpacity>
-        <View style={[styles.searchBar, {
-        }]}>
-          <TextInput
+        {/*<TouchableWithoutFeedback onPress={presseProfile}>
+          <LottieView
+            ref={profileRefanimation}
+            style={{
+              width: 35,
+              height: 34,
+            }}
+            loop
+            speed={0.3}
+            source={require('../assets/animations/profile.json')}
+          />
+        </TouchableWithoutFeedback>*/}
+        <TouchableWithoutFeedback onPress={() => setSearchModal(true)}>
+          <View style={styles.searchBar}>
+            <BaseText size={12} letterSpacing={.3} weight={600}>{"Cosa vuoi fare oggi?"}</BaseText>
+          </View>
+          {/*<TextInput
             placeholder={"Cosa vuoi fare oggi?"}
             placeholderTextColor={Colors.light.nero}
+            onFocus={() => setSearchModal(true)}
+            onBlur={() => setSearchModal(false)}
             style={{
               width: "90%",
               height: "50%",
               textAlign: "center",
               fontFamily: "Gilroy_SemiBold",
               fontSize: 15
-            }} />
-        </View>
+            }}
+          />*/}
+        </TouchableWithoutFeedback>
         <TouchableOpacity>
           {/** onPress={() => navigation.navigate(''}*/}
           <PinIcon type="normal" size={25} color={Colors.light.nero} />
@@ -475,7 +659,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
       <View style={{ backgroundColor: "transparent", marginTop: 10, paddingBottom: 10, }}>
         {/*<BaseText weight={700} size={25} styles={{ paddingLeft: 25 }}>{"Le nostre Categorie"}</BaseText>*/}
         <View style={{ marginTop: 15 }} />
-        <ScrollView
+        {/*<ScrollView
           contentContainerStyle={{ paddingLeft: 10 }}
           showsHorizontalScrollIndicator={false}
           bounces={true}
@@ -527,29 +711,124 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
               )
             }
           })}
-        </ScrollView>
+        </ScrollView>*/}
       </View>
       {/*<Desk style={styles.image} width="262" height="258" color={"white"} />*/}
+      <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={{ backgroundColor: "white" }}>
+        <FlatList
+          data={ENTRIES1}
+          renderItem={renderItem1}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingLeft: 20,
+            paddingRight: 20
+          }}
+        />
+        <Carousel
+          data={ENTRIES}
+          renderItem={_renderItem}
+          sliderWidth={Layout.window.width}
+          itemWidth={Layout.wp(90) + Layout.wp(2) * 2}
+          loop={true}
+          loopClonesPerSide={1}
+          itemHeight={200}
+          inactiveSlideScale={1}
+          inactiveSlideOpacity={1}
+          enableMomentum={false}
+          activeSlideAlignment={"center"}
+          containerCustomStyle={{
+            //marginTop: 15,
+            overflow: 'visible',
+          }}
+          contentContainerCustomStyle={{
+            paddingVertical: 20 // for custom animation
+          }}
+          activeAnimationType={'spring'}
+          activeAnimationOptions={{
+            friction: 4,
+            tension: 40
+          }}
+        />
+      </View>
       <View style={{ flex: 1, backgroundColor: "transparent" }} >
         {parrucchieri !== undefined && (
           <FlatList
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.light.arancio]} />}
+            //refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.light.arancio]} />}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              marginHorizontal: 30,
-              backgroundColor: "transparent",
-              paddingBottom: 100
-            }}
+            //contentContainerStyle={{
+            //  backgroundColor: "white",
+            //}}
+            //horizontal
+            //pagingEnabled
+            decelerationRate={0}
+            //snapToInterval={Layout.window.width - 60}
+            //snapToAlignment={"center"}
             data={parrucchieri}
-            style={{
-              backgroundColor: "transparent"
-            }}
+            //style={{
+            //  backgroundColor: "white"
+            //}}
             keyExtractor={(item) => item.id}
             renderItem={({ item, index }) => renderCards(item, index)}
           />
         )}
       </View>
+      </ScrollView>
+      <React.Fragment>
+        <Modal
+          animationType="fade"
+          transparent
+          visible={searchModal}
+          onRequestClose={() => setSearchModal(false)}
+        >
+          <View style={styles.closeOverlay} />
+          <Modal
+            animationType="slide"
+            transparent
+            visible={searchModal}
+            onRequestClose={() => setSearchModal(false)}
+          >
+            <TouchableWithoutFeedback onPress={() => setSearchModal(false)}>
+              <View style={styles.dialogModalWrapper}>
+                <View style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignContent: "center",
+                  alignItems: "center",
+                  marginHorizontal: 20,
+                  backgroundColor: "transparent",
+                  marginTop: 20
+                }}>
+                  <TouchableOpacity onPress={() => setSearchModal(false)} style={{ paddingHorizontal: 10, paddingVertical: 5 }}>
+                    <Ionicons name="ios-arrow-back" size={30} color={Colors.light.nero} />
+                  </TouchableOpacity>
+                  <View style={[styles.searchBar]}>
+                    <TextInput
+                      autoFocus
+                      placeholder={"Cosa vuoi fare oggi?"}
+                      placeholderTextColor={Colors.light.nero}
+                      //onFocus={() => setSearchModal(true)}
+                      //onBlur={() => setSearchModal(false)}
+                      style={{
+                        width: "90%",
+                        height: "50%",
+                        textAlign: "left",
+                        fontFamily: "Gilroy_SemiBold",
+                        fontSize: 16,
+                        letterSpacing: .4
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        </Modal>
+      </React.Fragment>
     </View>
   );
 }
@@ -566,6 +845,29 @@ const styles = StyleSheet.create({
   iconSearch: {
     position: "absolute",
     right: 15,
+  },
+  closeOverlay: {
+    height: '100%',
+    width: '100%',
+    backgroundColor: Colors.light.ARANCIO,
+    //opacity: .5,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 1,
+  },
+  dialogModalWrapper: {
+    //flex: 1,
+    //top: 115,
+    top: Layout.window.height / 20,
+    //height: Layout.window.height - 115,
+    height: Layout.window.height - 30,
+    backgroundColor: "white",
+    borderRadius: 40,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    zIndex: 999,
   },
   modalh1: {
     fontSize: 18,
