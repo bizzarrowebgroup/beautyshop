@@ -100,7 +100,7 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
         </Animated.Text>
         <Icon name="heart" size={ICON_SIZE} color="white" />
       </View>
-      <TabHeader {...{ y, transition, tabs, scrollView }} />
+      {tabs && <TabHeader {...{ y, transition, tabs, scrollView }} />}
     </Animated.View>
   );
 };

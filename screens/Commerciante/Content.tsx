@@ -7,49 +7,52 @@ import Animated, { Extrapolate, interpolate } from "react-native-reanimated";
 import { HEADER_IMAGE_HEIGHT } from "./HeaderImage";
 import { MIN_HEADER_HEIGHT } from "./Header";
 import BaseText from "../../components/StyledText";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import Colors from "../../constants/Colors";
 
 const { height } = Dimensions.get("window");
 
-const items = [
-  {
-    title: "Long Hongdae Nights",
-    description:
-      "Korean fried chicken glazed with Gochujang, garnished with sesame & spring onions, served with fries & Miss Miu Mayo",
-    price: "26 CHF",
-  },
-  {
-    title: "Late Sunset",
-    description:
-      "Korean fried chicken starter with dirty cheese sauce and Artisan Hot Sauce - the naughty version new, favourite",
-    price: "13.50 CHF",
-  },
-  {
-    title: "Cabbage Kimchi",
-    description: "Portion, vegan",
-    price: "5.00 CHF",
-  },
-  {
-    title: "Namur by Pieces",
-    description:
-      "Homemade steamed dim sum with minced pork, shiitake mushrooms and smokey honey flavour, four pcs",
-    price: "10.50 CHF",
-  },
-  {
-    title: "Silim Lights",
-    description:
-      "Beef Bibimbap, sesame oil, rice, beans, spinach, carrots, spring onions, Chinese cabbage, shiitake mushrooms, roasted onions and egg",
-    price: "26.50 CHF",
-  },
-];
+//const items = [
+//  {
+//    title: "Long Hongdae Nights",
+//    description:
+//      "Korean fried chicken glazed with Gochujang, garnished with sesame & spring onions, served with fries & Miss Miu Mayo",
+//    price: "26 CHF",
+//  },
+//  {
+//    title: "Late Sunset",
+//    description:
+//      "Korean fried chicken starter with dirty cheese sauce and Artisan Hot Sauce - the naughty version new, favourite",
+//    price: "13.50 CHF",
+//  },
+//  {
+//    title: "Cabbage Kimchi",
+//    description: "Portion, vegan",
+//    price: "5.00 CHF",
+//  },
+//  {
+//    title: "Namur by Pieces",
+//    description:
+//      "Homemade steamed dim sum with minced pork, shiitake mushrooms and smokey honey flavour, four pcs",
+//    price: "10.50 CHF",
+//  },
+//  {
+//    title: "Silim Lights",
+//    description:
+//      "Beef Bibimbap, sesame oil, rice, beans, spinach, carrots, spring onions, Chinese cabbage, shiitake mushrooms, roasted onions and egg",
+//    price: "26.50 CHF",
+//  },
+//];
 
-const menu = [
-  { name: "Starters", items },
-  { name: "Order Again", items },
-  { name: "Picked for you", items },
-  { name: "Gimbap Sushi", items },
-];
+//const menu = [
+//  { name: "Starters", items },
+//  { name: "Order Again", items },
+//  { name: "Picked for you", items },
+//  { name: "Gimbap Sushi", items },
+//];
 
-export const defaultTabs = menu.map(({ name }) => ({ name, anchor: 0 }));
+//export const defaultTabs = menu.map(({ name }) => ({ name, anchor: 0 }));
+//console.log("defaultTabs", defaultTabs)
 
 const styles = StyleSheet.create({
   section: {
@@ -94,7 +97,7 @@ const styles = StyleSheet.create({
   item: {
     borderBottomColor: "#e2e3e4",
     borderBottomWidth: 1,
-    marginTop: 16,
+    //marginTop: 16,
   },
   title: {
     //fontFamily: "UberMoveMedium",
@@ -111,17 +114,20 @@ const styles = StyleSheet.create({
 });
 
 export interface TabModel {
-  name: string;
+  title: string;
   anchor: number;
 }
 
 interface ContentProps {
   y: Animated.Node<number>;
   data?: any;
+  servizi?: any;
   onMeasurement: (index: number, tab: TabModel) => void;
+  setCarrello?: any;
+  carrello?: any;
 }
 
-export default ({ y, onMeasurement, data }: ContentProps) => {
+export default ({ y, onMeasurement, data, servizi, carrello, setCarrello }: ContentProps) => {
   const opacity = interpolate(y, {
     inputRange: [
       HEADER_IMAGE_HEIGHT - MIN_HEADER_HEIGHT - 100,
@@ -168,28 +174,43 @@ export default ({ y, onMeasurement, data }: ContentProps) => {
         </View>
       </View>
       <View style={styles.divider} />
-      {menu.map(({ name, items: menuItems }, index) => (
-        <View
-          style={styles.section}
-          key={index}
-          onLayout={({
-            nativeEvent: {
-              layout: { y: anchor },
-            },
-          }) => onMeasurement(index, { name, anchor: anchor - 142 })}
-        >
-          <BaseText weight={600} styles={styles.title1}>{name}</BaseText>
-          {menuItems.map(({ title, description, price }, j) => (
-            <View style={styles.item} key={j}>
-              <BaseText weight={600} styles={styles.title}>{title}</BaseText>
-              <BaseText styles={styles.description} numberOfLines={2}>
-                {description}
-              </BaseText>
-              <BaseText styles={styles.price}>{price}</BaseText>
-            </View>
-          ))}
-        </View>
-      ))}
+      {servizi && servizi.map(({ title, data: menuItems }, index) => {
+        return (
+          <View
+            //style={{}}
+            key={index}
+            onLayout={({
+              nativeEvent: {
+                layout: { y: anchor },
+              },
+            }) => onMeasurement(index, { title, anchor: anchor - 142 })}
+          >
+            <BaseText weight={600} styles={[styles.title1, { padding: 16 }]}>{title}</BaseText>
+            {menuItems.map(({ titolo, desc, cost }, j) => {
+              let isSelected = carrello !== undefined ? carrello.find(item => {
+                //console.log(item.index, "item");
+                //console.log(index, "index");
+                //console.log(item.index === index, "isEqual");
+                return item.index === j
+              }) : false;
+              return (
+                <TouchableOpacity style={[styles.item, { borderLeftWidth: 6, borderLeftColor: isSelected ? Colors.light.ARANCIO : "transparent" }]} key={j} onPress={() => setCarrello({ title: titolo, cost, index: j })} >
+                  <View style={{
+                    padding: 16
+                  }}>
+                    <BaseText weight={600} styles={styles.title}>{titolo}</BaseText>
+                    <BaseText styles={styles.description} numberOfLines={2}>
+                      {desc}
+                    </BaseText>
+                    <BaseText weight={isSelected ? 800 : 400} styles={[styles.price, { color: isSelected ? Colors.light.ARANCIO : Colors.light.nero }]}>{cost + " €"} {isSelected ? "x1" : ""}</BaseText>
+                  </View>
+                </TouchableOpacity>
+              )
+            })}
+          </View>
+        )
+      }
+      )}
       <View style={{ height }} />
     </>
   );

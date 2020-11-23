@@ -6,9 +6,12 @@ import moment from 'moment';
 import { db } from '../../network/Firebase';
 
 import HeaderImage from "./HeaderImage";
-import Content, { defaultTabs } from "./Content";
+//import Content, { defaultTabs } from "./Content";
+import Content from "./Content";
 import Header from "./Header";
 import Loader from "../../components/Loader";
+import BaseText from "../../components/StyledText";
+import Colors from "../../constants/Colors";
 
 const styles = StyleSheet.create({
   container: {
@@ -18,7 +21,6 @@ const styles = StyleSheet.create({
 
 export default ({ route, navigation }) => {
   const scrollView = useRef<Animated.ScrollView>(null);
-  const [tabs, setTabs] = useState(defaultTabs);
   const y = useValue(0);
   const onScroll = onScrollEvent({ y });
 
@@ -38,13 +40,14 @@ export default ({ route, navigation }) => {
 
   const [recensioni, setRecensioni] = React.useState(undefined);
   const [servizi, setServizi] = React.useState(undefined);
+  const [tabs, setTabs] = React.useState(undefined);
 
   const [indexChosenService, setChosenService] = React.useState(undefined);
   const [durationChosenService, setDurationChosenService] = React.useState(undefined);
   const [costChosenService, setCostChosenService] = React.useState(undefined);
   const [descChosenService, setDescChosenService] = React.useState(undefined);
   const [titleChosenService, setTitleChosenService] = React.useState(undefined);
-
+  const [banner, setBanner] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
 
   const getServizi = async (idCommerciante) => {
@@ -232,19 +235,45 @@ export default ({ route, navigation }) => {
     }
   }
 
+  const [carrello, setCart] = React.useState(undefined);
+
   React.useEffect(() => {
     loadPage(route.params?.id);
   }, [route.params?.id]);
 
   React.useEffect(() => {
-    if (servizi) console.log("--servizi--", servizi)
-    if (data) console.log("--data--", data)
+    if (servizi) {
+      //console.log("--servizi--", servizi)
+      setTabs(servizi.map(({ name }) => ({ name, anchor: 0 })))
+    }
+    //if (data) console.log("--data--", data)
   }, [servizi, data]);
 
   if (loading) {
     return (
       <Loader color={"#fff"} size={"large"} animating={true} />
     )
+  }
+  //React.useEffect(() => {
+  //  //if (carrello && carrello.length > 0) {
+  //  //  setBanner(true);
+  //  //} else {
+  //  //  setBanner(false);
+  //  //}
+  //}, [carrello])
+
+  const setCarrello = (item) => {
+    if (carrello && carrello.length > 0) {
+      let tempCart = carrello.filter(i => i.index === item.index);
+      console.log("tempCart", tempCart)
+      if (tempCart.length > 0) {
+        setCart([]);
+        setBanner(false);
+      }
+    } else {
+      setCart([{ id: item.index, ...item }])
+      setBanner(true);
+    }
   }
 
   return (
@@ -258,14 +287,55 @@ export default ({ route, navigation }) => {
       >
         <Content
           data={data}
+          servizi={servizi}
+          setCarrello={setCarrello}
+          carrello={carrello}
           onMeasurement={(index, tab) => {
             tabs[index] = tab;
             setTabs([...tabs]);
           }}
           {...{ y }}
         />
+
       </Animated.ScrollView>
-      <Header {...{ y, tabs, scrollView, title: data.title }} />
+      {banner && (<View style={{
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        width: "100%",
+        minHeight: 100,
+        shadowOffset: {
+          width: 0,
+          height: -4
+        },
+        shadowColor: "black",
+        shadowOpacity: .22,
+        shadowRadius: 4,
+        backgroundColor: "white",
+        alignContent: "center",
+        justifyContent: "flex-start"
+        //alignItems: "center"
+      }}>
+        <View style={{
+          marginHorizontal: 20,
+          marginTop: 15,
+          borderRadius: 8,
+          backgroundColor: "rgba(236, 118, 33, 0.4)",
+          height: 60,
+          alignContent: "center",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexDirection: "row"
+        }}>
+          <View style={{ backgroundColor: "#FB6E3B", width: 30, height: 30, marginLeft: 20, borderRadius: 5, alignContent: "center", justifyContent: "center" }}>
+            <BaseText styles={{ alignSelf: "center" }} weight={900} size={17} color={Colors.light.bianco}>1</BaseText>
+          </View>
+          <BaseText styles={{}} weight={900} size={20} color={Colors.light.bianco}>Riepilogo</BaseText>
+          <BaseText styles={{ marginRight: 20 }} weight={900} size={15} color={Colors.light.bianco}></BaseText>
+        </View>
+      </View>)}
+      {tabs !== undefined && <Header {...{ y, tabs, scrollView, title: data.title }} />}
     </View>
   );
 };

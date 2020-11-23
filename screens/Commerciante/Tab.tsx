@@ -18,12 +18,12 @@ const styles = StyleSheet.create({
 
 interface TabProps {
   color: string;
-  name: string;
+  title: string;
   onMeasurement?: (measurement: number) => void;
   onPress?: () => void;
 }
 
-export default ({ name, color, onMeasurement, onPress }: TabProps) => {
+export default ({ title, color, onMeasurement, onPress }: TabProps) => {
   return (
     <TouchableWithoutFeedback {...{ onPress }}>
       <View
@@ -38,7 +38,7 @@ export default ({ name, color, onMeasurement, onPress }: TabProps) => {
         }
         style={styles.container}
       >
-        <Text style={[styles.text, { color }]}>{name}</Text>
+        <Text style={[styles.text, { color }]}>{title}</Text>
       </View>
     </TouchableWithoutFeedback>
   );
