@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
-  SectionList
+  SectionList,
+  Linking
 } from 'react-native';
 import Header from '../components/Header';
 import Colors from '../constants/Colors';
@@ -19,6 +20,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
 import { AuthUserContext } from '../navigation/AuthUserProvider';
 import BaseText from '../components/StyledText';
+import * as WebBrowser from 'expo-web-browser';
+import BackIcon from '../components/svg/BackIcon';
 
 import Constants from "expo-constants";
 import { backgroundImage } from './Commerciante/HeaderImage';
@@ -73,12 +76,20 @@ const Profilo = ({
   }
   const sections = [
     {
+      title: "",
+      data: [
+        {
+          realheader: true
+        }
+      ]
+    },
+    {
       title: "Informazioni personali",
       data: [
         {
           title: "I miei appuntamenti",
           icon: true,
-          navigateTo: ""
+          navigateTo: "Prenotazioni"
         },
         {
           title: "Le mie informazioni",
@@ -114,17 +125,17 @@ const Profilo = ({
         {
           title: "Cos'è BeautyShop",
           icon: false,
-          navigateTo: ""
+          openWeb: "https://bizzarro.org/contact"
         },
         {
           title: "Ricevi assistenza",
           icon: false,
-          navigateTo: ""
+          openWeb: "https://bizzarro.org/contact"
         },
         {
           title: "Inviaci il tuo feedback",
           icon: false,
-          navigateTo: ""
+          openWeb: "https://bizzarro.org/contact"
         },
       ]
     },
@@ -169,32 +180,57 @@ const Profilo = ({
     }
   }
 
-  const Item = ({ data }) => {
-    const { title, subtitle, icon, navigateTo, special, version, logout } = data;
-    const navigateToScreen = logout ? handleSignOut : navigateTo && navigateTo !== "" ? navigation.navigate(navigateTo) : undefined;
-    let itemBorder = special ? {} : {
-      borderBottomColor: "#EEEEEE",
-      borderBottomWidth: 1,
-    }
-    let titleStyle = logout ? {
-      textDecorationLine: "underline",
-      textDecorationStyle: "solid",
-      textDecorationColor: "#000",
-    } : {};
-    let titleWeight = logout ? 700 : 400;
-    return (
-      <TouchableOpacity onPress={navigateToScreen}>
-        <View style={[styles.item, itemBorder]}>
-          <View style={[styles.itemContent, { justifyContent: version ? "center" : "space-between" }]}>
-            <BaseText size={version ? 10 : 17} weight={titleWeight} styles={titleStyle}>{title}</BaseText>
-            {icon && (
-              <Icon name="arrow-right" size={20} color="black" />
-            )}
+  const RenderHeader = () => {
+    if (name && photoUrl)
+      return (
+        <View style={styles.mainHeader}>
+          <View style={styles.mainHeaderRow}>
+            <BackIcon width={20} height={20} style={{ position: "absolute", left: 25 }} onPress={() => { navigation.goBack() }} color={Colors.light.nero} />
+            <View style={{
+            }}>
+              <Image source={{ uri: photoUrl }} style={styles.headerImage} />
+              <BaseText weight={800} size={22} styles={styles.headerName}>{`Ciao ${name.substring(0, 8)}!`}</BaseText>
+            </View>
           </View>
-          {subtitle && subtitle !== "" && <BaseText size={11} styles={{ marginTop: 5, marginBottom: 15 }}>{subtitle}</BaseText>}
         </View>
-      </TouchableOpacity>
-    )
+      )
+    return <></>
+  }
+
+  const Item = ({ data, index }) => {
+    const { realheader, title, subtitle, icon, navigateTo, special, version, logout, openWeb } = data;
+    var header = realheader ? true : false;
+    if (header) {
+      return (
+        <RenderHeader />
+      )
+    } else {
+
+      const navigateToScreen = logout ? handleSignOut : navigateTo && navigateTo !== "" ? () => navigation.navigate(navigateTo) : openWeb && openWeb !== "" ? () => WebBrowser.openBrowserAsync(openWeb) : undefined;
+      let itemBorder = special ? {} : {
+        borderBottomColor: "#EEEEEE",
+        borderBottomWidth: 1,
+      }
+      let titleStyle = logout ? {
+        textDecorationLine: "underline",
+        textDecorationStyle: "solid",
+        textDecorationColor: "#000",
+      } : {};
+      let titleWeight = logout ? 700 : 400;
+      return (
+        <TouchableOpacity onPress={navigateToScreen}>
+          <View style={[styles.item, itemBorder]}>
+            <View style={[styles.itemContent, { justifyContent: version ? "center" : "space-between" }]}>
+              <BaseText size={version ? 10 : 15} weight={titleWeight} styles={titleStyle}>{title}</BaseText>
+              {icon && (
+                <Icon name="arrow-right" size={20} color="black" />
+              )}
+            </View>
+            {subtitle && subtitle !== "" && <BaseText size={11} styles={{ marginTop: 5, marginBottom: 15 }}>{subtitle}</BaseText>}
+          </View>
+        </TouchableOpacity>
+      )
+    }
   };
 
   React.useEffect(() => {
@@ -209,31 +245,16 @@ const Profilo = ({
 
   }, []);
 
-
-
-  const renderHeader = () => {
-    if (name && photoUrl)
-      return (
-        <View style={styles.mainHeader}>
-          <View style={styles.mainHeaderRow}>
-            <Image source={{ uri: photoUrl }} style={styles.headerImage} />
-            <BaseText weight={800} size={22} styles={styles.headerName}>{`Ciao ${name.substring(0, 8)}!`}</BaseText>
-          </View>
-        </View>
-      )
-  }
-
   return (
     <View style={styles.container}>
-      {renderHeader()}
       <SectionList
         sections={sections}
         stickySectionHeadersEnabled={false}
         style={{ backgroundColor: "white" }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 25, backgroundColor: "white", paddingBottom: 100 }}
+        contentContainerStyle={{ backgroundColor: "white", paddingBottom: 100 }}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <Item data={item} />}
+        renderItem={({ index, item }) => <Item data={item} index={index} />}
         renderSectionHeader={({ section: { title } }) => {
           if (title)
             return (
@@ -256,6 +277,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     height: 60,
     justifyContent: "center",
+    paddingHorizontal: 25,
   },
   itemContent: {
     flexDirection: "row",
@@ -268,6 +290,7 @@ const styles = StyleSheet.create({
   headerRow: {
     marginVertical: 15,
     backgroundColor: "#fff",
+    paddingHorizontal: 25,
   },
   title: {
     fontSize: 17
@@ -292,7 +315,7 @@ const styles = StyleSheet.create({
   },
   mainHeaderRow: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignContent: "center",
     alignItems: "center",
     paddingHorizontal: 25,
@@ -302,7 +325,8 @@ const styles = StyleSheet.create({
     height: 70,
     width: 70,
     borderRadius: 70 / 2,
-    marginRight: 10
+    marginRight: 10,
+    alignSelf: "center"
   },
 });
 

@@ -41,7 +41,7 @@ const Prenotazioni = (props: PrenotazioniProps) => {
       let prenotazioni = await checkPrenotazioni(user);
       //console.log("--PREN OTTENUTE", prenotazioni);
       let finalPrenotazioni = await editPrenotazioni(prenotazioni)
-      console.log("--FINALI OTTENUTE", finalPrenotazioni);
+      //console.log("--FINALI OTTENUTE", finalPrenotazioni);
       //  "commercianteId": "HHCFptUM91FqhMq2INjE",
       //"id": undefined,
       //"notes": "Prova note ",
@@ -114,164 +114,51 @@ const Prenotazioni = (props: PrenotazioniProps) => {
       }
     })
   }
-
-  //let today = null, day = "", day1 = null, customDatesStyles = [], disabledDates = [], prenotazioniFatte = [];
-  //if (user) {
-  //  today = moment();
-  //  day = today.clone();
-  //  day1 = today.clone().startOf('month');
-
-  //  customDatesStyles.push(
-  //    {
-  //      date: moment().add(3, 'day'),
-  //      style: { backgroundColor: Colors.light.arancioDes },
-  //      textStyle: { color: Colors.light.nero },
-  //      containerStyle: [],
-  //    },
-  //    {
-  //      date: moment().add(4, 'day'),
-  //      style: { backgroundColor: Colors.light.arancioDes },
-  //      textStyle: { color: Colors.light.nero },
-  //      containerStyle: [],
-  //    }
-  //  );
-
-  //  while (day1.add(1, 'day').isSame(today, 'month')) {
-  //    if (day1.day() == 0) {
-  //      // sabato & domenica
-  //      // if (day1.day() == 6 || day1.day() == 0) {
-  //      disabledDates.push(
-  //        {
-  //          date: day1.date(),
-  //          style: { backgroundColor: Colors.light.arancioDes },
-  //          textStyle: { color: Colors.light.nero },
-  //          containerStyle: [],
-  //        }
-  //      )
-  //    }
-
-  //  }
-
-  //  prenotazioniFatte = [
-  //    {
-  //      data: moment().add(3, 'day').format("LLLL"),
-  //      oraInizio: moment().add(3, 'day').format("LT"),
-  //      oraFine: moment().add(3, 'day').add(30, 'm').format("LT"),
-  //      servizio: "Lavaggio + Taglio + Piega",
-  //      oper: "Marika",
-  //      salon: "Salone Le Noir",
-  //      inRitardo: false
-  //    },
-  //    {
-  //      data: moment().add(4, 'day').format("LLLL"),
-  //      oraInizio: moment().add(4, 'day').add(60, 'm').format("LT"),
-  //      oraFine: moment().add(4, 'day').add(120, 'm').format("LT"),
-  //      servizio: "Manicure",
-  //      oper: "Giovanna",
-  //      salon: "Salone L'Araba Fenice",
-  //      inRitardo: false
-  //    }
-  //  ];
-  //}
-
+  console.log("prenotazioniFatte---", prenotazioniFatte)
   return (
     <View style={styles.container}>
-      <Header hasBack={false} title="Prenotazioni" />
+      <Header hasBack={false} title="I miei Appuntamenti" onPress={() => props.navigation.goBack()} />
       {user && (
-        <>
-          <View style={[styles.switchBox, styles.shadow]}>
-            <TouchableWithoutFeedback onPress={() => setselectedType(!selectedType)}>
-              <View style={{
-                marginLeft: 10,
-                width: "50%",
-                backgroundColor: selectedType ? Colors.light.newviola : Colors.light.grigio,
-                height: 40,
-                alignItems: "center",
-                justifyContent: 'center',
-                borderTopLeftRadius: 20,
-                borderBottomLeftRadius: 20,
-              }}>
-                <BaseText color={selectedType ? Colors.light.grigio : Colors.light.newviola}>{"Nuove"}</BaseText>
-              </View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => setselectedType(!selectedType)}>
-              <View style={{
-                marginRight: 10,
-                width: "50%",
-                backgroundColor: selectedType ? Colors.light.grigio : Colors.light.newviola,
-                height: 40,
-                alignItems: "center",
-                justifyContent: 'center',
-                borderTopRightRadius: 20,
-                borderBottomRightRadius: 20,
-              }}>
-                <BaseText color={selectedType ? Colors.light.newviola : Colors.light.grigio}>{"Vecchie"}</BaseText>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
+        <View style={{ borderTopLeftRadius: 40, borderTopRightRadius: 40, top: -50, backgroundColor: Colors.light.bianco }}>
+          {prenotazioniFatte !== undefined ? prenotazioniFatte.length <= 0 : false && (
+            <View style={[styles.switchBox, styles.shadow]}>
+              <TouchableWithoutFeedback onPress={() => setselectedType(!selectedType)}>
+                <View style={{
+                  marginLeft: 10,
+                  width: "50%",
+                  backgroundColor: selectedType ? Colors.light.ARANCIO : Colors.light.GRIGIO,
+                  height: 40,
+                  alignItems: "center",
+                  justifyContent: 'center',
+                  borderTopLeftRadius: 20,
+                  borderBottomLeftRadius: 20,
+                }}>
+                  <BaseText color={selectedType ? Colors.light.GRIGIO : Colors.light.ARANCIO}>{"Nuove"}</BaseText>
+                </View>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={() => setselectedType(!selectedType)}>
+                <View style={{
+                  marginRight: 10,
+                  width: "50%",
+                  backgroundColor: selectedType ? Colors.light.GRIGIO : Colors.light.ARANCIO,
+                  height: 40,
+                  alignItems: "center",
+                  justifyContent: 'center',
+                  borderTopRightRadius: 20,
+                  borderBottomRightRadius: 20,
+                }}>
+                  <BaseText color={selectedType ? Colors.light.ARANCIO : Colors.light.GRIGIO}>{"Vecchie"}</BaseText>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>)}
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
               paddingBottom: 100,
-              marginVertical: 20
+              marginVertical: 20,
+              marginHorizontal: 20,
             }}
           >
-            {/*
-            <View style={{
-          marginVertical: 20,
-          marginHorizontal: 20,
-          backgroundColor: Colors.light.bianco,
-          borderRadius: 10
-        }}>
-          <CalendarPicker
-            onDateChange={(date) => onDateChange(date)}
-            weekdays={['L', 'M', 'M', 'G', 'V', 'S', 'D']}
-            months={['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre']}
-            startFromMonday={true}
-            nextTitle={">"}
-            previousTitle={"<"}
-            // maxDate={moment()}
-            // minDate={moment()}
-            applyMinMaxDateOnMonthSelection={true}
-            previousTitleStyle={{
-              fontFamily: "Montserrat_700Bold",
-              color: Colors.light.arancioDes,
-              paddingLeft: 20,
-              paddingTop: 5,
-            }}
-            nextTitleStyle={{
-              fontFamily: "Montserrat_700Bold",
-              color: Colors.light.arancioDes,
-              paddingRight: 20,
-              paddingTop: 5,
-            }}
-            disabledDates={disabledDates}
-            disabledDatesTextStyle={{
-              color: Colors.light.grigio,
-            }}
-            selectedDayColor={Colors.light.arancioDes}
-            selectedDayTextColor={Colors.light.nero}
-            todayBackgroundColor={Colors.light.grigio}
-            selectYearTitle={"Scegli anno"}
-            selectMonthTitle={"Scegli mese nel "}
-            customDatesStyles={customDatesStyles}
-            enableDateChange={false}
-            restrictMonthNavigation={true}
-            textStyle={{
-              fontFamily: 'Montserrat_400Regular',
-              // color: 'white',
-            }}
-            textWeekStyle={{
-              fontFamily: 'Montserrat_700Bold',
-              color: Colors.light.bianco
-            }}
-            dayLabelsWrapper={{
-              backgroundColor: Colors.light.violaDes,
-              color: Colors.light.bianco,
-              marginHorizontal: 5
-            }}
-          />
-        </View>*/}
             {prenotazioniFatte !== undefined && prenotazioniFatte.map((
               {
                 //  "commercianteId": "HHCFptUM91FqhMq2INjE",
@@ -386,13 +273,23 @@ const Prenotazioni = (props: PrenotazioniProps) => {
               )
             }
             )}
+            {prenotazioniFatte == undefined ? false : prenotazioniFatte.length <= 0 && (
+              <View style={{
+                marginTop: 100,
+                width: "100%",
+                height: 300,
+                paddingHorizontal: 20
+              }}>
+                <BaseText textAlign="center" weight={400} size={15}>{"Non ci sono nuove prenotazioni.\nQui puoi trovare tutte le prenotazioni che sono state confermate dai gestori ed eventuali comunicazioni.\n\nPer aggiungere una nuova prenotazione fai logo di BeautyShop dal menu."}</BaseText>
+                <NoFavorites style={{ bottom: 0 }} />
+              </View>
+            )}
           </ScrollView>
-        </>
+        </View>
       )
       }
       {
         !user && (
-          //{true && (
           <ScrollView contentContainerStyle={{
             marginVertical: 20,
             marginHorizontal: 20,
@@ -420,7 +317,6 @@ export default Prenotazioni;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //backgroundColor: Colors.light.bg
     backgroundColor: Colors.light.bianco
   },
   switchBox: {
@@ -429,16 +325,13 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: 'center',
     marginHorizontal: 40,
-    marginTop: 20
+    marginTop: 40
   },
   light: {
-    //fontFamily: "Montserrat_300Light"
   },
   text: {
-    //fontFamily: "Montserrat_400Regular"
   },
   bold: {
-    //fontFamily: "Montserrat_700Bold",
   },
   shadow: {
     shadowColor: "black",
@@ -451,3 +344,60 @@ const styles = StyleSheet.create({
     elevation: 1,
   }
 });
+
+{/*
+            <View style={{
+          marginVertical: 20,
+          marginHorizontal: 20,
+          backgroundColor: Colors.light.bianco,
+          borderRadius: 10
+        }}>
+          <CalendarPicker
+            onDateChange={(date) => onDateChange(date)}
+            weekdays={['L', 'M', 'M', 'G', 'V', 'S', 'D']}
+            months={['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre']}
+            startFromMonday={true}
+            nextTitle={">"}
+            previousTitle={"<"}
+            // maxDate={moment()}
+            // minDate={moment()}
+            applyMinMaxDateOnMonthSelection={true}
+            previousTitleStyle={{
+              fontFamily: "Montserrat_700Bold",
+              color: Colors.light.arancioDes,
+              paddingLeft: 20,
+              paddingTop: 5,
+            }}
+            nextTitleStyle={{
+              fontFamily: "Montserrat_700Bold",
+              color: Colors.light.arancioDes,
+              paddingRight: 20,
+              paddingTop: 5,
+            }}
+            disabledDates={disabledDates}
+            disabledDatesTextStyle={{
+              color: Colors.light.grigio,
+            }}
+            selectedDayColor={Colors.light.arancioDes}
+            selectedDayTextColor={Colors.light.nero}
+            todayBackgroundColor={Colors.light.grigio}
+            selectYearTitle={"Scegli anno"}
+            selectMonthTitle={"Scegli mese nel "}
+            customDatesStyles={customDatesStyles}
+            enableDateChange={false}
+            restrictMonthNavigation={true}
+            textStyle={{
+              fontFamily: 'Montserrat_400Regular',
+              // color: 'white',
+            }}
+            textWeekStyle={{
+              fontFamily: 'Montserrat_700Bold',
+              color: Colors.light.bianco
+            }}
+            dayLabelsWrapper={{
+              backgroundColor: Colors.light.violaDes,
+              color: Colors.light.bianco,
+              marginHorizontal: 5
+            }}
+          />
+        </View>*/}

@@ -15,7 +15,7 @@ import { TabModel } from "./Content";
 const ICON_SIZE = 24;
 const PADDING = 16;
 export const MIN_HEADER_HEIGHT = 45;
-const { interpolate, Extrapolate, useCode, greaterThan, set, block } = Animated;
+const { interpolate, Extrapolate, useCode, greaterThan, lessThan, set, block } = Animated;
 
 const styles = StyleSheet.create({
   container: {
@@ -23,17 +23,31 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
+    zIndex: 100,
+    height: MIN_HEADER_HEIGHT + 50,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 2,
+      height: 0,
+    },
+    shadowOpacity: .2,
+    shadowRadius: 10,
+    elevation: 1,
   },
   header: {
     flexDirection: "row",
-    height: MIN_HEADER_HEIGHT,
+    //height: MIN_HEADER_HEIGHT,
+    paddingTop: 50,
     alignItems: "center",
+    justifyContent: "space-between",
+    alignContent: "center",
     paddingHorizontal: PADDING,
+    zIndex: 100
   },
   title: {
     fontFamily: "Gilroy_Medium",
     fontSize: 18,
-    marginLeft: PADDING,
+    marginLeft: PADDING - 10,
     flex: 1,
   },
 });
@@ -48,8 +62,10 @@ interface HeaderProps {
 export default ({ y, tabs, scrollView, title }: HeaderProps) => {
   const { goBack } = useNavigation();
   const toggle = useValue<0 | 1>(0);
+  const toggleShadow = useValue(0);
   const insets = useSafeArea();
   const transition = withTimingTransition(toggle, { duration: 100 });
+  const shadow = withTimingTransition(toggleShadow, { duration: 100 });
   const { top: paddingTop } = insets;
   const translateX = interpolate(y, {
     inputRange: [0, HEADER_IMAGE_HEIGHT],
@@ -57,19 +73,28 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
     extrapolate: Extrapolate.CLAMP,
   });
   const translateY = interpolate(y, {
-    inputRange: [-50, 0, HEADER_IMAGE_HEIGHT],
+    inputRange: [-HEADER_IMAGE_HEIGHT / 3.5, 0, HEADER_IMAGE_HEIGHT],
     outputRange: [
       HEADER_IMAGE_HEIGHT - MIN_HEADER_HEIGHT + 100,
-      HEADER_IMAGE_HEIGHT - MIN_HEADER_HEIGHT + 50,
+      HEADER_IMAGE_HEIGHT - MIN_HEADER_HEIGHT + 15,
       0,
     ],
     extrapolateRight: Extrapolate.CLAMP,
   });
   const opacity = transition;
-  useCode(() => block([set(toggle, greaterThan(y, HEADER_IMAGE_HEIGHT))]), [
-    toggle,
-    y,
-  ]);
+  useCode(
+    () => block(
+      [
+        set(toggle, greaterThan(y, HEADER_IMAGE_HEIGHT)),
+        set(toggleShadow, lessThan(y, HEADER_IMAGE_HEIGHT)),
+      ]
+    ),
+    [
+      toggle,
+      toggleShadow,
+      y,
+    ]
+  );
   return (
     <Animated.View style={[styles.container, { paddingTop: 0 }]}>
       <Animated.View
@@ -82,11 +107,21 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
       <View style={styles.header}>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <View>
-            <Icon name="arrow-left" size={ICON_SIZE} color="white" />
-            <Animated.View
-              style={{ ...StyleSheet.absoluteFillObject, opacity: transition }}
-            >
-              <Icon name="arrow-left" size={ICON_SIZE} color="black" />
+            <Animated.View style={{
+              height: ICON_SIZE + 10,
+              width: ICON_SIZE + 10,
+              borderRadius: ICON_SIZE + 10 / 2,
+              backgroundColor: "white",
+              justifyContent: "center",
+              shadowColor: "black",
+              shadowRadius: 5,
+              shadowOpacity: shadow,
+              shadowOffset: {
+                width: 1,
+                height: 0
+              }
+            }}>
+              <Icon name="arrow-left" size={ICON_SIZE} color="black" style={{ alignSelf: "center" }} />
             </Animated.View>
           </View>
         </TouchableWithoutFeedback>
@@ -98,7 +133,22 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
         >
           {title ? title : "NO/TITLE"}
         </Animated.Text>
-        <Icon name="heart" size={ICON_SIZE} color="white" />
+        <Animated.View style={{
+          height: ICON_SIZE + 10,
+          width: ICON_SIZE + 10,
+          borderRadius: ICON_SIZE + 10 / 2,
+          backgroundColor: "white",
+          justifyContent: "center",
+          shadowColor: "black",
+          shadowRadius: 5,
+          shadowOpacity: shadow,
+          shadowOffset: {
+            width: 1,
+            height: 0
+          }
+        }}>
+          <Icon name="heart" size={ICON_SIZE - 5} color="black" style={{ alignSelf: "center" }} />
+        </Animated.View>
       </View>
       {tabs && <TabHeader {...{ y, transition, tabs, scrollView }} />}
     </Animated.View>

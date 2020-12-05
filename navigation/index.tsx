@@ -93,10 +93,10 @@ function RootNavigator() {
         />
         <Stack.Screen name="Shop" component={Shop}
           options={{
-            ...TransitionPresets.ModalPresentationIOS,
-            gestureEnabled: true,
+            //...TransitionPresets.ModalPresentationIOS,
+            //gestureEnabled: true,
             headerShown: false,
-            cardOverlayEnabled: false,
+            //cardOverlayEnabled: false,
           }}
         />
         <Stack.Screen name="Homepage" component={NewHomePage}
@@ -118,10 +118,10 @@ function RootNavigator() {
           name="Profilo"
           component={Profilo}
           options={{
-            ...TransitionPresets.ModalPresentationIOS,
-            gestureEnabled: true,
+            //...TransitionPresets.ModalPresentationIOS,
+            //gestureEnabled: true,
             headerShown: false,
-            cardOverlayEnabled: false,
+            //cardOverlayEnabled: false,
           }}
         />
         <Stack.Screen
@@ -132,7 +132,12 @@ function RootNavigator() {
         <Stack.Screen
           name="Prenotazioni"
           component={Prenotazioni}
-          options={{ headerShown: false }}
+          options={{
+            //...TransitionPresets.ModalPresentationIOS,
+            //gestureEnabled: true,
+            headerShown: false,
+            //cardOverlayEnabled: false,
+          }}
         />
         <Stack.Screen name="NotFound" component={NotFoundScreen}
           options={{

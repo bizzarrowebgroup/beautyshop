@@ -145,18 +145,20 @@ const Header = (props: HeaderProps) => {
         </View>
       );
     } else {
+      //console.log("Constants.statusBarHeight",Constants.statusBarHeight)
       return (
-        <View style={[{ paddingTop: Constants.statusBarHeight, backgroundColor: Colors.light.newviola }, props.styles]}>
+        <View style={[{ paddingTop: 175, backgroundColor: Colors.light.ARANCIO }, props.styles]}>
           <View style={[styles.container, {
             justifyContent: "flex-start",
             alignItems: "center",
             alignContent: "center",
-            flexDirection: "row"
+            flexDirection: "row",
+            bottom: 50,
           }]}>
             {props.hasBack &&
-              <BackIcon width={20} height={20} style={styles.icona} onPress={props.onPress} color={Colors.light.bianco}/>
+              <BackIcon width={20} height={20} style={styles.icona} onPress={props.onPress} color={Colors.light.bianco} />
             }
-            <BaseText styles={styles.titlo} size={15} weight={400} color={Colors.light.bianco}>{props.title ? props.title : ""}</BaseText>
+            <BaseText styles={styles.titlo} size={25} weight={600} color={Colors.light.bianco}>{props.title ? props.title : ""}</BaseText>
           </View>
         </View>
       );

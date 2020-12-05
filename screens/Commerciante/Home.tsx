@@ -12,6 +12,7 @@ import Header from "./Header";
 import Loader from "../../components/Loader";
 import BaseText from "../../components/StyledText";
 import Colors from "../../constants/Colors";
+import { StatusBar } from "expo-status-bar";
 
 const styles = StyleSheet.create({
   container: {
@@ -49,6 +50,7 @@ export default ({ route, navigation }) => {
   const [titleChosenService, setTitleChosenService] = React.useState(undefined);
   const [banner, setBanner] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
+  //const [barStyle, setBar] = React.useState("light");
 
   const getServizi = async (idCommerciante) => {
     const serviziFirebase = db.collection('servizicommercianti');
@@ -232,7 +234,7 @@ export default ({ route, navigation }) => {
       const day = date.day();
       setDay(day);
       setLoading(false)
-    }
+    } else navigation.goBack();
   }
 
   const [carrello, setCart] = React.useState(undefined);
@@ -246,14 +248,22 @@ export default ({ route, navigation }) => {
       //console.log("--servizi--", servizi)
       setTabs(servizi.map(({ name }) => ({ name, anchor: 0 })))
     }
-    //if (data) console.log("--data--", data)
+    //if (servizi == undefined && data == undefined) navigation.goBack()
+    if (data) console.log("--data--", data)
   }, [servizi, data]);
+
+  React.useEffect(() => {
+    //return () => {
+    //  setBar("dark");
+    //}
+  }, [])
 
   if (loading) {
     return (
       <Loader color={"#fff"} size={"large"} animating={true} />
     )
   }
+
   //React.useEffect(() => {
   //  //if (carrello && carrello.length > 0) {
   //  //  setBanner(true);
@@ -278,11 +288,13 @@ export default ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      {/*<StatusBar style={barStyle} />*/}
       <HeaderImage {...{ y }} />
       <Animated.ScrollView
         ref={scrollView}
         style={StyleSheet.absoluteFill}
         scrollEventThrottle={1}
+        showsVerticalScrollIndicator={false}
         {...{ onScroll }}
       >
         <Content
@@ -335,7 +347,8 @@ export default ({ route, navigation }) => {
             <BaseText styles={{ marginRight: 20 }} weight={900} size={15} color={Colors.light.bianco}></BaseText>
           </View>
         </View>)}
-      {tabs !== undefined && <Header {...{ y, tabs, scrollView, title: data.title }} />}
+      {/*{tabs !== undefined && <Header {...{ y, tabs, scrollView, title: data.title }} />}*/}
+      <Header {...{ y, tabs, scrollView, title: data.title }} />
     </View>
   );
 };
