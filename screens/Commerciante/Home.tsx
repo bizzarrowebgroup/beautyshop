@@ -296,45 +296,45 @@ export default ({ route, navigation }) => {
           }}
           {...{ y }}
         />
-
       </Animated.ScrollView>
-      {banner && (<View style={{
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        width: "100%",
-        minHeight: 100,
-        shadowOffset: {
-          width: 0,
-          height: -4
-        },
-        shadowColor: "black",
-        shadowOpacity: .22,
-        shadowRadius: 4,
-        backgroundColor: "white",
-        alignContent: "center",
-        justifyContent: "flex-start"
-        //alignItems: "center"
-      }}>
+      {banner && (
         <View style={{
-          marginHorizontal: 20,
-          marginTop: 15,
-          borderRadius: 8,
-          backgroundColor: "rgba(236, 118, 33, 0.4)",
-          height: 60,
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          width: "100%",
+          minHeight: 100,
+          shadowOffset: {
+            width: 0,
+            height: -4
+          },
+          shadowColor: "black",
+          shadowOpacity: .22,
+          shadowRadius: 4,
+          backgroundColor: "white",
           alignContent: "center",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexDirection: "row"
+          justifyContent: "flex-start"
+          //alignItems: "center"
         }}>
-          <View style={{ backgroundColor: "#FB6E3B", width: 30, height: 30, marginLeft: 20, borderRadius: 5, alignContent: "center", justifyContent: "center" }}>
-            <BaseText styles={{ alignSelf: "center" }} weight={900} size={17} color={Colors.light.bianco}>1</BaseText>
+          <View style={{
+            marginHorizontal: 20,
+            marginTop: 15,
+            borderRadius: 8,
+            backgroundColor: "rgba(236, 118, 33, 0.4)",
+            height: 60,
+            alignContent: "center",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexDirection: "row"
+          }}>
+            <View style={{ backgroundColor: "#FB6E3B", width: 30, height: 30, marginLeft: 20, borderRadius: 5, alignContent: "center", justifyContent: "center" }}>
+              <BaseText styles={{ alignSelf: "center" }} weight={900} size={17} color={Colors.light.bianco}>1</BaseText>
+            </View>
+            <BaseText styles={{}} weight={900} size={20} color={Colors.light.bianco}>Riepilogo</BaseText>
+            <BaseText styles={{ marginRight: 20 }} weight={900} size={15} color={Colors.light.bianco}></BaseText>
           </View>
-          <BaseText styles={{}} weight={900} size={20} color={Colors.light.bianco}>Riepilogo</BaseText>
-          <BaseText styles={{ marginRight: 20 }} weight={900} size={15} color={Colors.light.bianco}></BaseText>
-        </View>
-      </View>)}
+        </View>)}
       {tabs !== undefined && <Header {...{ y, tabs, scrollView, title: data.title }} />}
     </View>
   );

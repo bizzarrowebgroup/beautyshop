@@ -106,6 +106,10 @@ const ENTRIES1 = [
     title: "Corpo",
     bg: "#9D006D"
   },
+  {
+    title: "Piedi",
+    bg: "#F9BD01",
+  },
 ];
 
 export default function HomePage({ navigation }: StackScreenProps<RootStackParamList, 'Shop'>) {
@@ -470,42 +474,42 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
     } else navigation.navigate('Auth')
   }
 
-  const renderTitle = () => {
-    return (
-      <MaskedView
-        style={{ height: 50, marginTop: 60, marginVertical: 20 }}
-        maskElement={
-          <View
-            style={{
-              backgroundColor: 'transparent',
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            <BaseText
-              weight={700}
-              size={30}
-            >
-              {"BeautyShop"}
-            </BaseText>
-          </View>
-        }
-      >
-        <LinearGradient
-          style={{ flex: 1 }}
-          colors={["#FB6E3B", "#FB6E3B", "#FF9B76", "#FF9B76"]}
-          //colors={[Colors.light.ARANCIO, Colors.light.ARANCIO, Colors.light.ARANCIO, Colors.light.ARANCIO]}
-          //colors={[Colors.light.text, Colors.light.text, Colors.light.nero, Colors.light.nero]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          locations={[.3, .4, .8, .9]}
-        //locations={[.1, 0.5, 0.8, 0]}
-        >
-        </LinearGradient>
-      </MaskedView>
-    )
-  }
+  //const renderTitle = () => {
+  //  return (
+  //    <MaskedView
+  //      style={{ height: 50, marginTop: 60, marginVertical: 20 }}
+  //      maskElement={
+  //        <View
+  //          style={{
+  //            backgroundColor: 'transparent',
+  //            flex: 1,
+  //            justifyContent: 'center',
+  //            alignItems: 'center'
+  //          }}
+  //        >
+  //          <BaseText
+  //            weight={700}
+  //            size={30}
+  //          >
+  //            {"BeautyShop"}
+  //          </BaseText>
+  //        </View>
+  //      }
+  //    >
+  //      <LinearGradient
+  //        style={{ flex: 1 }}
+  //        colors={["#FB6E3B", "#FB6E3B", "#FF9B76", "#FF9B76"]}
+  //        //colors={[Colors.light.ARANCIO, Colors.light.ARANCIO, Colors.light.ARANCIO, Colors.light.ARANCIO]}
+  //        //colors={[Colors.light.text, Colors.light.text, Colors.light.nero, Colors.light.nero]}
+  //        start={{ x: 0, y: 0 }}
+  //        end={{ x: 0, y: 1 }}
+  //        locations={[.3, .4, .8, .9]}
+  //      //locations={[.1, 0.5, 0.8, 0]}
+  //      >
+  //      </LinearGradient>
+  //    </MaskedView>
+  //  )
+  //}
 
   const renderItem1 = ({ item, index }) => {
     const { title, bg, model } = item;
@@ -554,7 +558,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
           //borderColor: "black",
           //borderRadius: 8
         }}
-        onPress={() => { alert(`You've clicked '${index}'`); }}
+        //onPress={() => { alert(`You've clicked '${index}'`); }}
       >
         <View
           style={{

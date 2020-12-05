@@ -140,7 +140,11 @@ export const signInWithFacebook = async () => {
             console.log("---utentiAppID-AGGIUNTO---", res.id);
             return user.uid;
           } else {
-            return alert("ERRORE REGISTRAZIONE FB SOCIAL 003-30-2")
+            return {
+              type: "error",
+              
+            }
+            //return alert("ERRORE REGISTRAZIONE FB SOCIAL 003-30-2")
           }
         } catch (error) {
           var errorCode = error.code;
@@ -169,7 +173,7 @@ export const signInWithFacebook = async () => {
 
 export const logInWithFacebook = async () => {
   try {
-    await Facebook.initializeAsync('3483388645055624');
+    await Facebook.initializeAsync({ appId: "3483388645055624" });
     //});
     const {
       type,

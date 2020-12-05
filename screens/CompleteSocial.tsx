@@ -341,10 +341,10 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
     backgroundColor: Colors.light.bianco,
-    shadowColor: Colors.light.nero,
     justifyContent: 'center',
     alignItems: 'center',
     alignContent: 'center',
+    shadowColor: Colors.light.nero,
     shadowOffset: {
       width: 0,
       height: 3,

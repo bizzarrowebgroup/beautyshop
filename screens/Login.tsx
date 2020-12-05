@@ -73,23 +73,26 @@ const Login = ({ navigation }) => {
       //  setLoading(false);
       //});
       await logInWithFacebook().then((id) => {
-        //console.log("id", id)
+        console.log("id", id)
         if (id !== undefined) {
-          //console.log("id", id)
+
           // check se è login social
           if (id.type == 'login_facebook' && !id.toBecompleted) {
             // check se è registrazione social
             // id.userid
             // se registrazione mando l'utente alla complete screen 
-            //console.log("---LOGIN OK---", id)
+            console.log("---LOGIN OK---", id)
             navigation.goBack();
             showToast("LOGIN CON FACEBOOK", "Sei riuscito ad entrare con successo", "success", "bottom", 2000);
           } else if (id.type == 'login_facebook' && id.toBecompleted) {
             navigation.navigate("CompleteSocial", { userid: id.userid, nomecognome: id.nomecognome })
           } else if (id.type == "register_facebook") {
             navigation.navigate("CompleteSocial", { userid: id.userid, nomecognome: id.nomecognome })
-          } else if (id.type == 'error') {
-            showToast("LOGIN CON FACEBOOK", id.message, "error", "bottom", 4000);
+          } else if (id.type === 'error') {
+            //console.log("id", id.message)
+            //console.log("type", id.type)
+            //console.log("type is Equal", id.type === 'error')
+            showToast("LOGIN CON FACEBOOK", "errore nel login", "error", "bottom", 4000);
           }
         } else {
           showToast("LOGIN CON FACEBOOK", "errore nel login", "error", "bottom", 4000);
