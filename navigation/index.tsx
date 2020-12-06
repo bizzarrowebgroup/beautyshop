@@ -26,6 +26,8 @@ import Shop from '../screens/Commerciante/Home';
 import Preferiti from '../screens/Preferiti';
 import Prenotazioni from '../screens/Prenotazioni';
 import CompleteSocial from '../screens/CompleteSocial';
+import EditProfile from '../screens/EditProfile';
+import EditEmail from '../screens/EditEmail';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -117,6 +119,26 @@ function RootNavigator() {
         <Stack.Screen
           name="Profilo"
           component={Profilo}
+          options={{
+            //...TransitionPresets.ModalPresentationIOS,
+            //gestureEnabled: true,
+            headerShown: false,
+            //cardOverlayEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
+          options={{
+            //...TransitionPresets.ModalPresentationIOS,
+            //gestureEnabled: true,
+            headerShown: false,
+            //cardOverlayEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="EditEmail"
+          component={EditEmail}
           options={{
             //...TransitionPresets.ModalPresentationIOS,
             //gestureEnabled: true,

@@ -94,7 +94,7 @@ const Profilo = ({
         {
           title: "Le mie informazioni",
           icon: true,
-          navigateTo: ""
+          navigateTo: "EditProfile"
         },
         {
           title: "Le tue recensioni",
@@ -259,7 +259,7 @@ const Profilo = ({
           if (title)
             return (
               <View style={styles.headerRow}>
-                <BaseText color={"#898A8D"} weight={700} >{title}</BaseText>
+                <BaseText color={"#898A8D"} weight={700}>{title}</BaseText>
               </View>
             )
         }}

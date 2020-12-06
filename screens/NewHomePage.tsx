@@ -116,7 +116,9 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
   const {
     servizi,
     commercianti,
-    foto
+    foto,
+    currentUser,
+    setCurrentUser
   } = useContext(AppContext);
   const { user, setUser } = useContext(AuthUserContext);
   //let profileRef = null;
@@ -343,7 +345,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
           navigation.navigate("Shop", { id: id });
         }}>
         <View style={{
-          width: Layout.window.width ,
+          width: Layout.window.width,
           paddingLeft: 20,
           paddingRight: 20,
           backgroundColor: "white"
@@ -361,7 +363,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
               resizeMode: "cover",
               borderRadius: 5,
             }}
-            source={mainPhoto ? { uri: mainPhoto.url } : require('../assets/images/salon.jpeg')}
+            source={mainPhoto ? { uri: mainPhoto.url } : { uri: "https://images.unsplash.com/photo-1582582450303-48cc2cfa2c43?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80" }}
           >
             {user !== null && (
               <TouchableOpacity onPress={setFavorite} style={{
@@ -465,12 +467,15 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
   }
 
   const presseProfile = () => {
-    console.log("--userData--", userData)
+    //console.log("--userData--", userData)
     if (user && userData) {
       const { toBecompleted, userId, displayName } = userData;
       if (toBecompleted === true) {
         navigation.navigate('Auth', { screen: 'CompleteSocial', params: { userid: userId, nomecognome: displayName } })
-      } else navigation.navigate('Profilo');
+      } else {
+        setCurrentUser(userData);
+        navigation.navigate('Profilo');
+      }
     } else navigation.navigate('Auth')
   }
 
@@ -558,7 +563,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
           //borderColor: "black",
           //borderRadius: 8
         }}
-        //onPress={() => { alert(`You've clicked '${index}'`); }}
+      //onPress={() => { alert(`You've clicked '${index}'`); }}
       >
         <View
           style={{
@@ -719,68 +724,68 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
       </View>
       {/*<Desk style={styles.image} width="262" height="258" color={"white"} />*/}
       <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={{ backgroundColor: "white" }}>
-        <FlatList
-          data={ENTRIES1}
-          renderItem={renderItem1}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingLeft: 20,
-            paddingRight: 20
-          }}
-        />
-        <Carousel
-          data={ENTRIES}
-          renderItem={_renderItem}
-          sliderWidth={Layout.window.width}
-          itemWidth={Layout.wp(90) + Layout.wp(2) * 2}
-          loop={true}
-          loopClonesPerSide={1}
-          itemHeight={200}
-          inactiveSlideScale={1}
-          inactiveSlideOpacity={1}
-          enableMomentum={false}
-          activeSlideAlignment={"center"}
-          containerCustomStyle={{
-            //marginTop: 15,
-            overflow: 'visible',
-          }}
-          contentContainerCustomStyle={{
-            paddingVertical: 20 // for custom animation
-          }}
-          activeAnimationType={'spring'}
-          activeAnimationOptions={{
-            friction: 4,
-            tension: 40
-          }}
-        />
-      </View>
-      <View style={{ flex: 1, backgroundColor: "transparent" }} >
-        {parrucchieri !== undefined && (
+        <View style={{ backgroundColor: "white" }}>
           <FlatList
-            //refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.light.arancio]} />}
+            data={ENTRIES1}
+            renderItem={renderItem1}
+            horizontal
+            pagingEnabled
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
-            //contentContainerStyle={{
-            //  backgroundColor: "white",
-            //}}
-            //horizontal
-            //pagingEnabled
-            decelerationRate={0}
-            //snapToInterval={Layout.window.width - 60}
-            //snapToAlignment={"center"}
-            data={parrucchieri}
-            //style={{
-            //  backgroundColor: "white"
-            //}}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item, index }) => renderCards(item, index)}
+            contentContainerStyle={{
+              paddingLeft: 20,
+              paddingRight: 20
+            }}
           />
-        )}
-      </View>
+          <Carousel
+            data={ENTRIES}
+            renderItem={_renderItem}
+            sliderWidth={Layout.window.width}
+            itemWidth={Layout.wp(90) + Layout.wp(2) * 2}
+            loop={true}
+            loopClonesPerSide={1}
+            itemHeight={200}
+            inactiveSlideScale={1}
+            inactiveSlideOpacity={1}
+            enableMomentum={false}
+            activeSlideAlignment={"center"}
+            containerCustomStyle={{
+              //marginTop: 15,
+              overflow: 'visible',
+            }}
+            contentContainerCustomStyle={{
+              paddingVertical: 20 // for custom animation
+            }}
+            activeAnimationType={'spring'}
+            activeAnimationOptions={{
+              friction: 4,
+              tension: 40
+            }}
+          />
+        </View>
+        <View style={{ flex: 1, backgroundColor: "transparent" }} >
+          {parrucchieri !== undefined && (
+            <FlatList
+              //refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.light.arancio]} />}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              //contentContainerStyle={{
+              //  backgroundColor: "white",
+              //}}
+              //horizontal
+              //pagingEnabled
+              decelerationRate={0}
+              //snapToInterval={Layout.window.width - 60}
+              //snapToAlignment={"center"}
+              data={parrucchieri}
+              //style={{
+              //  backgroundColor: "white"
+              //}}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item, index }) => renderCards(item, index)}
+            />
+          )}
+        </View>
       </ScrollView>
       <React.Fragment>
         <Modal

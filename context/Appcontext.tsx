@@ -51,8 +51,8 @@ interface AppState {
     lang?: string;
     i18n?: string;
     currentLocale?: string;
-    currentUser?: User[];
-    setCurrentUser?: () => void;
+    currentUser?: any; //User[];
+    setCurrentUser?: any;
     showToast?: showToastType;
     servizi?: servizi[];
     commercianti?: commercianti[];

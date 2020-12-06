@@ -41,6 +41,7 @@ function App() {
   const [commercianti, setCommercianti] = React.useState([]);
   const [foto, setFoto] = React.useState([]);
   const [fetching, setFetching] = React.useState(true);
+  const [currentUser, setCurrentUser] = React.useState(undefined);
 
   const errorToast = useRef(null);
 
@@ -144,7 +145,9 @@ function App() {
     showToast,
     servizi,
     commercianti,
-    foto
+    foto,
+    currentUser,
+    setCurrentUser
   };
   if (!isLoadingComplete || fetching) {
     //if (true) {

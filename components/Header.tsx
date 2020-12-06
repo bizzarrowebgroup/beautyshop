@@ -22,6 +22,7 @@ interface HeaderProps {
   phonenumber?: any;
   loggedIn?: boolean;
   styles?: StyleSheetProperties;
+  hasTitleHeight?: boolean;
 }
 
 const Header = (props: HeaderProps) => {
@@ -158,7 +159,7 @@ const Header = (props: HeaderProps) => {
             {props.hasBack &&
               <BackIcon width={20} height={20} style={styles.icona} onPress={props.onPress} color={Colors.light.bianco} />
             }
-            <BaseText styles={styles.titlo} size={25} weight={600} color={Colors.light.bianco}>{props.title ? props.title : ""}</BaseText>
+            <BaseText styles={[styles.titlo, { height: props.hasTitleHeight ? 70 : "100%" }]} size={25} weight={600} color={Colors.light.bianco}>{props.title ? props.title : ""}</BaseText>
           </View>
         </View>
       );
@@ -190,13 +191,16 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   titlo: {
-    marginLeft: 15
+    marginLeft: 15,
   },
   number: {
     fontSize: 30,
   },
   icona: {
-    marginLeft: 20
+    marginLeft: 20,
+    //minHeight: 70,
+    //textAlign: "center",
+    //alignSelf: "center"
   },
   text: {
     color: Colors.light.nero
