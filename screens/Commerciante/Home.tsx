@@ -249,14 +249,14 @@ export default ({ route, navigation }) => {
       setTabs(servizi.map(({ name }) => ({ name, anchor: 0 })))
     }
     //if (servizi == undefined && data == undefined) navigation.goBack()
-    if (data) console.log("--data--", data)
+    //if (data) console.log("--data--", data)
   }, [servizi, data]);
 
-  React.useEffect(() => {
-    //return () => {
-    //  setBar("dark");
-    //}
-  }, [])
+  //React.useEffect(() => {
+  //  //return () => {
+  //  //  setBar("dark");
+  //  //}
+  //}, [])
 
   if (loading) {
     return (

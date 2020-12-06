@@ -15,7 +15,7 @@ import { TabModel } from "./Content";
 const ICON_SIZE = 24;
 const PADDING = 16;
 export const MIN_HEADER_HEIGHT = 45;
-const { interpolate, Extrapolate, useCode, greaterThan, lessThan, set, block } = Animated;
+const { interpolate, Extrapolate, useCode, greaterThan, lessThan, set, block, Value } = Animated;
 
 const styles = StyleSheet.create({
   container: {
@@ -62,7 +62,8 @@ interface HeaderProps {
 export default ({ y, tabs, scrollView, title }: HeaderProps) => {
   const { goBack } = useNavigation();
   const toggle = useValue<0 | 1>(0);
-  const toggleShadow = useValue(0);
+  const toggleShadow = useValue<0 | 1>(0);
+  //console.log("toggleShadow--", toggleShadow)
   const insets = useSafeArea();
   const transition = withTimingTransition(toggle, { duration: 100 });
   const shadow = withTimingTransition(toggleShadow, { duration: 100 });

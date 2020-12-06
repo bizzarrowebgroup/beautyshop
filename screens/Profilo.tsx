@@ -96,15 +96,15 @@ const Profilo = ({
           icon: true,
           navigateTo: "EditProfile"
         },
-        {
-          title: "Le tue recensioni",
-          icon: true,
-          navigateTo: ""
-        },
+        //{
+        //  title: "Le tue recensioni",
+        //  icon: true,
+        //  navigateTo: ""
+        //},
         {
           title: "Impostazioni",
           icon: false,
-          navigateTo: ""
+          navigateTo: "ProfileSettings"
         },
       ]
     },

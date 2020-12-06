@@ -28,6 +28,7 @@ import Prenotazioni from '../screens/Prenotazioni';
 import CompleteSocial from '../screens/CompleteSocial';
 import EditProfile from '../screens/EditProfile';
 import EditEmail from '../screens/EditEmail';
+import ProfileSettings from '../screens/ProfileSettings';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -139,6 +140,16 @@ function RootNavigator() {
         <Stack.Screen
           name="EditEmail"
           component={EditEmail}
+          options={{
+            //...TransitionPresets.ModalPresentationIOS,
+            //gestureEnabled: true,
+            headerShown: false,
+            //cardOverlayEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="ProfileSettings"
+          component={ProfileSettings}
           options={{
             //...TransitionPresets.ModalPresentationIOS,
             //gestureEnabled: true,
