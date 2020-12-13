@@ -20,6 +20,8 @@ import Colors from "../../constants/Colors";
 
 const styles = StyleSheet.create({
   container: {
+    zIndex: 100,
+    backgroundColor: "white",
     marginLeft: 8,
     height: 45,
     marginBottom: 8,
@@ -36,7 +38,7 @@ interface TabHeaderProps {
 
 export default ({ transition, y, tabs, scrollView }: TabHeaderProps) => {
   if (tabs && tabs.length > 1) {
-    //console.log("tabs", tabs)
+    console.log("tabs", tabs)
     //console.log("tabsMAP", tabs.map((_, i) => i))
     const index = new Value<number>(0);
     const [measurements, setMeasurements] = useState<number[]>(
@@ -107,8 +109,8 @@ export default ({ transition, y, tabs, scrollView }: TabHeaderProps) => {
               Platform.OS === "android"
                 ? {
                   backgroundColor: "transparent",
-                  //borderColor: "black",
-                  //borderWidth: 1,
+                  borderColor: "black",
+                  borderWidth: 1,
                 }
                 : {},
             ]}

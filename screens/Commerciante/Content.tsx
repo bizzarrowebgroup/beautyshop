@@ -57,6 +57,7 @@ const { height } = Dimensions.get("window");
 const styles = StyleSheet.create({
   section: {
     padding: 16,
+    backgroundColor: "white"
   },
   placeholder: {
     height: HEADER_IMAGE_HEIGHT,
@@ -68,7 +69,9 @@ const styles = StyleSheet.create({
   },
   title1: {
     //fontFamily: "UberMoveMedium",
-    fontSize: 24,
+    fontSize: 18,
+    marginBottom: 10,
+    color: Colors.light.ARANCIO
   },
   title2: {
     //fontFamily: "UberMoveMedium",
@@ -101,11 +104,13 @@ const styles = StyleSheet.create({
   },
   title: {
     //fontFamily: "UberMoveMedium",
-    fontSize: 16,
-    marginBottom: 8,
+    fontSize: 14,
+    //marginBottom: 8,
   },
   description: {
+    marginTop: 4,
     marginBottom: 8,
+    fontSize: 12,
   },
   price: {
     //fontFamily: "UberMoveMedium",
@@ -155,29 +160,33 @@ export default ({ y, onMeasurement, data, servizi, carrello, setCarrello }: Cont
   return (
     <>
       <View style={styles.placeholder} />
-      <Animated.View style={[styles.section, { opacity }]}>
+      <Animated.View style={[styles.section, { opacity, display: "flex", flexDirection: "row", justifyContent: "space-between", alignContent: "center", alignItems: "center" }]}>
         <BaseText styles={styles.text}>{economyTitle} • {`${data && data.tipo == 1 ? "Estetista" : "Parrucchiere"}`}</BaseText>
-        <View style={styles.info}>
+        {stars > 0 && (<View style={styles.ratings}>
+          <Icon name="star" color="#f4c945" size={24} style={styles.icon} />
+          <BaseText styles={styles.text}>({stars})</BaseText>
+        </View>)}
+        {/*<View style={styles.info}>
           <BaseText styles={styles.text}>Apre alle 11:00</BaseText>
-          <View style={styles.ratings}>
-            <Icon name="star" color="#f4c945" size={24} style={styles.icon} />
-            <BaseText styles={styles.text}>({stars})</BaseText>
-          </View>
-        </View>
+        </View>*/}
       </Animated.View>
       <View style={styles.divider} />
       <View style={styles.section}>
-        <BaseText weight={600} styles={styles.title2}>{`Informazioni ${data && data.tipo == 1 ? "Estetista" : "Parrucchiere"}`}</BaseText>
+        <BaseText weight={600} styles={styles.title2}>{`Informazioni sul ${data && data.tipo == 1 ? "centro estetico" : "salone di bellezza"}`}</BaseText>
         <View style={styles.info}>
-          <BaseText styles={styles.text}>{via ? via : ""}</BaseText>
-          {/*<BaseText styles={styles.link}>Più info</BaseText>*/}
+          <BaseText styles={styles.text}>{"Indicazioni e tanto altro"}</BaseText>
+          {/*<BaseText styles={styles.text}>{via ? via : ""}</BaseText>
+          <BaseText styles={styles.link}>Indicazioni e tanto altro</BaseText>*/}
         </View>
       </View>
       <View style={styles.divider} />
       {servizi && servizi.map(({ title, data: menuItems }, index) => {
         return (
           <View
-            //style={{}}
+            style={{
+              marginTop: 10,
+              backgroundColor: "white"
+            }}
             key={index}
             onLayout={({
               nativeEvent: {
@@ -185,24 +194,26 @@ export default ({ y, onMeasurement, data, servizi, carrello, setCarrello }: Cont
               },
             }) => onMeasurement(index, { title, anchor: anchor - 142 })}
           >
-            <BaseText weight={600} styles={[styles.title1, { padding: 16 }]}>{title}</BaseText>
+            <BaseText weight={600} styles={[styles.title1, { paddingLeft: 16, paddingTop: 10, }]}>{title}</BaseText>
             {menuItems.map(({ titolo, desc, cost }, j) => {
               let isSelected = carrello !== undefined ? carrello.find(item => {
-                //console.log(item.index, "item");
+                console.log(item, "item");
                 //console.log(index, "index");
                 //console.log(item.index === index, "isEqual");
-                return item.index === j
+                return (item.title === titolo && item.cost === cost && item.category === title)
               }) : false;
               return (
-                <TouchableOpacity style={[styles.item, { borderLeftWidth: 6, borderLeftColor: isSelected ? Colors.light.ARANCIO : "transparent" }]} key={j} onPress={() => setCarrello({ title: titolo, cost, index: j })} >
-                  <View style={{
-                    padding: 16
-                  }}>
-                    <BaseText weight={600} styles={styles.title}>{titolo}</BaseText>
-                    <BaseText styles={styles.description} numberOfLines={2}>
-                      {desc}
-                    </BaseText>
-                    <BaseText weight={isSelected ? 800 : 400} styles={[styles.price, { color: isSelected ? Colors.light.ARANCIO : Colors.light.nero }]}>{cost + " €"} {isSelected ? "x1" : ""}</BaseText>
+                <TouchableOpacity style={[styles.item, { borderLeftWidth: 6, paddingLeft: 10, borderLeftColor: isSelected ? Colors.light.ARANCIO : "transparent", marginTop: 10, }]} key={j} onPress={() => setCarrello({ category: title, title: titolo, cost, index: j })}>
+                  <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignContent: "center", alignItems: "center" }}>
+                    <View style={{ width: "70%" }}>
+                      <BaseText weight={600} styles={styles.title}>{titolo}</BaseText>
+                      <BaseText styles={styles.description} numberOfLines={2}>
+                        {desc}
+                      </BaseText>
+                    </View>
+                    <View style={{ paddingRight: 15 }}>
+                      <BaseText weight={isSelected ? 800 : 700} styles={[styles.price, { color: isSelected ? Colors.light.ARANCIO : Colors.light.nero }]}>{cost + " €"} {/*isSelected ? "x1" : ""*/}</BaseText>
+                    </View>
                   </View>
                 </TouchableOpacity>
               )
@@ -211,7 +222,7 @@ export default ({ y, onMeasurement, data, servizi, carrello, setCarrello }: Cont
         )
       }
       )}
-      <View style={{ height }} />
+      <View style={{ height: height / 2 }} />
     </>
   );
 };

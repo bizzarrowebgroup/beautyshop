@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { onScrollEvent, useValue } from "react-native-redash";
 import moment from 'moment';
@@ -17,6 +17,7 @@ import { StatusBar } from "expo-status-bar";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white"
   },
 });
 
@@ -26,6 +27,11 @@ export default ({ route, navigation }) => {
   const onScroll = onScrollEvent({ y });
 
   const [data, setData] = React.useState(undefined);
+
+  React.useEffect(() => {
+    console.log("SCHERMATA AVVIATA")
+  }, [])
+
 
   // TABELLA ORARIO
   const [day, setDay] = React.useState(0);
@@ -237,7 +243,7 @@ export default ({ route, navigation }) => {
     } else navigation.goBack();
   }
 
-  const [carrello, setCart] = React.useState(undefined);
+  const [carrello, setCart] = React.useState([]);
 
   React.useEffect(() => {
     loadPage(route.params?.id);
@@ -264,31 +270,31 @@ export default ({ route, navigation }) => {
     )
   }
 
-  //React.useEffect(() => {
-  //  //if (carrello && carrello.length > 0) {
-  //  //  setBanner(true);
-  //  //} else {
-  //  //  setBanner(false);
-  //  //}
-  //}, [carrello])
-
   const setCarrello = (item) => {
-    if (carrello && carrello.length > 0) {
-      let tempCart = carrello.filter(i => i.index === item.index);
-      console.log("tempCart", tempCart)
-      if (tempCart.length > 0) {
-        setCart([]);
-        setBanner(false);
+    //console.log("--item---", item)
+    if (carrello.length > 0) {
+      const existingItem = carrello.findIndex(i => (i.title === item.title && i.cost === item.cost && i.category === item.category))
+      if (existingItem > -1) {
+        var newListRemove = carrello.filter(a => (a.title !== item.title || a.cost !== item.cost || a.category !== item.category));
+        setCart(newListRemove)
+        if (newListRemove.length <= 0) {
+          setBanner(false)
+        } else setBanner(true)
+      } else {
+        setCart((currentCart) => [...currentCart, item])
       }
     } else {
-      setCart([{ id: item.index, ...item }])
+      setCart((currentCart) => [...currentCart, item])
       setBanner(true);
     }
+  };
+
+  const goToPrenotazione = () => {
+    navigation.navigate("Prenotazione", { carrello });
   }
 
   return (
     <View style={styles.container}>
-      {/*<StatusBar style={barStyle} />*/}
       <HeaderImage {...{ y }} />
       <Animated.ScrollView
         ref={scrollView}
@@ -329,24 +335,25 @@ export default ({ route, navigation }) => {
           justifyContent: "flex-start"
           //alignItems: "center"
         }}>
-          <View style={{
+          <TouchableOpacity onPress={() => goToPrenotazione()} style={{
             marginHorizontal: 20,
-            marginTop: 15,
+            marginTop: 10,
             borderRadius: 8,
-            backgroundColor: "rgba(236, 118, 33, 0.4)",
-            height: 60,
+            backgroundColor: "#FB6E3B",
+            height: 45,
             alignContent: "center",
             justifyContent: "space-between",
             alignItems: "center",
             flexDirection: "row"
           }}>
-            <View style={{ backgroundColor: "#FB6E3B", width: 30, height: 30, marginLeft: 20, borderRadius: 5, alignContent: "center", justifyContent: "center" }}>
-              <BaseText styles={{ alignSelf: "center" }} weight={900} size={17} color={Colors.light.bianco}>1</BaseText>
+            <View style={{ backgroundColor: "white", width: 30, height: 30, marginLeft: 10, borderRadius: 5, alignContent: "center", justifyContent: "center" }}>
+              <BaseText styles={{ alignSelf: "center" }} weight={900} size={17} color={Colors.light.ARANCIO}>{carrello ? carrello.length : 0}</BaseText>
             </View>
-            <BaseText styles={{}} weight={900} size={20} color={Colors.light.bianco}>Riepilogo</BaseText>
+            <BaseText weight={900} size={14} color={Colors.light.bianco}>Riepilogo</BaseText>
             <BaseText styles={{ marginRight: 20 }} weight={900} size={15} color={Colors.light.bianco}></BaseText>
-          </View>
-        </View>)}
+          </TouchableOpacity>
+        </View>
+      )}
       {/*{tabs !== undefined && <Header {...{ y, tabs, scrollView, title: data.title }} />}*/}
       <Header {...{ y, tabs, scrollView, title: data.title }} />
     </View>

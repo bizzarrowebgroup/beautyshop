@@ -11,6 +11,7 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { HEADER_IMAGE_HEIGHT } from "./HeaderImage";
 import TabHeader from "./TabHeader";
 import { TabModel } from "./Content";
+import Colors from "../../constants/Colors";
 
 const ICON_SIZE = 24;
 const PADDING = 16;
@@ -19,20 +20,20 @@ const { interpolate, Extrapolate, useCode, greaterThan, lessThan, set, block, Va
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 100,
+    //position: "absolute",
+    //top: 0,
+    //left: 0,
+    //right: 0,
+    //zIndex: 200,
     height: MIN_HEADER_HEIGHT + 50,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 2,
-      height: 0,
-    },
-    shadowOpacity: .2,
-    shadowRadius: 10,
-    elevation: 1,
+    //shadowColor: "#000",
+    //shadowOffset: {
+    //  width: 2,
+    //  height: 0,
+    //},
+    //shadowOpacity: .2,
+    //shadowRadius: 10,
+    //elevation: 1,
   },
   header: {
     flexDirection: "row",
@@ -42,13 +43,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignContent: "center",
     paddingHorizontal: PADDING,
-    zIndex: 100
+    //zIndex: 100,
+    //backgroundColor: "white"
   },
   title: {
-    fontFamily: "Gilroy_Medium",
-    fontSize: 18,
+    fontFamily: "Gilroy_Bold",
+    fontSize: 20,
     marginLeft: PADDING - 10,
     flex: 1,
+    color: Colors.light.ARANCIO,
   },
 });
 
@@ -114,13 +117,13 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
               borderRadius: ICON_SIZE + 10 / 2,
               backgroundColor: "white",
               justifyContent: "center",
-              shadowColor: "black",
-              shadowRadius: 5,
-              shadowOpacity: shadow,
-              shadowOffset: {
-                width: 1,
-                height: 0
-              }
+              //shadowColor: "black",
+              //shadowRadius: 5,
+              //shadowOpacity: shadow,
+              //shadowOffset: {
+              //  width: 1,
+              //  height: 0
+              //}
             }}>
               <Icon name="arrow-left" size={ICON_SIZE} color="black" style={{ alignSelf: "center" }} />
             </Animated.View>
@@ -140,13 +143,13 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
           borderRadius: ICON_SIZE + 10 / 2,
           backgroundColor: "white",
           justifyContent: "center",
-          shadowColor: "black",
-          shadowRadius: 5,
-          shadowOpacity: shadow,
-          shadowOffset: {
-            width: 1,
-            height: 0
-          }
+          //shadowColor: "black",
+          //shadowRadius: 5,
+          //shadowOpacity: shadow,
+          //shadowOffset: {
+          //  width: 1,
+          //  height: 0
+          //}
         }}>
           <Icon name="heart" size={ICON_SIZE - 5} color="black" style={{ alignSelf: "center" }} />
         </Animated.View>

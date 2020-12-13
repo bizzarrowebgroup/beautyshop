@@ -23,6 +23,7 @@ import Profilo from '../screens/Profilo';
 import Review from '../screens/Review';
 //import Shop from '../screens/Shop';
 import Shop from '../screens/Commerciante/Home';
+import Prenotazione from '../screens/Prenotazione/Home';
 import Preferiti from '../screens/Preferiti';
 import Prenotazioni from '../screens/Prenotazioni';
 import CompleteSocial from '../screens/CompleteSocial';
@@ -96,10 +97,15 @@ function RootNavigator() {
         />
         <Stack.Screen name="Shop" component={Shop}
           options={{
+            //cardOverlayEnabled: false,
             //...TransitionPresets.ModalPresentationIOS,
             //gestureEnabled: true,
             headerShown: false,
-            //cardOverlayEnabled: false,
+          }}
+        />
+        <Stack.Screen name="Prenotazione" component={Prenotazione}
+          options={{
+            headerShown: false,
           }}
         />
         <Stack.Screen name="Homepage" component={NewHomePage}

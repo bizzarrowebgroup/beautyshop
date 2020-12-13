@@ -225,9 +225,10 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
       }))
       //console.log(comFin, "comFin");
       comFin.map((item) => {
-        if (item.tipo == 0) {
+        // SE PARRUCCHIERE
+        //if (item.tipo == 0) {
           parrucchieri.push(item);
-        }
+        //}
       })
       setPar(parrucchieri);
     }

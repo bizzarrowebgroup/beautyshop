@@ -21,7 +21,7 @@ interface HeaderProps {
   email?: any;
   phonenumber?: any;
   loggedIn?: boolean;
-  styles?: StyleSheetProperties;
+  styles?: any;
   hasTitleHeight?: boolean;
 }
 
@@ -37,7 +37,7 @@ const Header = (props: HeaderProps) => {
         <View style={{ height: 190 }}>
           <Intro4 width="259" height="212" style={{ position: "absolute", top: 20, right: 0, bottom: 0 }} />
           <BaseText weight={700} styles={styles.titlo}>{props.title ? props.title : ""}</BaseText>
-          <Ionicons name="md-return-left" size={30} color={Colors.light.bianco} style={styles.icona} onPress={props.onPress} />
+          <Ionicons name="ios-arrow-back" size={30} color={Colors.light.bianco} style={styles.icona} onPress={props.onPress} />
           <View style={{ width: 105, top: 0, left: 20 }}>
             <BaseText styles={styles.number}>{props.number ? props.number : "4.6"} / 5</BaseText>
             <View style={{ flexDirection: "row", marginTop: 5, justifyContent: "flex-start", alignItems: "center" }}>
@@ -155,11 +155,15 @@ const Header = (props: HeaderProps) => {
             alignContent: "center",
             flexDirection: "row",
             bottom: 50,
+            //height: props.hasTitleHeight ? 70 : "100%",
           }]}>
-            {props.hasBack &&
-              <BackIcon width={20} height={20} style={styles.icona} onPress={props.onPress} color={Colors.light.bianco} />
-            }
-            <BaseText styles={[styles.titlo, { height: props.hasTitleHeight ? 70 : "100%" }]} size={25} weight={600} color={Colors.light.bianco}>{props.title ? props.title : ""}</BaseText>
+            {props.hasBack && (
+              <>
+                {/*<BackIcon width={20} height={20} style={styles.icona} onPress={props.onPress} color={Colors.light.bianco} />*/}
+                <Ionicons name="ios-arrow-back" size={30} color={Colors.light.bianco} onPress={props.onPress} style={styles.icona} />
+              </>
+            )}
+            <BaseText styles={[styles.titlo, { /*height: props.hasTitleHeight ? 70 : "100%"*/ }]} size={25} weight={600} color={Colors.light.bianco}>{props.title ? props.title : ""}</BaseText>
           </View>
         </View>
       );
@@ -171,7 +175,7 @@ export default Header;
 
 const styles = StyleSheet.create({
   container: {
-    height: 56,
+    //height: 56,
   },
   btn: {
     backgroundColor: "#DE9182",
