@@ -154,7 +154,7 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
           <Icon name="heart" size={ICON_SIZE - 5} color="black" style={{ alignSelf: "center" }} />
         </Animated.View>
       </View>
-      {tabs && <TabHeader {...{ y, transition, tabs, scrollView }} />}
+      {/*{tabs && <TabHeader {...{ y, transition, tabs, scrollView }} />}*/}
     </Animated.View>
   );
 };

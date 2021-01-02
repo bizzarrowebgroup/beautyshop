@@ -273,7 +273,7 @@ export default function NotFoundScreen({
         blocksSlots.push(cursor);
         cursor = step(cursor);
       }
-      console.log("---blocksGOT---", blocksSlots)
+      //console.log("---blocksGOT---", blocksSlots)
       if (prenotazioni !== undefined) {
         let finalBlockedPrenotazioni = [];
         prenotazioni.forEach(d => {

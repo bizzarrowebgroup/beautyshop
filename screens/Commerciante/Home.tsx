@@ -32,10 +32,8 @@ export default ({ route, navigation }) => {
     console.log("SCHERMATA AVVIATA")
   }, [])
 
-
   // TABELLA ORARIO
   const [day, setDay] = React.useState(0);
-
   const [lunedi, setLunedi] = React.useState({});
   const [martedi, setMartedi] = React.useState({});
   const [mercoledi, setMercoledi] = React.useState({});
@@ -44,6 +42,7 @@ export default ({ route, navigation }) => {
   const [sabato, setSabato] = React.useState({});
   const [domenica, setDomenica] = React.useState({});
   const [noOrari, setOrari] = React.useState(false);
+  const [commerciante, setCommerciante] = React.useState(undefined);
 
   const [recensioni, setRecensioni] = React.useState(undefined);
   const [servizi, setServizi] = React.useState(undefined);
@@ -236,6 +235,7 @@ export default ({ route, navigation }) => {
     if (id) {
       await getServizi(id);
       await getCommerciante(id);
+      setCommerciante(id);
       const date = moment();
       const day = date.day();
       setDay(day);
@@ -257,12 +257,6 @@ export default ({ route, navigation }) => {
     //if (servizi == undefined && data == undefined) navigation.goBack()
     //if (data) console.log("--data--", data)
   }, [servizi, data]);
-
-  //React.useEffect(() => {
-  //  //return () => {
-  //  //  setBar("dark");
-  //  //}
-  //}, [])
 
   if (loading) {
     return (
@@ -290,9 +284,12 @@ export default ({ route, navigation }) => {
   };
 
   const goToPrenotazione = () => {
-    navigation.navigate("Prenotazione", { carrello });
+    navigation.navigate("Prenotazione", { carrello, commerciante });
   }
-
+  //console.log("carrello", carrello)
+  const Somma = (arr, prop) => {
+    return arr.reduce((a, b) => +a + +b[prop], 0)
+  }
   return (
     <View style={styles.container}>
       <HeaderImage {...{ y }} />
@@ -349,8 +346,11 @@ export default ({ route, navigation }) => {
             <View style={{ backgroundColor: "white", width: 30, height: 30, marginLeft: 10, borderRadius: 5, alignContent: "center", justifyContent: "center" }}>
               <BaseText styles={{ alignSelf: "center" }} weight={900} size={17} color={Colors.light.ARANCIO}>{carrello ? carrello.length : 0}</BaseText>
             </View>
-            <BaseText weight={900} size={14} color={Colors.light.bianco}>Riepilogo</BaseText>
-            <BaseText styles={{ marginRight: 20 }} weight={900} size={15} color={Colors.light.bianco}></BaseText>
+            <BaseText weight={900} size={14} color={Colors.light.bianco}>Quando</BaseText>
+            <View style={{ backgroundColor: "white", width: 80, height: 30, marginRight: 10, borderRadius: 5, alignContent: "center", justifyContent: "center" }}>
+              <BaseText styles={{ alignSelf: "center" }} weight={900} size={13} color={Colors.light.ARANCIO}>{carrello ? Somma(carrello, "cost").toFixed(2) + " €" : 0}</BaseText>
+            </View>
+            {/*<BaseText styles={{ marginRight: 20 }} weight={900} size={15} color={Colors.light.bianco}></BaseText>*/}
           </TouchableOpacity>
         </View>
       )}
