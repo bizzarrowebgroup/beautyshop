@@ -4,3 +4,6 @@
 
 //
 git apply --ignore-whitespace patches/package-name+0.44.2.patch
+
+
+to use expo in windows use nvm windows with version 13.7.0

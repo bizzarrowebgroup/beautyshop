@@ -12,7 +12,7 @@ import Colors from "../../constants/Colors";
 import Layout from '../../constants/Layout'
 
 import 'moment';
-import 'moment/locale/it';
+// import 'moment/locale/it';
 
 const styles = StyleSheet.create({
   content: {
