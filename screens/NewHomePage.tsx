@@ -5,7 +5,6 @@ import {
   ImageBackground,
   Dimensions,
   Modal,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   FlatList,
@@ -15,7 +14,9 @@ import {
   StatusBar,
   Text,
   UIManager,
-  LogBox
+  LogBox,
+  Animated,
+  SafeAreaView
 } from 'react-native';
 import MaskedView from '@react-native-community/masked-view';
 import Constants from 'expo-constants';
@@ -24,6 +25,8 @@ import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
 LogBox.ignoreLogs([
   'VirtualizedLists should never be nested'
 ]);
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+//import SafeAreaView from 'react-native-safe-area-view';
 
 import { AppContext } from '../context/Appcontext';
 import { AuthUserContext } from '../navigation/AuthUserProvider';
@@ -68,6 +71,21 @@ const ENTRIES = [
   },
   {
     illustration: 'https://i.postimg.cc/1z4MfPHZ/New-Project-1.png',
+    navigationAction: undefined,
+    linkUrl: undefined
+  },
+  {
+    illustration: 'https://firebasestorage.googleapis.com/v0/b/beautyshop-afe23.appspot.com/o/Buonefeste.png?alt=media&token=35d56d63-cb1c-413e-970b-399463578daa',
+    navigationAction: undefined,
+    linkUrl: undefined
+  },
+  {
+    illustration: 'https://firebasestorage.googleapis.com/v0/b/beautyshop-afe23.appspot.com/o/amico.png?alt=media&token=ec6ff44b-5183-4686-88b3-b1dc5485d45d',
+    navigationAction: undefined,
+    linkUrl: undefined
+  },
+  {
+    illustration: 'https://firebasestorage.googleapis.com/v0/b/beautyshop-afe23.appspot.com/o/parereconta.png?alt=media&token=2e7c5886-232c-4e40-82e8-2c432e8c5fa3',
     navigationAction: undefined,
     linkUrl: undefined
   },
@@ -227,7 +245,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
       comFin.map((item) => {
         // SE PARRUCCHIERE
         //if (item.tipo == 0) {
-          parrucchieri.push(item);
+        parrucchieri.push(item);
         //}
       })
       setPar(parrucchieri);
@@ -256,9 +274,6 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
   }, []);
 
   const renderCards = (item, index) => {
-    //console.log("item", item)
-    //console.log("index", index)
-    //console.log("\n")
     let { title, stars, via, desc, mainPhoto, economy, id } = item;
     let economyColor = "rgba(133, 194, 170, 0.4)", economyTitle = "€", economyTColor = "#008D56";
     if (economy) {
@@ -346,18 +361,17 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
           navigation.navigate("Shop", { id: id });
         }}>
         <View style={{
-          width: Layout.window.width,
+          //width: Layout.window.width,
           paddingLeft: 20,
           paddingRight: 20,
           backgroundColor: "white"
-          //marginRight: 20,
         }}>
           <ImageBackground
             style={{
               height: 185,
-              //marginVertical: 10,
               flexDirection: "row",
               borderRadius: 5,
+              marginVertical: 10,
             }}
             imageStyle={{
               backgroundColor: Colors.light.background,
@@ -366,7 +380,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
             }}
             source={mainPhoto ? { uri: mainPhoto.url } : { uri: "https://images.unsplash.com/photo-1582582450303-48cc2cfa2c43?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80" }}
           >
-            {user !== null && (
+            {/*{user !== null && (
               <TouchableOpacity onPress={setFavorite} style={{
                 position: "absolute",
                 top: 0,
@@ -381,78 +395,46 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
                 //zIndex: 10
               }}>
                 <BottomIcon type={"ios-heart-empty"} color={Colors.light.bianco} size={25} />
-                {/*<Ionicons name={isFavorite ? "ios-heart" : "ios-heart-empty"} size={20} color={Colors.light.bianco} />*/}
               </TouchableOpacity>
-            )}
-            {/*<View style={{
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundColor: "#8D99AE",
-              opacity: .15,
-              zIndex: 1
-            }} />*/}
+            )}*/}
+            {/*<Ionicons name={isFavorite ? "ios-heart" : "ios-heart-empty"} size={20} color={Colors.light.bianco} />*/}
           </ImageBackground>
-          <View style={{ marginTop: 10, marginBottom: 10, marginRight: 20, backgroundColor: "white" }}>
+          <View style={{
+            backgroundColor: "transparent",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            alignContent: "center"
+          }}>
             <BaseText size={14} weight={700} color={Colors.light.nero} styles={{
               letterSpacing: 0.5,
-            }}>{title}</BaseText>
-            <View style={{
-              //marginTop: 5,
-              backgroundColor: "white",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "flex-start",
-              alignContent: "center"
-            }}>
-              {stars > 0 && (
-                <View style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  alignContent: "center",
-                  marginRight: 10,
-                  backgroundColor: "white"
-                }}>
-                  <Ionicons name="ios-star" size={20} color={Colors.light.ARANCIO} />
-                  {/*<Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
+            }}>{title ? title.toLowerCase() : ""}</BaseText>
+            {stars > 0 && (
+              <View style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                alignContent: "center",
+                backgroundColor: "transparent"
+              }}>
+                <Ionicons name="ios-star" size={20} color={Colors.light.viola} />
+                {/*<Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
                   <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
                   <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
                   <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />*/}
-                  <BaseText size={10} weight={700} styles={{ marginLeft: 5, marginTop: 5 }}>{stars}</BaseText>
-                </View>
-              )}
-              {/*<View style={{
-                minWidth: 25,
-                minHeight: 14,
-                paddingHorizontal: 5,
-                borderRadius: 5,
-                backgroundColor: economyColor,
-                justifyContent: "center",
-                alignItems: "center"
-              }}>*/}
-              {/*<BaseText weight={700} color={economyTColor} size={8}>{economyTitle}</BaseText>*/}
-              {/*</View>*/}
-              <BaseText weight={300} color={Colors.light.nero} styles={{ marginTop: 5 }} size={8}>{via}</BaseText>
-              <BaseText weight={700} color={Colors.light.nero} styles={{ marginLeft: 5, marginTop: 5 }} size={8}>·  {economyTitle}</BaseText>
-              {/*<View style={{
-                width: 65,
-                height: 14,
-                borderRadius: 5,
-                backgroundColor: false ? "rgba(133, 194, 170, 0.4)" : "#C4C4C4",
-                justifyContent: "center",
-                alignItems: "center",
-                marginLeft: 10
-              }}>
-                <BaseText weight={700} styles={{
-                  color: false ? "#008D56" : "#525252",
-                  fontSize: 8,
-                }}>{false ? "APERTO" : "CHIUSO"}</BaseText>
-              </View>*/}
-            </View>
+                <BaseText size={10} weight={700} styles={{ marginLeft: 5, marginTop: 5 }}>{stars}</BaseText>
+              </View>
+            )}
+          </View>
+          <View style={{
+            backgroundColor: "transparent",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            alignContent: "center"
+          }}>
+            <BaseText weight={300} color={Colors.light.nero} styles={{ marginTop: 5 }} size={8}>{via}</BaseText>
+            <BaseText weight={700} color={Colors.light.nero} styles={{ marginLeft: 5, marginTop: 5 }} size={8}>·  {economyTitle}</BaseText>
           </View>
         </View>
       </TouchableOpacity>
@@ -615,238 +597,211 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
     )
   }
 
-  return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      {/*{renderTitle()}*/}
-      <View style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignContent: "center",
-        alignItems: "center",
-        marginHorizontal: 20,
-        backgroundColor: "transparent",
-        marginTop: Constants.statusBarHeight
+  const offset = React.useRef(new Animated.Value(0)).current;
+
+  const HEADER_HEIGHT = 200;
+
+  const AnimatedHeader = ({ animatedValue }) => {
+    const insets = useSafeAreaInsets();
+
+    const headerHeight = animatedValue.interpolate({
+      inputRange: [0, HEADER_HEIGHT + insets.top],
+      outputRange: [HEADER_HEIGHT + insets.top, insets.top + 50],
+      extrapolate: 'clamp'
+    });
+
+    const paddingHeight = animatedValue.interpolate({
+      inputRange: [0, HEADER_HEIGHT + insets.top],
+      outputRange: [insets.top, insets.top],
+      extrapolate: 'clamp'
+    });
+
+    const isShadow = animatedValue.interpolate({
+      inputRange: [0, HEADER_HEIGHT + insets.top],
+      outputRange: [0, .5],
+      extrapolate: 'clamp'
+    });
+
+    const opacity = animatedValue.interpolate({
+      inputRange: [0, HEADER_HEIGHT + insets.top],
+      outputRange: [0, 50],
+      extrapolate: 'clamp'
+    });
+
+    return (
+      <Animated.View style={{
+        paddingHorizontal: 20,
+        backgroundColor: "white",
+        paddingTop: paddingHeight,
+        paddingBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 1, height: 1 },
+        shadowOpacity: isShadow,
+        borderRadius: 20,
+        shadowRadius: 10,
+        elevation: 5,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 10,
+        //height: headerHeight,
       }}>
-        <TouchableOpacity onPress={presseProfile}>
-          <BottomIcon type={"ios-people"} color={Colors.light.nero} size={30} />
-        </TouchableOpacity>
-        {/*<TouchableWithoutFeedback onPress={presseProfile}>
-          <LottieView
-            ref={profileRefanimation}
-            style={{
-              width: 35,
-              height: 34,
-            }}
-            loop
-            speed={0.3}
-            source={require('../assets/animations/profile.json')}
-          />
-        </TouchableWithoutFeedback>*/}
-        <TouchableWithoutFeedback onPress={() => setSearchModal(true)}>
-          <View style={styles.searchBar}>
-            <BaseText size={12} letterSpacing={.3} weight={600}>{"Cosa vuoi fare oggi?"}</BaseText>
-          </View>
-          {/*<TextInput
-            placeholder={"Cosa vuoi fare oggi?"}
-            placeholderTextColor={Colors.light.nero}
-            onFocus={() => setSearchModal(true)}
-            onBlur={() => setSearchModal(false)}
-            style={{
-              width: "90%",
-              height: "50%",
-              textAlign: "center",
-              fontFamily: "Gilroy_SemiBold",
-              fontSize: 15
-            }}
-          />*/}
-        </TouchableWithoutFeedback>
-        <TouchableOpacity>
-          {/** onPress={() => navigation.navigate(''}*/}
-          <PinIcon type="normal" size={25} color={Colors.light.nero} />
-        </TouchableOpacity>
-      </View>
-      <View style={{ backgroundColor: "transparent", marginTop: 10, paddingBottom: 10, }}>
-        {/*<BaseText weight={700} size={25} styles={{ paddingLeft: 25 }}>{"Le nostre Categorie"}</BaseText>*/}
-        <View style={{ marginTop: 15 }} />
-        {/*<ScrollView
-          contentContainerStyle={{ paddingLeft: 10 }}
-          showsHorizontalScrollIndicator={false}
-          bounces={true}
-          scrollEventThrottle={1}
-          decelerationRate="fast"
-          horizontal>
-          {servizi.map(({ label, id, enabled, icon }, index) => {
-            if (enabled) {
-              return (
-                <TouchableOpacity onPress={() => cateogryPressed(index)} key={id} style={{
-                  paddingBottom: 10,
-                  marginHorizontal: 10,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "transparent"
-                }}>
-                  <View style={{
-                    width: 70,
-                    height: 110,
-                    borderRadius: 50,
-                    backgroundColor: selectedCategory == index ? Colors.light.ARANCIO : "white",
-                    shadowColor: Colors.light.nero,
-                    shadowOpacity: 0.25,
-                    shadowOffset: {
-                      width: 0,
-                      height: 4
-                    },
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    alignContent: "center"
-                  }}>
-                    <View style={{
-                      backgroundColor: selectedCategory == index ? "white" : Colors.light.GRIGIO,
-                      width: 40,
-                      height: 40,
-                      borderRadius: 20,
-                      marginTop: 10,
-                      alignItems: "center",
-                      alignContent: "center",
-                      justifyContent: "center"
-                    }}>
-                      <Text style={{ fontSize: 25 }}>{icon ? icon : "🤫"}</Text>
-                    </View>
-                    <View style={{ marginTop: 15, marginBottom: 20, backgroundColor: "transparent", marginHorizontal: 10 }}>
-                      <BaseText color={selectedCategory !== index ? Colors.light.nero : Colors.light.bianco} weight={700} size={9.4} styles={{ textAlign: "center" }}>{label}</BaseText>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              )
-            }
-          })}
-        </ScrollView>*/}
-      </View>
-      {/*<Desk style={styles.image} width="262" height="258" color={"white"} />*/}
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ backgroundColor: "white" }}>
-          <FlatList
-            data={ENTRIES1}
-            renderItem={renderItem1}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingLeft: 20,
-              paddingRight: 20
-            }}
-          />
-          <Carousel
-            data={ENTRIES}
-            renderItem={_renderItem}
-            sliderWidth={Layout.window.width}
-            itemWidth={Layout.wp(90) + Layout.wp(2) * 2}
-            loop={true}
-            loopClonesPerSide={1}
-            itemHeight={200}
-            inactiveSlideScale={1}
-            inactiveSlideOpacity={1}
-            enableMomentum={false}
-            activeSlideAlignment={"center"}
-            containerCustomStyle={{
-              //marginTop: 15,
-              overflow: 'visible',
-            }}
-            contentContainerCustomStyle={{
-              paddingVertical: 20 // for custom animation
-            }}
-            activeAnimationType={'spring'}
-            activeAnimationOptions={{
-              friction: 4,
-              tension: 40
-            }}
-          />
+        <Animated.View style={{ alignSelf: "center", marginBottom: 5, height: opacity }}>
+          <Image source={require("../assets/images/logoBS.png")} style={{ width: 50, height: 50, resizeMode: "contain" }} />
+        </Animated.View>
+        <View style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignContent: "center",
+          alignItems: "center",
+        }}>
+          <TouchableOpacity onPress={presseProfile}>
+            <BottomIcon type={"ios-people"} color={Colors.light.nero} size={30} />
+          </TouchableOpacity>
+          <TouchableWithoutFeedback onPress={() => setSearchModal(true)}>
+            <View style={styles.searchBar}>
+              <BaseText size={12} letterSpacing={.3} weight={600}>{"Cosa vuoi fare oggi?"}</BaseText>
+            </View>
+          </TouchableWithoutFeedback>
+          <TouchableOpacity>
+            <PinIcon type="normal" size={25} color={Colors.light.nero} />
+          </TouchableOpacity>
         </View>
-        <View style={{ flex: 1, backgroundColor: "transparent" }} >
-          {parrucchieri !== undefined && (
+      </Animated.View>
+    );
+  };
+
+  return (
+    <SafeAreaProvider>
+      <StatusBar barStyle="dark-content" />
+      <SafeAreaView style={styles.container} forceInset={{ top: 'always' }}>
+        {/*{renderTitle()}*/}
+        <AnimatedHeader animatedValue={offset} />
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingTop: 80,
+          }}
+          scrollEventThrottle={16}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: offset } } }],
+            { useNativeDriver: false }
+          )}
+        >
+          <View style={{ backgroundColor: "transparent" }}>
             <FlatList
-              //refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.light.arancio]} />}
+              data={ENTRIES1}
+              renderItem={renderItem1}
+              horizontal
+              pagingEnabled
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-              //contentContainerStyle={{
-              //  backgroundColor: "white",
-              //}}
-              //horizontal
-              //pagingEnabled
-              decelerationRate={0}
-              //snapToInterval={Layout.window.width - 60}
-              //snapToAlignment={"center"}
-              data={parrucchieri}
-              //style={{
-              //  backgroundColor: "white"
-              //}}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item, index }) => renderCards(item, index)}
+              contentContainerStyle={{
+                paddingLeft: 20,
+                paddingRight: 20
+              }}
             />
-          )}
-        </View>
-      </ScrollView>
-      <React.Fragment>
-        <Modal
-          animationType="fade"
-          transparent
-          visible={searchModal}
-          onRequestClose={() => setSearchModal(false)}
-        >
-          <View style={styles.closeOverlay} />
+            <Carousel
+              data={ENTRIES}
+              renderItem={_renderItem}
+              sliderWidth={Layout.window.width}
+              itemWidth={Layout.wp(90) + Layout.wp(2) * 2}
+              loop={true}
+              loopClonesPerSide={1}
+              itemHeight={200}
+              inactiveSlideScale={1}
+              inactiveSlideOpacity={1}
+              enableMomentum={false}
+              activeSlideAlignment={"center"}
+              containerCustomStyle={{
+                overflow: 'visible',
+              }}
+              contentContainerCustomStyle={{
+                paddingTop: 20
+              }}
+              activeAnimationType={'spring'}
+            //activeAnimationOptions={{
+            //  friction: 4,
+            //  tension: 40
+            //}}
+            />
+          </View>
+          <View style={{ flex: 1, backgroundColor: "transparent" }} >
+            {parrucchieri !== undefined && (
+              <FlatList
+                //refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.light.arancio]} />}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
+                decelerationRate={0}
+                data={parrucchieri}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item, index }) => renderCards(item, index)}
+              />
+            )}
+          </View>
+        </ScrollView>
+        <React.Fragment>
           <Modal
-            animationType="slide"
+            animationType="fade"
             transparent
             visible={searchModal}
             onRequestClose={() => setSearchModal(false)}
           >
-            <TouchableWithoutFeedback onPress={() => setSearchModal(false)}>
-              <View style={styles.dialogModalWrapper}>
-                <View style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignContent: "center",
-                  alignItems: "center",
-                  marginHorizontal: 20,
-                  backgroundColor: "transparent",
-                  marginTop: 20
-                }}>
-                  <TouchableOpacity onPress={() => setSearchModal(false)} style={{ paddingHorizontal: 10, paddingVertical: 5 }}>
-                    <Ionicons name="ios-arrow-back" size={30} color={Colors.light.nero} />
-                  </TouchableOpacity>
-                  <View style={[styles.searchBar]}>
-                    <TextInput
-                      autoFocus
-                      placeholder={"Cosa vuoi fare oggi?"}
-                      placeholderTextColor={Colors.light.nero}
-                      //onFocus={() => setSearchModal(true)}
-                      //onBlur={() => setSearchModal(false)}
-                      style={{
-                        width: "90%",
-                        height: "50%",
-                        textAlign: "left",
-                        fontFamily: "Gilroy_SemiBold",
-                        fontSize: 16,
-                        letterSpacing: .4
-                      }}
-                    />
+            <View style={styles.closeOverlay} />
+            <Modal
+              animationType="slide"
+              transparent
+              visible={searchModal}
+              onRequestClose={() => setSearchModal(false)}
+            >
+              <TouchableWithoutFeedback onPress={() => setSearchModal(false)}>
+                <View style={styles.dialogModalWrapper}>
+                  <View style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignContent: "center",
+                    alignItems: "center",
+                    marginHorizontal: 20,
+                    backgroundColor: "transparent",
+                    marginTop: 20
+                  }}>
+                    <TouchableOpacity onPress={() => setSearchModal(false)} style={{ paddingHorizontal: 10, paddingVertical: 5 }}>
+                      <Ionicons name="ios-arrow-back" size={30} color={Colors.light.nero} />
+                    </TouchableOpacity>
+                    <View style={[styles.searchBar]}>
+                      <TextInput
+                        autoFocus
+                        placeholder={"Cosa vuoi fare oggi?"}
+                        placeholderTextColor={Colors.light.nero}
+                        //onFocus={() => setSearchModal(true)}
+                        //onBlur={() => setSearchModal(false)}
+                        style={{
+                          width: "90%",
+                          height: "50%",
+                          textAlign: "left",
+                          fontFamily: "Gilroy_SemiBold",
+                          fontSize: 16,
+                          letterSpacing: .4
+                        }}
+                      />
+                    </View>
                   </View>
                 </View>
-              </View>
-            </TouchableWithoutFeedback>
+              </TouchableWithoutFeedback>
+            </Modal>
           </Modal>
-        </Modal>
-      </React.Fragment>
-    </View>
+        </React.Fragment>
+      </SafeAreaView>
+    </SafeAreaProvider>
+
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background
+    backgroundColor: Colors.light.background,
   },
   textHeader: {
     height: 50,
@@ -860,17 +815,13 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     backgroundColor: Colors.light.ARANCIO,
-    //opacity: .5,
     position: 'absolute',
     top: 0,
     left: 0,
     zIndex: 1,
   },
   dialogModalWrapper: {
-    //flex: 1,
-    //top: 115,
     top: Layout.window.height / 20,
-    //height: Layout.window.height - 115,
     height: Layout.window.height - 30,
     backgroundColor: "white",
     borderRadius: 40,

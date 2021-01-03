@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 40,
     top: -35,
     backgroundColor: Colors.light.bianco,
-    height: Layout.window.height,
+    //height: Layout.window.height,
   },
   contentRows: {
     paddingHorizontal: 20,
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
 });
 
 export default ({ route, navigation }) => {
-  const [selectedDate, setSelectedDate] = useState(moment());
+  const [selectedDate, setSelectedDate] = useState(undefined);
   const [blocks, setBlocks] = React.useState(null);
   const [blockSelected, setBlockSelected] = React.useState(undefined);
   const [timeSelected, setTimeSelected] = React.useState(undefined);
@@ -37,11 +37,20 @@ export default ({ route, navigation }) => {
   const [commercianteId, setCommerciante] = React.useState(undefined);
   const [prenotazioni, setPrenotazioni] = React.useState(undefined);
   const [daySelected, setDateSelected] = React.useState(undefined);
+  const [cart, setCart] = React.useState(undefined);
+  const [titoloNegozio, setTitoloNegozio] = React.useState(route.params?.title);
   React.useEffect(() => {
+    let carrello = route.params?.carrello;
     let commerciante = route.params?.commerciante;
     if (commerciante) {
       setCommerciante(commerciante)
       initPrenota(commerciante);
+    }
+    if (!carrello) {
+      navigation.goBack();
+      alert("Errore con il carrello")
+    } else {
+      setCart(carrello)
     }
   }, []);
 
@@ -104,9 +113,13 @@ export default ({ route, navigation }) => {
     setOrari(orariFb);
   }
   const onDateChange = (date) => {
-    setDateSelected(date);
-    let today = moment(date).isoWeekday();
-    workSlots(today, undefined, date);
+    //
+    let realDate = moment(date).add(1, "day");
+    let today = date.isoWeekday();
+    //console.log(today, "---today")
+    setDateSelected(realDate);
+    setSelectedDate(realDate);
+    workSlots(today, undefined, realDate);
   }
   const workSlots = async (isoWeekday?, orariFb = undefined, realDate?) => {
     let today = isoWeekday ? isoWeekday : moment().isoWeekday();
@@ -230,141 +243,185 @@ export default ({ route, navigation }) => {
     }
   }
   return (
-    <View>
-      <StatusBar style="light" />
-      <Header hasBack={true} hasTitleHeight={true} title={``} onPress={() => navigation.goBack()} />
-      <View style={styles.content}>
-        <View style={styles.contentRows}>
-          {/*<View style={{ width: "100%", height: 1, backgroundColor: "grey" }} />*/}
-          <CalendarStrip
-            scrollable
-            calendarAnimation={{ type: 'sequence', duration: 30, }}
-            daySelectionAnimation={{ type: 'background', duration: 200, highlightColor: Colors.light.ARANCIO }}
-            style={{ height: 140, paddingTop: 0 }}
-            calendarHeaderStyle={{ color: 'black', fontFamily: "Gilroy_Bold", fontSize: 15, }}
-            calendarColor={'transparent'}
-            onDateSelected={onDateChange}
-            selectedDate={selectedDate}
-            dateNumberStyle={{ color: 'black', fontFamily: "Gilroy_Regular", fontSize: 15 }}
-            dateNameStyle={{ color: '#dddddd', fontFamily: "Gilroy_Bold", fontSize: 15, }}
-            highlightDateNumberStyle={{ color: 'white', fontFamily: "Gilroy_Regular", fontSize: 15, }}
-            highlightDateNameStyle={{ color: '#dddddd', fontFamily: "Gilroy_Bold", fontSize: 15, }}
-            disabledDateNameStyle={{ color: 'grey' }}
-            disabledDateNumberStyle={{ color: 'grey' }}
-            iconContainer={{ flex: 0.0001 }}
-            iconLeftStyle={{ display: "none" }}
-            iconRightStyle={{ display: "none" }}
-            locale={{
-              name: "it", config: {
-                months: 'Gennaio_Febbraio_Marzo_Aprile_Maggio_Giugno_Luglio_Agosto_Settembre_Ottobre_Novembre_Dicembre'.split(
-                  '_'
-                ),
-                monthsShort: 'Gen_Feb_Mar_Apr_Mag_Giu_Lug_Ago_Set_Ott_Nov_Dic'.split(
-                  '_'
-                ),
-                weekdays: 'Domenica_Lunedi_Martedi_Mercoledi_Giovedi_Venerdi_Sabato'.split('_'),
-                weekdaysShort: 'D_L_M_M_G_V_S'.split('_'),
-                weekdaysMin: 'Do_Lu_Ma_Me_Gi_Ve_Sa'.split('_'),
-                longDateFormat: {
-                  LT: 'HH:mm',
-                  LTS: 'HH:mm:ss',
-                  L: 'DD/MM/YYYY',
-                  LL: 'D MMMM YYYY',
-                  LLL: 'D MMMM YYYY LT',
-                  LLLL: 'dddd D MMMM YYYY LT'
-                },
-                calendar: {
-                  sameDay: "[Aujourd'hui à] LT",
-                  nextDay: '[Demain à] LT',
-                  nextWeek: 'dddd [à] LT',
-                  lastDay: '[Hier à] LT',
-                  lastWeek: 'dddd [dernier à] LT',
-                  sameElse: 'L'
-                },
-                relativeTime: {
-                  future: 'dans %s',
-                  past: 'il y a %s',
-                  s: 'quelques secondes',
-                  m: 'une minute',
-                  mm: '%d minutes',
-                  h: 'une heure',
-                  hh: '%d heures',
-                  d: 'un jour',
-                  dd: '%d jours',
-                  M: 'un mois',
-                  MM: '%d mois',
-                  y: 'une année',
-                  yy: '%d années'
-                },
-                ordinalParse: /\d{1,2}(er|ème)/,
-                ordinal: function (number) {
-                  return number + (number === 1 ? 'er' : 'ème');
-                },
-                meridiemParse: /PD|MD/,
-                isPM: function (input) {
-                  return input.charAt(0) === 'M';
-                },
-                // in case the meridiem units are not separated around 12, then implement
-                // this function (look at locale/id.js for an example)
-                // meridiemHour : function (hour, meridiem) {
-                //     return /* 0-23 hour, given meridiem token and hour 1-12 */
-                // },
-                meridiem: function (hours, minutes, isLower) {
-                  return hours < 12 ? 'PD' : 'MD';
-                },
-                week: {
-                  dow: 1, // Monday is the first day of the week.
-                  doy: 4 // The week that contains Jan 4th is the first week of the year.
+    <>
+      <View>
+        <StatusBar style="light" />
+        <Header hasBack={true} hasTitleHeight={true} title={`Quando`} onPress={() => navigation.goBack()} />
+        <View style={styles.content}>
+
+          <View style={styles.contentRows}>
+            {/*<View style={{ width: "100%", height: 1, backgroundColor: "grey" }} />*/}
+            <CalendarStrip
+              scrollable
+              calendarAnimation={{ type: 'sequence', duration: 30, }}
+              daySelectionAnimation={{ type: 'background', duration: 200, highlightColor: Colors.light.ARANCIO }}
+              style={{ height: 140, paddingTop: 0 }}
+              calendarHeaderStyle={{ color: 'black', fontFamily: "Gilroy_Bold", fontSize: 15, }}
+              calendarColor={'transparent'}
+              onDateSelected={onDateChange}
+              selectedDate={selectedDate}
+              dateNumberStyle={{ color: 'black', fontFamily: "Gilroy_Regular", fontSize: 15 }}
+              dateNameStyle={{ color: '#dddddd', fontFamily: "Gilroy_Bold", fontSize: 15, }}
+              highlightDateNumberStyle={{ color: 'white', fontFamily: "Gilroy_Regular", fontSize: 15, }}
+              highlightDateNameStyle={{ color: '#dddddd', fontFamily: "Gilroy_Bold", fontSize: 15, }}
+              disabledDateNameStyle={{ color: 'grey' }}
+              disabledDateNumberStyle={{ color: 'grey' }}
+              iconContainer={{ flex: 0.0001 }}
+              iconLeftStyle={{ display: "none" }}
+              iconRightStyle={{ display: "none" }}
+              locale={{
+                name: "it", config: {
+                  months: 'Gennaio_Febbraio_Marzo_Aprile_Maggio_Giugno_Luglio_Agosto_Settembre_Ottobre_Novembre_Dicembre'.split(
+                    '_'
+                  ),
+                  monthsShort: 'Gen_Feb_Mar_Apr_Mag_Giu_Lug_Ago_Set_Ott_Nov_Dic'.split(
+                    '_'
+                  ),
+                  weekdays: 'Domenica_Lunedi_Martedi_Mercoledi_Giovedi_Venerdi_Sabato'.split('_'),
+                  weekdaysShort: 'D_L_M_M_G_V_S'.split('_'),
+                  weekdaysMin: 'Do_Lu_Ma_Me_Gi_Ve_Sa'.split('_'),
+                  longDateFormat: {
+                    LT: 'HH:mm',
+                    LTS: 'HH:mm:ss',
+                    L: 'DD/MM/YYYY',
+                    LL: 'D MMMM YYYY',
+                    LLL: 'D MMMM YYYY LT',
+                    LLLL: 'dddd D MMMM YYYY LT'
+                  },
+                  calendar: {
+                    sameDay: "[Aujourd'hui à] LT",
+                    nextDay: '[Demain à] LT',
+                    nextWeek: 'dddd [à] LT',
+                    lastDay: '[Hier à] LT',
+                    lastWeek: 'dddd [dernier à] LT',
+                    sameElse: 'L'
+                  },
+                  relativeTime: {
+                    future: 'dans %s',
+                    past: 'il y a %s',
+                    s: 'quelques secondes',
+                    m: 'une minute',
+                    mm: '%d minutes',
+                    h: 'une heure',
+                    hh: '%d heures',
+                    d: 'un jour',
+                    dd: '%d jours',
+                    M: 'un mois',
+                    MM: '%d mois',
+                    y: 'une année',
+                    yy: '%d années'
+                  },
+                  ordinalParse: /\d{1,2}(er|ème)/,
+                  ordinal: function (number) {
+                    return number + (number === 1 ? 'er' : 'ème');
+                  },
+                  meridiemParse: /PD|MD/,
+                  isPM: function (input) {
+                    return input.charAt(0) === 'M';
+                  },
+                  // in case the meridiem units are not separated around 12, then implement
+                  // this function (look at locale/id.js for an example)
+                  // meridiemHour : function (hour, meridiem) {
+                  //     return /* 0-23 hour, given meridiem token and hour 1-12 */
+                  // },
+                  meridiem: function (hours, minutes, isLower) {
+                    return hours < 12 ? 'PD' : 'MD';
+                  },
+                  week: {
+                    dow: 1, // Monday is the first day of the week.
+                    doy: 4 // The week that contains Jan 4th is the first week of the year.
+                  }
                 }
-              }
+              }}
+            />
+            <View style={{ top: -20, width: "100%", height: 1, backgroundColor: "#dddddd", alignSelf: "center" }} />
+
+          </View>
+          <ScrollView
+            style={{
+              top: -30
             }}
-          />
-          <View style={{ top: -20, width: "100%", height: 1, backgroundColor: "#dddddd", alignSelf: "center" }} />
-        </View>
-        <ScrollView
-          style={{
-            top: -30
-          }}
-          contentContainerStyle={{
-            //display: blocks === null ? "none" : "flex",
-            //display: blocks == undefined && blocks == null ? "none" : "flex"
-            paddingBottom: Dimensions.get("window").height * 2,
-          }}
-        >
-          {blocks === undefined && (
-            <View style={{ alignSelf: "center" }}>
-              <BaseText size={10} weight={600} color={Colors.light.rosso}>🚨 In questa data il commerciante è chiuso! 🚨</BaseText>
-            </View>
-          )}
-          {
-            blocks !== undefined && blocks !== null && blocks.map((slot, index) => {
-              const onPress = () => {
-                if (index == blockSelected) {
-                  setBlockSelected(undefined);
-                } else {
-                  setTimeSelected(slot);
-                  setBlockSelected(index);
+            contentContainerStyle={{
+              //display: blocks === null ? "none" : "flex",
+              //display: blocks == undefined && blocks == null ? "none" : "flex"
+              paddingBottom: Dimensions.get("window").height + 150,
+            }}
+          >
+            {blocks === undefined && (
+              <View style={{ alignSelf: "center" }}>
+                <BaseText size={10} weight={600} color={Colors.light.rosso}>{"🚨 In questa data il commerciante è chiuso! 🚨".toUpperCase()}</BaseText>
+              </View>
+            )}
+            {
+              blocks !== undefined && blocks !== null && blocks.map((slot, index) => {
+                const onPress = () => {
+                  if (index == blockSelected) {
+                    setBlockSelected(undefined);
+                  } else {
+                    setTimeSelected(slot.format("HH:mm"));
+                    setBlockSelected(index);
+                  }
                 }
-              }
-              return (
-                <TouchableOpacity key={index} onPress={() => onPress()} style={{
-                  marginVertical: 10,
-                  paddingHorizontal: 20,
-                  //backgroundColor: blockSelected == index ? Colors.light.arancio : Colors.light.grigio,
-                }}>
-                  <View style={{ flexDirection: "row", justifyContent: "space-between", alignContent: "center", alignItems: "center" }}>
-                    <View style={{ backgroundColor: blockSelected == index ? Colors.light.ARANCIO : "transparent", width: 25, height: 25, borderRadius: 25 / 2, borderWidth: 2, borderColor: blockSelected == index ? Colors.light.ARANCIO : "grey", marginBottom: 5 }} />
-                    <View style={{ height: .5, backgroundColor: blockSelected == index ? Colors.light.ARANCIO : "#dddddd", width: "75%", }} />
-                    <BaseText size={12} weight={600} color={blockSelected == index ? Colors.light.ARANCIO : "black"} letterSpacing={0.4}>
-                      {slot.format("HH:mm")}
-                    </BaseText>
-                  </View>
-                </TouchableOpacity>
-              )
-            })
-          }
-        </ScrollView>
+                return (
+                  <TouchableOpacity key={index} onPress={() => onPress()} style={{
+                    marginVertical: 10,
+                    paddingHorizontal: 20,
+                    //backgroundColor: blockSelected == index ? Colors.light.arancio : Colors.light.grigio,
+                  }}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignContent: "center", alignItems: "center" }}>
+                      <View style={{ backgroundColor: blockSelected == index ? Colors.light.ARANCIO : "transparent", width: 25, height: 25, borderRadius: 25 / 2, borderWidth: 2, borderColor: blockSelected == index ? Colors.light.ARANCIO : "grey", marginBottom: 5 }} />
+                      <View style={{ height: .5, backgroundColor: blockSelected == index ? Colors.light.ARANCIO : "#dddddd", width: "75%", }} />
+                      <BaseText size={12} weight={600} color={blockSelected == index ? Colors.light.ARANCIO : "black"} letterSpacing={0.4}>
+                        {slot.format("HH:mm")}
+                      </BaseText>
+                    </View>
+                  </TouchableOpacity>
+                )
+              })
+            }
+            {selectedDate === undefined && blocks !== undefined && (
+              <View style={{ alignSelf: "center" }}>
+                <BaseText size={10} weight={800} color={Colors.light.ARANCIO}>{"Scegli quando".toUpperCase()}</BaseText>
+              </View>
+            )}
+          </ScrollView>
+
+        </View>
       </View>
-    </View>
+      {timeSelected !== undefined && daySelected !== undefined && (
+        <View style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          width: "100%",
+          minHeight: 100,
+          shadowOffset: {
+            width: 0,
+            height: -4
+          },
+          shadowColor: "black",
+          shadowOpacity: .22,
+          shadowRadius: 4,
+          backgroundColor: "white",
+          alignContent: "center",
+          justifyContent: "flex-start"
+        }}>
+          <TouchableOpacity onPress={() => navigation.navigate("DettagliPrenotazione", { cart, commercianteId, daySelected, timeSelected, titoloNegozio })} style={{
+            marginHorizontal: 20,
+            marginTop: 10,
+            borderRadius: 10,
+            backgroundColor: "#FB6E3B",
+            height: 45,
+            alignContent: "center",
+            justifyContent: "center",
+            paddingHorizontal: 10,
+            alignItems: "center",
+            flexDirection: "row"
+          }}>
+            <BaseText weight={900} size={14} color={Colors.light.bianco}>Continua</BaseText>
+          </TouchableOpacity>
+        </View>)}
+    </>
   );
 };

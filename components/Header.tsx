@@ -149,7 +149,7 @@ const Header = (props: HeaderProps) => {
       //console.log("Constants.statusBarHeight",Constants.statusBarHeight)
       return (
         <View style={[{ paddingTop: 175, backgroundColor: Colors.light.ARANCIO }, props.styles]}>
-          <View style={[styles.container, {
+          <TouchableOpacity  onPress={props.onPress} style={[styles.container, {
             justifyContent: "flex-start",
             alignItems: "center",
             alignContent: "center",
@@ -160,11 +160,11 @@ const Header = (props: HeaderProps) => {
             {props.hasBack && (
               <>
                 {/*<BackIcon width={20} height={20} style={styles.icona} onPress={props.onPress} color={Colors.light.bianco} />*/}
-                <Ionicons name="ios-arrow-back" size={30} color={Colors.light.bianco} onPress={props.onPress} style={styles.icona} />
+                <Ionicons name="ios-arrow-back" size={30} color={Colors.light.bianco} style={styles.icona} />
               </>
             )}
             <BaseText styles={[styles.titlo, { /*height: props.hasTitleHeight ? 70 : "100%"*/ }]} size={25} weight={600} color={Colors.light.bianco}>{props.title ? props.title : ""}</BaseText>
-          </View>
+          </TouchableOpacity>
         </View>
       );
     }

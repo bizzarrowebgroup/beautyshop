@@ -12,7 +12,8 @@ import Header from "./Header";
 import Loader from "../../components/Loader";
 import BaseText from "../../components/StyledText";
 import Colors from "../../constants/Colors";
-import { StatusBar } from "expo-status-bar";
+//import { StatusBar } from "expo-status-bar";
+import { somma } from "../../constants/Utils";
 
 const styles = StyleSheet.create({
   container: {
@@ -65,7 +66,7 @@ export default ({ route, navigation }) => {
       doc.forEach(d => {
         //console.log("--d.id--", d.id)
         let data = { ...d.data(), id: d.id };
-        //console.log("--data--", d.data())
+        //console.log("--data--", data)
         finalServizi.push({ data, "id": d.id });
       });
       //console.log(finalServizi, "finalServizi")
@@ -83,7 +84,8 @@ export default ({ route, navigation }) => {
     if (!doc.exists) {
       setOrari(true);
     } else {
-      let final = { ...doc.data() };
+      let final = { ...doc.data(), id: doc.id };
+      //console.log(final, "--final")
       setData(final);
 
       const orariRef = db.collection('orari');
@@ -284,11 +286,7 @@ export default ({ route, navigation }) => {
   };
 
   const goToPrenotazione = () => {
-    navigation.navigate("Prenotazione", { carrello, commerciante });
-  }
-  //console.log("carrello", carrello)
-  const Somma = (arr, prop) => {
-    return arr.reduce((a, b) => +a + +b[prop], 0)
+    navigation.navigate("Prenotazione", { carrello, commerciante, title: data.title });
   }
   return (
     <View style={styles.container}>
@@ -335,20 +333,21 @@ export default ({ route, navigation }) => {
           <TouchableOpacity onPress={() => goToPrenotazione()} style={{
             marginHorizontal: 20,
             marginTop: 10,
-            borderRadius: 8,
+            borderRadius: 10,
             backgroundColor: "#FB6E3B",
             height: 45,
             alignContent: "center",
             justifyContent: "space-between",
+            paddingHorizontal: 10,
             alignItems: "center",
             flexDirection: "row"
           }}>
-            <View style={{ backgroundColor: "white", width: 30, height: 30, marginLeft: 10, borderRadius: 5, alignContent: "center", justifyContent: "center" }}>
+            <View style={{ backgroundColor: "white", width: 30, height: 30, borderRadius: 5, alignContent: "center", justifyContent: "center" }}>
               <BaseText styles={{ alignSelf: "center" }} weight={900} size={17} color={Colors.light.ARANCIO}>{carrello ? carrello.length : 0}</BaseText>
             </View>
             <BaseText weight={900} size={14} color={Colors.light.bianco}>Quando</BaseText>
-            <View style={{ backgroundColor: "white", width: 80, height: 30, marginRight: 10, borderRadius: 5, alignContent: "center", justifyContent: "center" }}>
-              <BaseText styles={{ alignSelf: "center" }} weight={900} size={13} color={Colors.light.ARANCIO}>{carrello ? Somma(carrello, "cost").toFixed(2) + " €" : 0}</BaseText>
+            <View style={{ backgroundColor: "white", width: 80, height: 30, borderRadius: 5, alignContent: "center", justifyContent: "center" }}>
+              <BaseText styles={{ alignSelf: "center" }} weight={900} size={13} color={Colors.light.ARANCIO}>{carrello ? somma(carrello, "cost") : 0}</BaseText>
             </View>
             {/*<BaseText styles={{ marginRight: 20 }} weight={900} size={15} color={Colors.light.bianco}></BaseText>*/}
           </TouchableOpacity>

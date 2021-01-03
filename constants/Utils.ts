@@ -33,3 +33,7 @@ export const sortUserProfilesAlphabetically = (userProfiles: UserProfile[]): Use
         return nameA < nameB ? -1 : 0;
     });
 };
+
+export const somma = (arr, prop) => {
+  return arr.reduce((a, b) => +a + +b[prop], 0).toFixed(2) + " €";
+}

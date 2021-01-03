@@ -15,8 +15,8 @@ import NetInfo from "@react-native-community/netinfo";
 import Toast from "react-native-toast-message"
 import { db } from './network/Firebase';
 import { AppContext } from './context/Appcontext';
-import { View } from "react-native";
-import { withSecurityScreen } from "./components/withSecurityScreen";
+//import { View } from "react-native";
+//import { withSecurityScreen } from "./components/withSecurityScreen";
 
 // Sentry.init({
 //   dsn: "https://6f3d61d6211445b4a5af61e57aaecbaa@o421980.ingest.sentry.io/5342571",
