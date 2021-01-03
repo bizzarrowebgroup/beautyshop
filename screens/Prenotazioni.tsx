@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, TouchableOpacity } from 'react-native';
 import moment from 'moment';
-import localization from 'moment/locale/it';
+//import localization from 'moment/locale/it';
 import { Ionicons } from '@expo/vector-icons';
 import CalendarPicker from 'react-native-calendar-picker';
 // CONTENTX
@@ -29,7 +29,7 @@ const Prenotazioni = (props: PrenotazioniProps) => {
     setStartDate(date);
   }
   React.useEffect(() => {
-    moment.updateLocale('it', localization);
+    //moment.updateLocale('it', localization);
     //loadScreen()
   }, []);
   React.useEffect(() => {
