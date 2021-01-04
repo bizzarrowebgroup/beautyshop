@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, TouchableOpacity } from 'react-native';
 import moment from 'moment';
-//import localization from 'moment/locale/it';
 import { Ionicons } from '@expo/vector-icons';
 import CalendarPicker from 'react-native-calendar-picker';
 // CONTENTX
@@ -10,7 +9,7 @@ import { AuthUserContext } from '../navigation/AuthUserProvider';
 import Header from '../components/Header';
 import Colors from '../constants/Colors';
 // SVG
-import Capelli from '../components/svg/Capelli';
+//import Capelli from '../components/svg/Capelli';
 import NoFavorites from '../components/svg/NoFavorites';
 import BaseText from '../components/StyledText';
 import { db, dbVal } from '../network/Firebase';

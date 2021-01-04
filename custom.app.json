@@ -28,11 +28,11 @@
       "supportsTablet": false,
       "usesAppleSignIn": true,
       "bundleIdentifier": "it.bizzarro.beautyshop",
-      "buildNumber": "11",
+      "buildNumber": "10",
       "userInterfaceStyle": "light",
       "config": {
         "googleSignIn": {
-          "reservedClientId": "com.googleusercontent.apps.470013044742-3qu3q39rebnsacs94rs0ggb7ca68k2pl"
+          "reservedClientId": "com.googleusercontent.apps.470013044742-69pbts2tm4280vunsoekk4ebkf5l3t8s",
         }
       },
       "googleServicesFile": "./GoogleService-Info.plist"

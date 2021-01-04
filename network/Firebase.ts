@@ -142,7 +142,7 @@ export const signInWithFacebook = async () => {
           } else {
             return {
               type: "error",
-              
+
             }
             //return alert("ERRORE REGISTRAZIONE FB SOCIAL 003-30-2")
           }
@@ -377,14 +377,19 @@ export const logInWithFacebook = async () => {
 }
 
 export const loginWithGoogle = async () => {
+  alert(JSON.stringify(AppAuth));
   //alert(AppAuth.OAuthRedirect);
   //alert(Application.applicationId);
+  let IOS_CID_CUSTOM_EXPO = "470013044742-nfbf3icicc1ro6udt1l1tnhh8m70ofa8.apps.googleusercontent.com";
+  let IOS_CID = "470013044742-3qu3q39rebnsacs94rs0ggb7ca68k2pl.apps.googleusercontent.com";
+  //let IOS_SACD_CUSTOM_EXPO = "";
   try {
     const result = await Google.logInAsync({
-      iosClientId: "470013044742-nfbf3icicc1ro6udt1l1tnhh8m70ofa8.apps.googleusercontent.com",
-      iosStandaloneAppClientId: "470013044742-69pbts2tm4280vunsoekk4ebkf5l3t8s.apps.googleusercontent.com",
+      behavior: "web",
+      iosClientId: IOS_CID_CUSTOM_EXPO,
+      iosStandaloneAppClientId: IOS_CID,
       scopes: ['openid', 'profile', 'email'],
-      redirectUrl: `${AppAuth.OAuthRedirect}:/oauthredirect`
+      redirectUrl: `${AppAuth.OAuthRedirect}:/oauthredirect`,
       //redirectUrl: `${AppAuth.OAuthRedirect}:/oauth2redirect/google`
     });
     if (result.type === 'success') {

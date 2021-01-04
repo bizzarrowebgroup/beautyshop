@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { StyleSheet, ScrollView, TouchableOpacity, View, Platform, Dimensions } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import CalendarStrip from 'react-native-calendar-strip';
-import moment from 'moment';
 import { db } from '../../network/Firebase';
 
 import Header from "../../components/Header";
@@ -11,8 +10,10 @@ import BaseText from "../../components/StyledText";
 import Colors from "../../constants/Colors";
 import Layout from '../../constants/Layout'
 
-import 'moment';
-// import 'moment/locale/it';
+//import 'moment';
+//import 'moment/locale/it';
+//moment().locale('it');
+import moment from 'moment';
 
 const styles = StyleSheet.create({
   content: {
@@ -40,6 +41,7 @@ export default ({ route, navigation }) => {
   const [cart, setCart] = React.useState(undefined);
   const [titoloNegozio, setTitoloNegozio] = React.useState(route.params?.title);
   React.useEffect(() => {
+    
     let carrello = route.params?.carrello;
     let commerciante = route.params?.commerciante;
     if (commerciante) {
@@ -270,7 +272,8 @@ export default ({ route, navigation }) => {
               iconLeftStyle={{ display: "none" }}
               iconRightStyle={{ display: "none" }}
               locale={{
-                name: "it", config: {
+                name: "it", 
+                config: {
                   months: 'Gennaio_Febbraio_Marzo_Aprile_Maggio_Giugno_Luglio_Agosto_Settembre_Ottobre_Novembre_Dicembre'.split(
                     '_'
                   ),

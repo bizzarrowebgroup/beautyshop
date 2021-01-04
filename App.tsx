@@ -9,6 +9,11 @@ import Colors from './constants/Colors';
 import Navigation from "./navigation";
 import Loader from './components/Loader';
 
+import 'moment';
+import 'moment/locale/it';
+import moment from 'moment-timezone';
+moment().locale('it');
+
 import NetInfo from "@react-native-community/netinfo";
 // import * as Sentry from "sentry-expo";
 // import * as firebase from "firebase";
