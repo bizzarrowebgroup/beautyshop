@@ -2,6 +2,7 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
+    "devprod": "expo start --no-dev --minify",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
@@ -36,6 +37,7 @@
     "expo-facebook": "~9.0.0",
     "expo-font": "~8.3.0",
     "expo-google-app-auth": "^8.1.2",
+    "expo-google-sign-in": "~8.3.0",
     "expo-haptics": "~8.3.0",
     "expo-linear-gradient": "~8.3.0",
     "expo-linking": "^1.0.1",

@@ -452,9 +452,9 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
   const presseProfile = () => {
     //console.log("--userData--", userData)
     if (user && userData) {
-      const { toBecompleted, userId, displayName } = userData;
+      const { toBecompleted, userId, displayName, email, phoneNumber } = userData;
       if (toBecompleted === true) {
-        navigation.navigate('Auth', { screen: 'CompleteSocial', params: { userid: userId, nomecognome: displayName } })
+        navigation.navigate('Auth', { screen: 'CompleteSocial', params: { userid: userId, nomecognome: displayName, email: email, phone: phoneNumber ? phoneNumber : "" } })
       } else {
         setCurrentUser(userData);
         navigation.navigate('Profilo');
@@ -513,7 +513,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
           borderRadius: 8,
           overflow: "hidden"
         }}
-        onPress={() => { alert(`You've clicked '${index}'`); }}
+        onPress={() => { alert(`Hai premuto la cat. n.'${index}'`); }}
       >
         <View style={{
           backgroundColor: bg ? bg : "black",

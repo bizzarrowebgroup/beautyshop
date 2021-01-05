@@ -118,9 +118,9 @@ const Login = ({ navigation }) => {
             navigation.goBack();
             showToast("LOGIN CON GOOGLE", "Sei riuscito ad entrare con successo", "success", "bottom", 2000);
           } else if (id.type == 'login_google' && id.toBecompleted) {
-            navigation.navigate("CompleteSocial", { userid: id.userid, nomecognome: id.nomecognome })
+            navigation.navigate("CompleteSocial", { userid: id.userid, nomecognome: id.nomecognome, email: id.email })
           } else if (id.type == "register_google") {
-            navigation.navigate("CompleteSocial", { userid: id.userid, nomecognome: id.nomecognome })
+            navigation.navigate("CompleteSocial", { userid: id.userid, nomecognome: id.nomecognome, email: id.email })
           } else if (id.type == 'error') {
             showToast("LOGIN CON GOOGLE", id.message, "error", "bottom", 4000);
           }

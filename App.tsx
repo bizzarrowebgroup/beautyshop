@@ -134,6 +134,7 @@ function App() {
       unsubscribe();
     }
   }, []);
+
   const showToast = (header, message, type = 'error', pos = 'top', duration = 1500) => {
     errorToast.current.show({
       text1: header,
@@ -146,6 +147,7 @@ function App() {
     });
     return null;
   };
+
   const context = {
     showToast,
     servizi,
@@ -154,6 +156,7 @@ function App() {
     currentUser,
     setCurrentUser
   };
+
   if (!isLoadingComplete || fetching) {
     //if (true) {
     return (
@@ -163,14 +166,6 @@ function App() {
   return (
     <SafeAreaProvider>
       <AppContext.Provider value={context}>
-        {/*<StatusBar
-          //animated
-          style="dark"
-          translucent={true}
-          hideTransitionAnimation="fade"
-          networkActivityIndicatorVisible={false}
-          backgroundColor={Colors.light.arancio}
-        />*/}
         <Navigation colorScheme={colorScheme} />
         <Toast
           ref={errorToast}
@@ -179,7 +174,6 @@ function App() {
     </SafeAreaProvider>
   );
 }
-
 
 //export default withSecurityScreen(App);
 export default App;

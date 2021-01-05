@@ -28,7 +28,7 @@ const CompleteSocial = ({ navigation, route }) => {
   const [schermata, setSchermata] = useState(1)
   const [userId, setUserId] = useState(route.params?.userid);
   const [nomecognome, setNome] = useState(route.params?.nomecognome);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(route.params?.email);
   const [phone, setPhone] = useState('');
   const [privacy, setPrivacy] = useState(true);
   const [newsletter, setNews] = useState(false);

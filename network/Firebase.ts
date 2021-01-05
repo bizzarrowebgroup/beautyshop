@@ -4,6 +4,8 @@ import 'firebase/firestore';
 import * as Facebook from 'expo-facebook';
 //import * as GoogleSignIn from 'expo-google-sign-in';
 import * as Google from 'expo-google-app-auth';
+import * as GoogleSignIn from 'expo-google-sign-in';
+
 import * as AppAuth from 'expo-app-auth';
 import * as Application from 'expo-application';
 
@@ -36,6 +38,32 @@ if (!firebase.apps.length) {
 }
 
 export const auth = firebase.auth();
+
+const getPushNotificationPermissions = async (result) => {
+  //const { status: existingStatus } = await Permissions.getAsync(
+  //  Permissions.NOTIFICATIONS
+  //);
+  //let finalStatus = existingStatus;
+
+  //// only ask if permissions have not already been determined, because
+  //// iOS won't necessarily prompt the user a second time.
+  //if (existingStatus !== "granted") {
+  //  // Android remote notification permissions are granted during the app
+  //  // install, so this will only ask on iOS
+  //  const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+  //  finalStatus = status;
+  //}
+
+  // Stop here if the user did not grant permissions
+  //if (finalStatus !== "granted") {
+  //  return;
+  //}
+  //console.log(finalStatus);
+  //this.currentUser = await firebase.auth.currentUser;
+  //return await Notifications.getExpoPushTokenAsync();
+};
+// let pushToken = await getPushNotificationPermissions();
+// console.log(push_token: pushToken)
 
 export const loginWithEmail = (email, password) =>
   auth.signInWithEmailAndPassword(email, password);
@@ -197,7 +225,7 @@ export const logInWithFacebook = async () => {
           //return user.uid;
           let data = isRegistered.data();
           let toBecompleted = data.toBecompleted;
-          if (toBecompleted) {
+          if (toBecompleted === true) {
             const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name`);
             let fbData = await response.json();
             if (fbData) {
@@ -375,32 +403,39 @@ export const logInWithFacebook = async () => {
     console.log("login FB annullato", message)
   }
 }
-
+//latest_login: Date.now(),
 export const loginWithGoogle = async () => {
-  alert(JSON.stringify(AppAuth));
+  //alert(JSON.stringify(AppAuth));
   //alert(AppAuth.OAuthRedirect);
   //alert(Application.applicationId);
   let IOS_CID_CUSTOM_EXPO = "470013044742-nfbf3icicc1ro6udt1l1tnhh8m70ofa8.apps.googleusercontent.com";
   let IOS_CID = "470013044742-3qu3q39rebnsacs94rs0ggb7ca68k2pl.apps.googleusercontent.com";
   //let IOS_SACD_CUSTOM_EXPO = "";
+  //var provider = new firebase.auth.GoogleAuthProvider();
+  // provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
   try {
-    const result = await Google.logInAsync({
-      behavior: "web",
-      iosClientId: IOS_CID_CUSTOM_EXPO,
-      iosStandaloneAppClientId: IOS_CID,
-      scopes: ['openid', 'profile', 'email'],
-      redirectUrl: `${AppAuth.OAuthRedirect}:/oauthredirect`,
-      //redirectUrl: `${AppAuth.OAuthRedirect}:/oauth2redirect/google`
-    });
-    if (result.type === 'success') {
-      console.log("--resultOK--", result)
+    await GoogleSignIn.askForPlayServicesAsync();
+    const { type, user } = await GoogleSignIn.signInAsync();
+    //const result = await Google.logInAsync({
+    //  //behavior: "web",
+    //  iosClientId: IOS_CID_CUSTOM_EXPO,
+    //  //iosStandaloneAppClientId: IOS_CID,
+    //  scopes: ['openid', 'profile', 'email'],
+    //  //redirectUrl: `${AppAuth.OAuthRedirect}:/oauthredirect`,
+    //  //redirectUrl: `${AppAuth.OAuthRedirect}:/oauth2redirect/google`
+    //});
+    //const result = await GoogleSignIn.signInAsync();
+    if (type === "success") {
+      //alert("--resultOK--", JSON.stringify(result))
       await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-      const credential = firebase.auth.GoogleAuthProvider.credential(result.idToken);
+      const credential = firebase.auth.GoogleAuthProvider.credential(
+        user.auth.idToken,
+        user.auth.accessToken
+      );
+      let accessToken = user.auth.accessToken;
       try {
-
-        // i can use result.user 
         /*
-                "user": Object {
+            "user": Object {
             "email": "jon.canevese@gmail.com",
             "familyName": "Derewith",
             "givenName": "Jonathan",
@@ -408,11 +443,11 @@ export const loginWithGoogle = async () => {
             "name": "Jonathan Derewith",
             "photoUrl": "https://lh4.googleusercontent.com/-W6BG8FgkGlM/AAAAAAAAAAI/AAAAAAAAAqk/AMZuucn4KK5Z_DlDAfDOBhcRjx9_kpfR8A/s96-c/photo.jpg",
           }, 
-
         */
         let userId = await auth.signInWithCredential(credential);
         let { user } = userId;
-        console.log("----user----", user)
+        // result.additionalUserInfo.profile.picture,
+        //alert(JSON.stringify(user))
         let isRegistered = await db.collection('utentiApp').doc(user.uid).get();
         if (isRegistered.exists) {
           // the user is already registered
@@ -420,17 +455,18 @@ export const loginWithGoogle = async () => {
           let toBecompleted = data.toBecompleted;
           if (toBecompleted) {
             let userInfoResponse = await fetch('https://www.googleapis.com/userinfo/v2/me', {
-              headers: { Authorization: `Bearer ${result.accessToken}` },
+              headers: { Authorization: `Bearer ${accessToken}` },
             });
             //const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name`);
             let gData = await userInfoResponse.json();
             if (gData) {
-              console.log("--fbData--", gData)
-              const { name } = gData;
-              return { type: "login_google", userid: user.uid, toBecompleted, nomecognome: name };
+              //alert(JSON.stringify(gData))
+              //console.log("--fbData--", gData)
+              const { name, email } = gData;
+              return { type: "login_google", userid: user.uid, toBecompleted, nomecognome: name, email: email };
             } {
               let error = "gData error fetching from graph.facebook";
-              console.log(error, result.accessToken)
+              //console.log(error, user.auth.accessToken)
               return { type: "error", message: error }
             }
           } else {
@@ -439,12 +475,14 @@ export const loginWithGoogle = async () => {
         } else {
           // the user is not registered yet
           let userInfoResponse = await fetch('https://www.googleapis.com/userinfo/v2/me', {
-            headers: { Authorization: `Bearer ${result.accessToken}` },
+            headers: { Authorization: `Bearer ${accessToken}` },
           });
+
           //const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,birthday,picture.type(large)`);
           let fbData = await userInfoResponse.json();
           if (fbData) {
-            console.log("---fbData--", fbData);
+            //console.log("---gData--", fbData);
+            //alert(JSON.stringify(fbData))
             const { picture, name, email } = fbData;
             try {
               await auth.currentUser.updateProfile({
@@ -468,6 +506,7 @@ export const loginWithGoogle = async () => {
                 type: "register_google",
                 userid: user.uid,
                 nomecognome: name,
+                email: email,
               };
             } catch (error) {
               var errorCode = error.code;
@@ -492,7 +531,7 @@ export const loginWithGoogle = async () => {
         }
       }
     } else {
-      console.log("login G annullato -- result", result)
+      //console.log("login G annullato -- result", result)
       return { type: "error", message: "login con Google annullato" }
     }
   } catch ({ message }) {
