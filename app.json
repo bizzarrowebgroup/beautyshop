@@ -28,7 +28,7 @@
       "supportsTablet": false,
       "usesAppleSignIn": true,
       "bundleIdentifier": "it.bizzarro.beautyshop",
-      "buildNumber": "11",
+      "buildNumber": "12",
       "userInterfaceStyle": "light",
       "config": {
         "googleSignIn": {
@@ -40,6 +40,8 @@
     "facebookScheme": "fb3483388645055624",
     "facebookAppId": "3483388645055624",
     "facebookDisplayName": "dBeautyShop",
+    "facebookAutoInitEnabled": true,
+    "facebookAutoLogAppEventsEnabled": true,
     "web": {
       "favicon": "./assets/images/favicon.png"
     },

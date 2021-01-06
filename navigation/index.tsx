@@ -25,6 +25,8 @@ import Review from '../screens/Review';
 import Shop from '../screens/Commerciante/Home';
 import Prenotazione from '../screens/Prenotazione/Home';
 import DettagliPrenotazione from '../screens/Prenotazione/DettagliPrenotazione';
+import PrenotazioneOk from '../screens/Prenotazione/PrenotazioneOk';
+
 import Preferiti from '../screens/Preferiti';
 import Prenotazioni from '../screens/Prenotazioni';
 import CompleteSocial from '../screens/CompleteSocial';
@@ -110,6 +112,11 @@ function RootNavigator() {
           }}
         />
         <Stack.Screen name="DettagliPrenotazione" component={DettagliPrenotazione}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen name="PrenotazioneOk" component={PrenotazioneOk}
           options={{
             headerShown: false,
           }}

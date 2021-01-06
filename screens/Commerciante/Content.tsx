@@ -198,7 +198,7 @@ export default ({ y, onMeasurement, data, servizi, carrello, setCarrello }: Cont
             }) => onMeasurement(index, { title, anchor: anchor - 142 })}
           >
             <BaseText weight={600} styles={[styles.title1, { paddingLeft: 16, paddingTop: 10, }]}>{title}</BaseText>
-            {menuItems.map(({ titolo, desc, cost, id }, j) => {
+            {menuItems.map(({ titolo, desc, cost, id, durata }, j) => {
               let isSelected = carrello !== undefined ? carrello.find(item => {
                 //console.log(item, "item");
                 //console.log(index, "index");
@@ -209,7 +209,7 @@ export default ({ y, onMeasurement, data, servizi, carrello, setCarrello }: Cont
                 <TouchableOpacity
                   style={[styles.item, { borderLeftWidth: 6, paddingLeft: 10, borderLeftColor: isSelected ? Colors.light.ARANCIO : "transparent", paddingTop: 10, }]}
                   key={j}
-                  onPress={() => setCarrello({ category: title, title: titolo, cost, id })}>
+                  onPress={() => setCarrello({ category: title, title: titolo, cost, id, durata })}>
                   <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignContent: "center", alignItems: "center" }}>
                     <View style={{ width: "70%" }}>
                       <BaseText weight={600} styles={styles.title}>{titolo}</BaseText>

@@ -14,6 +14,7 @@ import BaseText from "../../components/StyledText";
 import Colors from "../../constants/Colors";
 //import { StatusBar } from "expo-status-bar";
 import { somma } from "../../constants/Utils";
+import { AuthUserContext } from '../../navigation/AuthUserProvider';
 
 const styles = StyleSheet.create({
   container: {
@@ -32,6 +33,8 @@ export default ({ route, navigation }) => {
   React.useEffect(() => {
     console.log("SCHERMATA AVVIATA")
   }, [])
+
+  const { user, setUser } = React.useContext(AuthUserContext);
 
   // TABELLA ORARIO
   const [day, setDay] = React.useState(0);
@@ -286,7 +289,11 @@ export default ({ route, navigation }) => {
   };
 
   const goToPrenotazione = () => {
-    navigation.navigate("Prenotazione", { carrello, commerciante, title: data.title });
+    if(user !== null) {
+      navigation.navigate("Prenotazione", { carrello, commerciante, title: data.title });
+    } else {
+      navigation.navigate("Auth");
+    }
   }
   return (
     <View style={styles.container}>
