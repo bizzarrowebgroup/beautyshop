@@ -119,6 +119,7 @@ function RootNavigator() {
         <Stack.Screen name="PrenotazioneOk" component={PrenotazioneOk}
           options={{
             headerShown: false,
+            gestureEnabled: false,
           }}
         />
         <Stack.Screen name="Homepage" component={NewHomePage}

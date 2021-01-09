@@ -130,13 +130,14 @@ const ENTRIES1 = [
   },
 ];
 
-export default function HomePage({ navigation }: StackScreenProps<RootStackParamList, 'Shop'>) {
+export default function HomePage({ route, navigation }: StackScreenProps<RootStackParamList, 'Shop'>) {
   const {
     servizi,
     commercianti,
     foto,
     currentUser,
-    setCurrentUser
+    setCurrentUser,
+    prenotazione
   } = useContext(AppContext);
   const { user, setUser } = useContext(AuthUserContext);
   //let profileRef = null;
@@ -148,8 +149,8 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
   const [userData, setUserData] = React.useState(undefined);
   //const [favoritesFB, setFavorites] = React.useState(undefined);
   const [searchModal, setSearchModal] = React.useState(false);
-
   const [refreshing, setRefreshing] = useState(false);
+  const [prenotazioni, setPrenotazioni] = useState(undefined);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -268,7 +269,15 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
         getUserId();
         //getFavorites();
       }
+      if (prenotazione) {
+        console.log("--home pren--", JSON.stringify(prenotazione, null, 2))
+        setPrenotazioni(prenotazione)
+      }
     });
+    if (prenotazione) {
+      console.log("--home pren--", JSON.stringify(prenotazione, null, 2))
+      setPrenotazioni(prenotazione)
+    }
     //UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
     //if (profileRefanimation) profileRefanimation.current.play();
   }, []);
@@ -694,7 +703,7 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
               data={ENTRIES1}
               renderItem={renderItem1}
               horizontal
-              pagingEnabled
+              // pagingEnabled
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{
@@ -726,6 +735,15 @@ export default function HomePage({ navigation }: StackScreenProps<RootStackParam
             //  tension: 40
             //}}
             />
+            {/* {prenotazioni && (
+              <View style={{ marginHorizontal: 20 }}>
+                <BaseText>{prenotazioni.title}</BaseText>
+                <BaseText>{prenotazioni.slot_date}</BaseText>
+                <BaseText>{prenotazioni.slot_time}</BaseText>
+                <BaseText>{prenotazioni.slot_end_time}</BaseText>
+                <BaseText>{prenotazioni.totale}</BaseText>
+              </View>
+            )} */}
           </View>
           <View style={{ flex: 1, backgroundColor: "transparent" }} >
             {parrucchieri !== undefined && (

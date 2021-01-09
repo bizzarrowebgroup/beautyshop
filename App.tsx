@@ -2,6 +2,8 @@
 import React, { useRef } from "react";
 //import * as Device from 'expo-device';
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Deprecation warning', 'VirtualizedList', 'Non-serializable']);
 
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
@@ -44,6 +46,7 @@ function App() {
   const colorScheme = useColorScheme();
   const [servizi, setServizi] = React.useState([]);
   const [commercianti, setCommercianti] = React.useState([]);
+  const [prenotazione, setPrenotazione] = React.useState([]);
   const [foto, setFoto] = React.useState([]);
   const [fetching, setFetching] = React.useState(true);
   const [currentUser, setCurrentUser] = React.useState(undefined);
@@ -51,7 +54,6 @@ function App() {
   const errorToast = useRef(null);
 
   const checkServizi = async () => {
-
     const serviziFirebase = await db.collection('servizi').get();
     // const messageRef = db.collection('rooms').doc('roomA').collection('messages').doc('message1');
     // const currentUserId = auth.currentUser.uid;
@@ -77,11 +79,10 @@ function App() {
       const tempDoc = commerciantiFirebase.docs.map((doc) => {
         return { id: doc.id, ...doc.data() }
       })
-      // tempDoc.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
-      setCommercianti(tempDoc);
-      // setFetching(false);
+      let FinlatempDoc = tempDoc.filter(i => i.status);
+      console.log(JSON.stringify(FinlatempDoc, null, 2));
+      setCommercianti(FinlatempDoc);
     } else {
-      // setFetching(false);
     }
   }
   const checkFoto = async () => {
@@ -90,12 +91,9 @@ function App() {
       const tempDoc = fotoFirebase.docs.map((doc) => {
         return { id: doc.id, ...doc.data() }
       })
-      // console.log(tempDoc);
       // tempDoc.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
       setFoto(tempDoc);
-      // setFetching(false);
     } else {
-      // setFetching(false);
     }
   }
 
@@ -154,7 +152,9 @@ function App() {
     commercianti,
     foto,
     currentUser,
-    setCurrentUser
+    setCurrentUser,
+    prenotazione,
+    setPrenotazione
   };
 
   if (!isLoadingComplete || fetching) {

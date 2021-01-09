@@ -57,6 +57,8 @@ interface AppState {
     servizi?: servizi[];
     commercianti?: commercianti[];
     foto?: photos[];
+    prenotazione?: any;
+    setPrenotazione?: any;
 }
 
 const AppContext = React.createContext({} as AppState);

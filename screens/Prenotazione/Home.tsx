@@ -41,7 +41,7 @@ export default ({ route, navigation }) => {
   const [cart, setCart] = React.useState(undefined);
   const [titoloNegozio, setTitoloNegozio] = React.useState(route.params?.title);
   React.useEffect(() => {
-    
+
     let carrello = route.params?.carrello;
     let commerciante = route.params?.commerciante;
     if (commerciante) {
@@ -262,6 +262,9 @@ export default ({ route, navigation }) => {
               calendarColor={'transparent'}
               onDateSelected={onDateChange}
               selectedDate={selectedDate}
+              startingDate={moment()}
+              minDate={moment()}
+              maxDate={moment().add(1, 'months')}
               dateNumberStyle={{ color: 'black', fontFamily: "Gilroy_Regular", fontSize: 15 }}
               dateNameStyle={{ color: '#dddddd', fontFamily: "Gilroy_Bold", fontSize: 15, }}
               highlightDateNumberStyle={{ color: 'white', fontFamily: "Gilroy_Regular", fontSize: 15, }}
@@ -272,7 +275,7 @@ export default ({ route, navigation }) => {
               iconLeftStyle={{ display: "none" }}
               iconRightStyle={{ display: "none" }}
               locale={{
-                name: "it", 
+                name: "it",
                 config: {
                   months: 'Gennaio_Febbraio_Marzo_Aprile_Maggio_Giugno_Luglio_Agosto_Settembre_Ottobre_Novembre_Dicembre'.split(
                     '_'

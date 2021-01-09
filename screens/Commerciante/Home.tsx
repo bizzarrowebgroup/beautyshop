@@ -352,7 +352,7 @@ export default ({ route, navigation }) => {
             <View style={{ backgroundColor: "white", width: 30, height: 30, borderRadius: 5, alignContent: "center", justifyContent: "center" }}>
               <BaseText styles={{ alignSelf: "center" }} weight={900} size={17} color={Colors.light.ARANCIO}>{carrello ? carrello.length : 0}</BaseText>
             </View>
-            <BaseText weight={900} size={14} color={Colors.light.bianco}>Quando</BaseText>
+            <BaseText weight={900} size={14} color={Colors.light.bianco}>Scegli quando</BaseText>
             <View style={{ backgroundColor: "white", width: 80, height: 30, borderRadius: 5, alignContent: "center", justifyContent: "center" }}>
               <BaseText styles={{ alignSelf: "center" }} weight={900} size={13} color={Colors.light.ARANCIO}>{carrello ? somma(carrello, "cost") : 0}</BaseText>
             </View>

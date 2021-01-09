@@ -34,6 +34,7 @@ export const sortUserProfilesAlphabetically = (userProfiles: UserProfile[]): Use
     });
 };
 
-export const somma = (arr, prop) => {
-  return arr.reduce((a, b) => +a + +b[prop], 0).toFixed(2) + " €";
+export const somma = (arr, prop, withExt = true) => {
+  const base = arr.reduce((a, b) => +a + +b[prop], 0).toFixed(2);
+  return withExt ? base + " €" : base;
 }
