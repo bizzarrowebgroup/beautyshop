@@ -4,13 +4,12 @@ import { createStackNavigator, TransitionPresets } from '@react-navigation/stack
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 
 import { RootStackParamList } from '../types';
-import { AuthUserProvider } from './AuthUserProvider';
 import BottomTabNavigator from './BottomTabNavigator';
 import LinkingConfiguration from './LinkingConfiguration';
 
 import Colors from '../constants/Colors';
 import Loader from '../components/Loader';
-import { AuthUserContext } from './AuthUserProvider';
+import { AuthUserContext, AuthUserProvider } from './AuthUserProvider';
 import { auth } from '../network/Firebase';
 
 import NotFoundScreen from '../screens/NotFoundScreen';
@@ -26,6 +25,7 @@ import Shop from '../screens/Commerciante/Home';
 import Prenotazione from '../screens/Prenotazione/Home';
 import DettagliPrenotazione from '../screens/Prenotazione/DettagliPrenotazione';
 import PrenotazioneOk from '../screens/Prenotazione/PrenotazioneOk';
+import InfoPren from '../screens/Prenotazione/InfoPren';
 
 import Preferiti from '../screens/Preferiti';
 import Prenotazioni from '../screens/Prenotazioni';
@@ -41,9 +41,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
       //theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
       theme={DefaultTheme}
     >
-      <AuthUserProvider>
-        <RootNavigator />
-      </AuthUserProvider>
+      <RootNavigator />
     </NavigationContainer>
   );
 }
@@ -120,6 +118,12 @@ function RootNavigator() {
           options={{
             headerShown: false,
             gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen name="InfoPren" component={InfoPren}
+          options={{
+            headerShown: false,
+            gestureEnabled: true,
           }}
         />
         <Stack.Screen name="Homepage" component={NewHomePage}

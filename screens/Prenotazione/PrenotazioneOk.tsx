@@ -51,6 +51,7 @@ const PrenotazioneOk = ({ route, navigation }) => {
   const [isLooping, setLoop] = useState(false);
   const [prenotazione, setPren] = useState(route.params?.prenotazione)
   const [title, setTitle] = useState(route.params?.title)
+  const [prenID, setPrenID] = useState(route.params?.prenID)
   const { setPrenotazione } = React.useContext(AppContext);
 
   useEffect(() => {
@@ -63,7 +64,7 @@ const PrenotazioneOk = ({ route, navigation }) => {
   };
 
   const handlePrenotazione = () => {
-    setPrenotazione({ title, ...prenotazione, })
+    // setPrenotazione({ title, ...prenotazione, })
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
@@ -107,16 +108,20 @@ const PrenotazioneOk = ({ route, navigation }) => {
           <BaseText weight={500} color={"grey"} size={10} styles={{ textAlign: "left", marginVertical: 2 }}>{"Verrai avvisato con un'email o una notifica in tempo reale."}</BaseText>
         </View>
         <View style={[styles.boxInfo, { backgroundColor: Colors.light.bianco }]}>
-          <BaseText>{"Totale"}</BaseText>
-          <BaseText weight={700} color={Colors.light.ARANCIO}>{prenotazione.totale + " €"}</BaseText>
+          <BaseText>{"Data"}</BaseText>
+          <BaseText weight={700}>{moment(prenotazione.slot_date).format("dddd DD MMMM YYYY")}</BaseText>
+        </View>
+        <View style={[styles.boxInfo, { backgroundColor: Colors.light.bianco }]}>
+          <BaseText>{"Codice identificativo"}</BaseText>
+          <BaseText weight={700}>{prenID}</BaseText>
         </View>
         <View style={[styles.boxInfo, { backgroundColor: Colors.light.bianco }]}>
           <BaseText>{"Commerciante"}</BaseText>
           <BaseText weight={700}>{title}</BaseText>
         </View>
         <View style={[styles.boxInfo, { backgroundColor: Colors.light.bianco }]}>
-          <BaseText>{"Data"}</BaseText>
-          <BaseText weight={700}>{moment(prenotazione.slot_date).format("dddd DD MMMM YYYY")}</BaseText>
+          <BaseText>{"Totale"}</BaseText>
+          <BaseText weight={700} color={Colors.light.ARANCIO}>{prenotazione.totale + " €"}</BaseText>
         </View>
         <View style={[styles.boxInfo, { backgroundColor: Colors.light.bianco }]}>
           <BaseText>{"Orario"}</BaseText>

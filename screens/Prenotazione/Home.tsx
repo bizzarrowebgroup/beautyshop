@@ -116,7 +116,8 @@ export default ({ route, navigation }) => {
   }
   const onDateChange = (date) => {
     //
-    let realDate = moment(date).add(1, "day");
+    // let realDate = moment(date).add(1, "day");
+    let realDate = moment(date);
     let today = date.isoWeekday();
     //console.log(today, "---today")
     setDateSelected(realDate);
@@ -250,7 +251,6 @@ export default ({ route, navigation }) => {
         <StatusBar style="light" />
         <Header hasBack={true} hasTitleHeight={true} title={`Quando`} onPress={() => navigation.goBack()} />
         <View style={styles.content}>
-
           <View style={styles.contentRows}>
             {/*<View style={{ width: "100%", height: 1, backgroundColor: "grey" }} />*/}
             <CalendarStrip
@@ -391,7 +391,6 @@ export default ({ route, navigation }) => {
               </View>
             )}
           </ScrollView>
-
         </View>
       </View>
       {timeSelected !== undefined && daySelected !== undefined && (

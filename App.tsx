@@ -22,6 +22,8 @@ import NetInfo from "@react-native-community/netinfo";
 import Toast from "react-native-toast-message"
 import { db } from './network/Firebase';
 import { AppContext } from './context/Appcontext';
+import { AuthUserContext, AuthUserProvider } from "./navigation/AuthUserProvider";
+
 //import { View } from "react-native";
 //import { withSecurityScreen } from "./components/withSecurityScreen";
 
@@ -46,11 +48,10 @@ function App() {
   const colorScheme = useColorScheme();
   const [servizi, setServizi] = React.useState([]);
   const [commercianti, setCommercianti] = React.useState([]);
-  const [prenotazione, setPrenotazione] = React.useState([]);
+  const [prenotazione, setPrenotazione] = React.useState(undefined);
   const [foto, setFoto] = React.useState([]);
   const [fetching, setFetching] = React.useState(true);
   const [currentUser, setCurrentUser] = React.useState(undefined);
-
   const errorToast = useRef(null);
 
   const checkServizi = async () => {
@@ -80,7 +81,7 @@ function App() {
         return { id: doc.id, ...doc.data() }
       })
       let FinlatempDoc = tempDoc.filter(i => i.status);
-      console.log(JSON.stringify(FinlatempDoc, null, 2));
+      // console.log(JSON.stringify(FinlatempDoc, null, 2));
       setCommercianti(FinlatempDoc);
     } else {
     }
@@ -96,13 +97,13 @@ function App() {
     } else {
     }
   }
-
+ 
   const startDb = async () => {
     try {
       await Promise.all([
         checkCommercianti(),
         checkServizi(),
-        checkFoto()
+        checkFoto(),
       ]).then(() => {
         setFetching(false);
         console.log("doneDBGOT-firebase")
@@ -116,22 +117,22 @@ function App() {
     startDb();
   }, [])
   // const [lang, setLang] = React.useState("it");
-  // Listen for authentication state to change.
-  React.useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener(state => {
-      console.log("Connection type", state.type);
-      console.log("Is connected?", state.isConnected);
-    });
-    // firebase.initializeApp(FirebaseConfig);
-    // firebase.auth().onAuthStateChanged((user) => {
-    //   if (user != null) {
-    //     console.log("We are authenticated now!");
-    //   }
-    // });
-    return () => {
-      unsubscribe();
-    }
-  }, []);
+  // // Listen for authentication state to change.
+  // React.useEffect(() => {
+  //   const unsubscribe = NetInfo.addEventListener(state => {
+  //     console.log("Connection type", state.type);
+  //     console.log("Is connected?", state.isConnected);
+  //   });
+  //   // firebase.initializeApp(FirebaseConfig);
+  //   // firebase.auth().onAuthStateChanged((user) => {
+  //   //   if (user != null) {
+  //   //     console.log("We are authenticated now!");
+  //   //   }
+  //   // });
+  //   return () => {
+  //     unsubscribe();
+  //   }
+  // }, []);
 
   const showToast = (header, message, type = 'error', pos = 'top', duration = 1500) => {
     errorToast.current.show({
@@ -165,12 +166,14 @@ function App() {
   }
   return (
     <SafeAreaProvider>
-      <AppContext.Provider value={context}>
-        <Navigation colorScheme={colorScheme} />
-        <Toast
-          ref={errorToast}
-        />
-      </AppContext.Provider>
+      <AuthUserProvider>
+        <AppContext.Provider value={context}>
+          <Navigation colorScheme={colorScheme} />
+          <Toast
+            ref={errorToast}
+          />
+        </AppContext.Provider>
+      </AuthUserProvider>
     </SafeAreaProvider>
   );
 }

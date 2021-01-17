@@ -3,25 +3,27 @@ import {
   TouchableWithoutFeedback,
   Image,
   ImageBackground,
-  Dimensions,
+  // Dimensions,
   Modal,
   ScrollView,
   TouchableOpacity,
   FlatList,
-  RefreshControl,
+  // RefreshControl,
   StyleSheet,
   TextInput,
   StatusBar,
-  Text,
-  UIManager,
+  // Text,
+  // UIManager,
   LogBox,
   Animated,
   SafeAreaView
 } from 'react-native';
-import MaskedView from '@react-native-community/masked-view';
-import Constants from 'expo-constants';
-import LottieView from 'lottie-react-native';
-import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
+import moment from 'moment';
+// import MaskedView from '@react-native-community/masked-view';
+// import Constants from 'expo-constants';
+// import LottieView from 'lottie-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import Carousel from 'react-native-snap-carousel';
 LogBox.ignoreLogs([
   'VirtualizedLists should never be nested'
 ]);
@@ -32,7 +34,7 @@ import { AppContext } from '../context/Appcontext';
 import { AuthUserContext } from '../navigation/AuthUserProvider';
 
 import { Ionicons } from '@expo/vector-icons';
-import Desk from '../components/svg/Desk';
+// import Desk from '../components/svg/Desk';
 //import Intro2 from '../components/svg/Intro2';
 //import Intro3 from '../components/svg/Intro3';
 //import Intro4 from '../components/svg/Intro4';
@@ -49,8 +51,8 @@ import { db, dbVal } from '../network/Firebase';
 import Loader from '../components/Loader';
 import { Vibration } from '../constants';
 // import LottieView from 'lottie-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import HeartIcon from '../components/svg/HeartIcon';
+// import { LinearGradient } from 'expo-linear-gradient';
+// import HeartIcon from '../components/svg/HeartIcon';
 import PinIcon from '../components/svg/PinIcon';
 import BottomIcon from '../components/svg/BottomIcon';
 import Layout from '../constants/Layout';
@@ -62,7 +64,6 @@ const wait = timeout => {
     setTimeout(resolve, timeout);
   });
 };
-
 const ENTRIES = [
   {
     illustration: 'https://i.postimg.cc/65NHzk9d/New-Project.png',
@@ -90,7 +91,6 @@ const ENTRIES = [
     linkUrl: undefined
   },
 ];
-
 const ENTRIES1 = [
   {
     title: "Capelli",
@@ -157,7 +157,6 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
     loading();
     wait(2000).then(() => setRefreshing(false));
   }, []);
-
   const getUserId = async () => {
     //get a unique key
     //console.log("---getUserId[called]---")
@@ -175,7 +174,6 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
       };
     }
   }
-
   //const getFavorites = async () => {
   //  try {
   //    //console.log("sono dentro getFavorites")
@@ -255,7 +253,6 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
       //getFavorites();
     }
   }
-
   React.useEffect(() => {
     // setTimeout(() => {
     //     setModal(!modalShow);
@@ -263,6 +260,40 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
     loading()
   }, [user, userDocId]);
 
+  // function sortFunction(a, b) {
+  //   var dateA = new Date(a.slot_date).getTime();
+  //   var dateB = new Date(b.slot_date).getTime();
+  //   // return dateA > dateB ? 1 : -1;
+  //   if (dateA < dateB) return -1;
+  //   if (dateA > dateB) return 1;
+  //   return 0;
+  // };
+
+  const checkPrenotazioni = async () => {
+    // console.log("--user--", JSON.stringify(user, null, 2))
+    if (user) {
+      // setPrenotazioni(undefined)
+      let dbPren = await db.collection('prenotazioni').orderBy('pren_date', 'desc').get();
+      if (!dbPren.empty) {
+        let finalpreno = [];
+        dbPren.forEach(item => {
+          let data = item.data();
+          finalpreno.push({ id: item.id, ...data });
+        })
+        finalpreno = finalpreno.filter(i => i.userId === user.uid)
+        if (finalpreno && finalpreno.length > 0) {
+          console.log("---finalpreno---", finalpreno.length);
+          while (finalpreno.length > 3) { finalpreno.pop() }
+          // finalpreno.sort((a, b) => a.slot_date - b.slot_date);
+          // finalpreno.sort(sortFunction)
+
+          setPrenotazioni(finalpreno)
+        }
+      } else {
+        console.log("non ci sono PRENOTAZIONI");
+      }
+    }
+  }
   React.useEffect(() => {
     navigation.addListener('focus', () => {
       if (user !== undefined && userDocId !== null) {
@@ -270,17 +301,52 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
         //getFavorites();
       }
       if (prenotazione) {
-        console.log("--home pren--", JSON.stringify(prenotazione, null, 2))
-        setPrenotazioni(prenotazione)
+        // console.log("--home pren--", JSON.stringify(prenotazion, null, 2))
+        // setPrenotazioni(prenotazione)
       }
     });
     if (prenotazione) {
       console.log("--home pren--", JSON.stringify(prenotazione, null, 2))
-      setPrenotazioni(prenotazione)
+      // setPrenotazioni(prenotazione)
     }
+    checkPrenotazioni()
     //UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
     //if (profileRefanimation) profileRefanimation.current.play();
   }, []);
+
+  const checkNewPrenotazioni = async (observer) => {
+    if (user) {
+      return observer = db.collection('prenotazioni').where('userId', '==', user.uid)
+        .onSnapshot(querySnapshot => {
+          // setPrenotazioni(undefined);
+          querySnapshot.docChanges().forEach(change => {
+            // if (change.type === 'added') {
+            //   console.log('NUOVA PRENOTAZIONE: ', change.doc.data());
+            //   // setPrenotazioni(prenotazioni => [...prenotazioni, change.doc.data()]);
+
+            // }
+            if (change.type === 'modified') {
+              // console.log('PRENOTAZIONE MODIFICATA: ', change.doc.data());
+              // setPrenotazioni(prenotazioni => [...prenotazioni], ...change.doc.data());
+              checkPrenotazioni()
+            }
+            if (change.type === 'removed') {
+              // console.log('PRENOTAZIONE RIMOSSA: ', change.doc.data());
+              checkPrenotazioni()
+            }
+          });
+        });
+    }
+  }
+  useEffect(() => {
+    let observer = undefined;
+    checkNewPrenotazioni(observer);
+    return () => {
+      // Clean up the subscription
+      if (observer !== undefined) observer();
+    };
+
+  }, [])
 
   const renderCards = (item, index) => {
     let { title, stars, via, desc, mainPhoto, economy, id } = item;
@@ -735,15 +801,52 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
             //  tension: 40
             //}}
             />
-            {/* {prenotazioni && (
-              <View style={{ marginHorizontal: 20 }}>
-                <BaseText>{prenotazioni.title}</BaseText>
-                <BaseText>{prenotazioni.slot_date}</BaseText>
-                <BaseText>{prenotazioni.slot_time}</BaseText>
-                <BaseText>{prenotazioni.slot_end_time}</BaseText>
-                <BaseText>{prenotazioni.totale}</BaseText>
+            {prenotazioni !== undefined && (
+              <View style={{ marginBottom: 20 }}>
+                <BaseText weight={700} styles={{ marginHorizontal: 20, marginVertical: 10 }} size={15}>{"Ultime prenotazioni"}</BaseText>
+                <ScrollView horizontal contentContainerStyle={{ marginHorizontal: 20, paddingRight: 30 }} showsHorizontalScrollIndicator={false}>
+                  {prenotazioni.map((item) => {
+                    // 0 DEFAULT CONFERMATA
+                    let color = ['#CB860B', '#daaa54'];
+                    switch (item.state) {
+                      case 1:
+                        // ACCETTATA
+                        color = ['#00C537', '#32d05e'];
+                        break;
+                      case 2:
+                        // FINITA
+                        color = [Colors.light.ARANCIO, '#FC9975'];
+                        break;
+                      case 3:
+                        // ANNULATA
+                        color = ['#CA1E13', '#d96159'];
+                        break;
+                    }
+                    return (
+                      <LinearGradient
+                        colors={color}
+                        start={{ x: 0, y: 0 }}
+                        style={{ marginRight: 20, borderRadius: 5, paddingVertical: 15, paddingHorizontal: 20, }}
+                        key={item.id}>
+                        <TouchableOpacity
+                          key={item.id}
+                          // style={{ backgroundColor: Colors.light.ARANCIO }}
+                          onPress={() => { navigation.navigate("InfoPren", { prenotazione: item }) }}>
+                          <View style={{ backgroundColor: "transparent", flexDirection: "row", alignContent: "center", alignItems: "center", justifyContent: "flex-start", }}>
+                            <BaseText weight={500} color={Colors.light.bianco} styles={{ textTransform: "capitalize" }}>{moment(item.slot_date).format("dddd DD MMMM")} | </BaseText>
+                            <BaseText weight={500} color={Colors.light.bianco}>{item.slot_time}  - </BaseText>
+                            <BaseText weight={500} color={Colors.light.bianco}>{item.slot_end_time}</BaseText>
+                          </View>
+                          <BaseText weight={600} color={Colors.light.bianco} styles={{ marginVertical: 5 }}>{item.title}</BaseText>
+                          <BaseText weight={400} color={Colors.light.bianco}>{item.totale + " €"}</BaseText>
+                        </TouchableOpacity>
+                      </LinearGradient>
+                    )
+                  })
+                  }
+                </ScrollView>
               </View>
-            )} */}
+            )}
           </View>
           <View style={{ flex: 1, backgroundColor: "transparent" }} >
             {parrucchieri !== undefined && (

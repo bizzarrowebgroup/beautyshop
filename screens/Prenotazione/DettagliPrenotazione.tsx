@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   }
 })
-
 const Item = ({ data }) => {
   let {
     title,
@@ -80,7 +79,7 @@ const DettagliPrenotazione = ({ route, navigation }) => {
       setTitle(titoloNegozio);
       let serviceDuration = cart.reduce((a, b) => +a + +b["durata"], 0);
       setSlotEnd(moment(date).add(serviceDuration * 10, 'minutes').format("HH:mm"))
-      //console.log("dataRef---",{ date, serviceDuration, slot_end_time, titoloNegozio, commercianteId, date,  })
+      console.log("DATE---", date)
       //console.log("cart---", JSON.stringify({ cart }))
     } else {
       navigation.goBack();
@@ -102,13 +101,15 @@ const DettagliPrenotazione = ({ route, navigation }) => {
           state: 0,
           cart,
           commercianteId,
-          notes,
-          totale: somma(cart, "cost", false)
+          notes: notes !== undefined ? notes : null,
+          totale: somma(cart, "cost", false),
+          title,
+          pren_date: Date.now()
         }
-        console.log("prenotazione", prenotazione)
-        // const res = await db.collection('prenotazioni').add(prenotazione);
-        // console.log('Added prenotazione with ID: ', res.id);
-        navigation.navigate("PrenotazioneOk", { prenotazione, title })
+        // console.log("prenotazione", prenotazione)
+        const res = await db.collection('prenotazioni').add(prenotazione);
+        console.log('Added prenotazione with ID: ', res.id);
+        navigation.navigate("PrenotazioneOk", { prenotazione, title, prenID: res.id })
         setLoadingPrenotazione(false)
       }
     } catch (error) {
