@@ -15,6 +15,7 @@ const SplashScreen = ({ navigation, route }) => {
                 duration={3000}
                 onAnimationFinish={() => navigation.navigate('Homepage')}
                 enableMergePathsAndroidForKitKatAndAbove
+                style={{ backgroundColor: Colors.light.ARANCIO }}
             />
         </View>
     );

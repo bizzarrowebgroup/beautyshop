@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import { useNetInfo } from '@react-native-community/netinfo';
 import BaseText from './StyledText';
+import Colors from '../constants/Colors';
 
 function AppOfflineNotice(props) {
     const netInfo = useNetInfo();
@@ -18,6 +19,7 @@ function AppOfflineNotice(props) {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: Colors.light.ARANCIO,
         height: 80,
         width: '100%',
         paddingTop: Constants.statusBarHeight,

@@ -22,6 +22,7 @@ import { AppContext } from './context/Appcontext';
 import { AuthUserContext, AuthUserProvider } from "./navigation/AuthUserProvider";
 import AppOfflineNotice from "./components/AppOffline";
 import authStorage from "./auth/storage";
+import Colors from "./constants/Colors";
 
 //import { withSecurityScreen } from "./components/withSecurityScreen";
 
@@ -134,7 +135,11 @@ function App() {
   };
 
   if (!isLoadingComplete || fetching) {
-    return <AppLoading startAsync={startDb} onFinish={() => setFetching(false)} onError={console.warn} />;
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors.light.ARANCIO }}>
+        <AppLoading startAsync={startDb} onFinish={() => setFetching(false)} onError={console.warn} />
+      </View>
+    );
   }
   return (
     <SafeAreaProvider>
