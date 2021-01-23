@@ -33,6 +33,7 @@ import CompleteSocial from '../screens/CompleteSocial';
 import EditProfile from '../screens/EditProfile';
 import EditEmail from '../screens/EditEmail';
 import ProfileSettings from '../screens/ProfileSettings';
+import SplashScreen from '../screens/SplashScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -51,7 +52,7 @@ const Stack = createStackNavigator();
 
 function RootNavigator() {
   const { user, setUser } = React.useContext(AuthUserContext);
-  const [isLoading, setIsLoading] = React.useState(true);
+  // const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     // onAuthStateChanged returns an unsubscriber
@@ -59,7 +60,7 @@ function RootNavigator() {
       try {
         //console.log(authUser, "authUser")
         await (authUser ? setUser(authUser) : setUser(null));
-        setIsLoading(false);
+        // setIsLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -69,18 +70,18 @@ function RootNavigator() {
     return unsubscribeAuth;
   }, []);
 
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, backgroundColor: Colors.light.ARANCIO, }}>
-        <Loader size="large" />
-      </View>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <View style={{ flex: 1, backgroundColor: Colors.light.ARANCIO, }}>
+  //       <Loader size="large" />
+  //     </View>
+  //   );
+  // }
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.light.ARANCIO, }}>
       <Stack.Navigator
-        initialRouteName="Homepage"
+        initialRouteName="SplashScreen"
         mode="modal"
       >
         <Stack.Screen name="Root" component={BottomTabNavigator} />
@@ -139,6 +140,12 @@ function RootNavigator() {
             gestureEnabled: true,
             headerShown: false,
             cardOverlayEnabled: false,
+          }}
+        />
+        <Stack.Screen name="SplashScreen" component={SplashScreen} 
+          options={{
+            gestureEnabled: false,
+            headerShown: false,
           }}
         />
         <Stack.Screen

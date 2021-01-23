@@ -8,9 +8,8 @@
     "scheme": "beautyshop",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#FB6E3B"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -28,7 +27,7 @@
       "supportsTablet": false,
       "usesAppleSignIn": true,
       "bundleIdentifier": "it.bizzarro.beautyshop",
-      "buildNumber": "13",
+      "buildNumber": "14",
       "userInterfaceStyle": "light",
       "config": {
         "googleSignIn": {

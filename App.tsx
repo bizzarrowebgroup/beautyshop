@@ -1,30 +1,28 @@
-//import { StatusBar } from "expo-status-bar";
-import React, { useRef } from "react";
-//import * as Device from 'expo-device';
+import React, { useState, useRef, useCallback } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { LogBox } from 'react-native';
+import { LogBox, View } from 'react-native';
 LogBox.ignoreLogs(['Deprecation warning', 'VirtualizedList', 'Non-serializable']);
 
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
-import Colors from './constants/Colors';
+// import Colors from './constants/Colors';
 import Navigation from "./navigation";
-import Loader from './components/Loader';
+// import Loader from './components/Loader';
+import AppLoading from 'expo-app-loading';
 
 import 'moment';
 import 'moment/locale/it';
 import moment from 'moment-timezone';
 moment().locale('it');
 
-import NetInfo from "@react-native-community/netinfo";
 // import * as Sentry from "sentry-expo";
-// import * as firebase from "firebase";
 import Toast from "react-native-toast-message"
 import { db } from './network/Firebase';
 import { AppContext } from './context/Appcontext';
 import { AuthUserContext, AuthUserProvider } from "./navigation/AuthUserProvider";
+import AppOfflineNotice from "./components/AppOffline";
+import authStorage from "./auth/storage";
 
-//import { View } from "react-native";
 //import { withSecurityScreen } from "./components/withSecurityScreen";
 
 // Sentry.init({
@@ -33,26 +31,17 @@ import { AuthUserContext, AuthUserProvider } from "./navigation/AuthUserProvider
 //   debug: true,
 // });
 
-// const FirebaseConfig = {
-//   apiKey: "AIzaSyDTRi3LQzoW4dMkbfPOpZVayYyMkYyp0ac",
-//   authDomain: "beautyshop-afe23.firebaseapp.com",
-//   databaseURL: "https://beautyshop-afe23.firebaseio.com",
-//   projectId: "beautyshop-afe23",
-//   storageBucket: "beautyshop-afe23.appspot.com",
-//   messagingSenderId: "470013044742",
-//   appId: "1:470013044742:web:c5cabae0efe0f2da96bb87"
-// }
-
 function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
-  const [servizi, setServizi] = React.useState([]);
-  const [commercianti, setCommercianti] = React.useState([]);
-  const [prenotazione, setPrenotazione] = React.useState(undefined);
-  const [foto, setFoto] = React.useState([]);
-  const [fetching, setFetching] = React.useState(true);
-  const [currentUser, setCurrentUser] = React.useState(undefined);
+  const [servizi, setServizi] = useState([]);
+  const [commercianti, setCommercianti] = useState([]);
+  const [prenotazione, setPrenotazione] = useState(undefined);
+  const [foto, setFoto] = useState([]);
+  const [fetching, setFetching] = useState(true);
+  const [currentUser, setCurrentUser] = useState(undefined);
   const errorToast = useRef(null);
+  const [user, setUser] = useState();
 
   const checkServizi = async () => {
     const serviziFirebase = await db.collection('servizi').get();
@@ -97,15 +86,20 @@ function App() {
     } else {
     }
   }
- 
+  const checkUser = async () => {
+    const user = await authStorage.getUser();
+    if (user) setUser(user);
+  }
+
   const startDb = async () => {
     try {
       await Promise.all([
         checkCommercianti(),
         checkServizi(),
         checkFoto(),
+        checkUser()
       ]).then(() => {
-        setFetching(false);
+        // setFetching(false);
         console.log("doneDBGOT-firebase")
       })
     } catch (e) {
@@ -113,26 +107,7 @@ function App() {
     }
   }
 
-  React.useEffect(() => {
-    startDb();
-  }, [])
-  // const [lang, setLang] = React.useState("it");
-  // // Listen for authentication state to change.
-  // React.useEffect(() => {
-  //   const unsubscribe = NetInfo.addEventListener(state => {
-  //     console.log("Connection type", state.type);
-  //     console.log("Is connected?", state.isConnected);
-  //   });
-  //   // firebase.initializeApp(FirebaseConfig);
-  //   // firebase.auth().onAuthStateChanged((user) => {
-  //   //   if (user != null) {
-  //   //     console.log("We are authenticated now!");
-  //   //   }
-  //   // });
-  //   return () => {
-  //     unsubscribe();
-  //   }
-  // }, []);
+  // const [lang, setLang] = useState("it");
 
   const showToast = (header, message, type = 'error', pos = 'top', duration = 1500) => {
     errorToast.current.show({
@@ -159,14 +134,12 @@ function App() {
   };
 
   if (!isLoadingComplete || fetching) {
-    //if (true) {
-    return (
-      <Loader color={Colors.light.bianco} size={"large"} animating={true} />
-    )
+    return <AppLoading startAsync={startDb} onFinish={() => setFetching(false)} onError={console.warn} />;
   }
   return (
     <SafeAreaProvider>
       <AuthUserProvider>
+        <AppOfflineNotice />
         <AppContext.Provider value={context}>
           <Navigation colorScheme={colorScheme} />
           <Toast
