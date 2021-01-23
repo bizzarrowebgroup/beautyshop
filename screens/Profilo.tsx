@@ -23,7 +23,7 @@ import BaseText from '../components/StyledText';
 import * as WebBrowser from 'expo-web-browser';
 import BackIcon from '../components/svg/BackIcon';
 
-import Constants from "expo-constants";
+// import Constants from "expo-constants";
 import { backgroundImage } from './Commerciante/HeaderImage';
 
 interface ProfiloProps {
@@ -162,7 +162,8 @@ const Profilo = ({
           logout: true
         },
         {
-          title: `Versione App ${Constants.manifest.version} (${Constants.platform.ios.buildNumber || 0})`,
+          // title: `Versione App ${Updates.manifest.version} (${Constants.platform.ios.buildNumber || 0})`,
+          title: `Versione App ------`,
           special: true,
           version: true,
         }

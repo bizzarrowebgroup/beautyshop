@@ -3,9 +3,10 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import * as Facebook from 'expo-facebook';
 import * as GoogleSignIn from 'expo-google-sign-in';
-import Constants from 'expo-constants';
+// import Constants from 'expo-constants';
 // import * as Crypto from 'expo-crypto';
 import * as AppleAuthentication from "expo-apple-authentication";
+import * as Updates from 'expo-updates';
 
 //import * as Google from 'expo-google-app-auth';
 
@@ -206,7 +207,7 @@ export const logInWithFacebook = async () => {
   try {
     await Facebook.initializeAsync({
       //appId: "3483388645055624",
-      appId: Constants.manifest.facebookAppId.toString(),
+      appId: Updates.manifest.facebookAppId.toString(),
       autoLogAppEvents: true,
       version: 'v9.0',
     });

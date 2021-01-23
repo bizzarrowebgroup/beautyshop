@@ -5,6 +5,7 @@ module.exports = (async () => {
   } = await getDefaultConfig();
   return {
     transformer: {
+      assetPlugins: ['expo-asset/tools/hashAssetFiles'],
       babelTransformerPath: require.resolve("react-native-svg-transformer")
     },
     resolver: {

@@ -21,7 +21,6 @@ import { db } from './network/Firebase';
 import { AppContext } from './context/Appcontext';
 import { AuthUserContext, AuthUserProvider } from "./navigation/AuthUserProvider";
 import AppOfflineNotice from "./components/AppOffline";
-import authStorage from "./auth/storage";
 import Colors from "./constants/Colors";
 
 //import { withSecurityScreen } from "./components/withSecurityScreen";
@@ -42,7 +41,6 @@ function App() {
   const [fetching, setFetching] = useState(true);
   const [currentUser, setCurrentUser] = useState(undefined);
   const errorToast = useRef(null);
-  const [user, setUser] = useState();
 
   const checkServizi = async () => {
     const serviziFirebase = await db.collection('servizi').get();
@@ -87,10 +85,6 @@ function App() {
     } else {
     }
   }
-  const checkUser = async () => {
-    const user = await authStorage.getUser();
-    if (user) setUser(user);
-  }
 
   const startDb = async () => {
     try {
@@ -98,7 +92,6 @@ function App() {
         checkCommercianti(),
         checkServizi(),
         checkFoto(),
-        checkUser()
       ]).then(() => {
         // setFetching(false);
         console.log("doneDBGOT-firebase")
