@@ -4,6 +4,8 @@ import 'firebase/firestore';
 import * as Facebook from 'expo-facebook';
 import * as GoogleSignIn from 'expo-google-sign-in';
 import Constants from 'expo-constants';
+// import * as Crypto from 'expo-crypto';
+import * as AppleAuthentication from "expo-apple-authentication";
 
 //import * as Google from 'expo-google-app-auth';
 
@@ -430,6 +432,81 @@ export const loginWithGoogle = async () => {
   } catch ({ message }) {
     console.log("login G annullato", message)
     return { type: "error", message: "login con Google annullato" + message }
+  }
+}
+
+export const loginWithApple = async () => {
+  try {
+    const nonce = Math.random().toString(36).substring(2, 10);
+    const appleCredential = await AppleAuthentication.signInAsync({
+      requestedScopes: [
+        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+        AppleAuthentication.AppleAuthenticationScope.EMAIL,
+      ],
+    })
+    const { identityToken, email, fullName, realUserStatus } = appleCredential;
+    const userNomeCognome = fullName.givenName !== null && fullName.familyName !== null ? fullName.givenName + " " + fullName.familyName : undefined;
+    const profilePic = realUserStatus === 2 ? `https://eu.ui-avatars.com/api/?background=FB6E3B&color=ffffff&rounded=true&size=236&bold=true&name=${userNomeCognome}` : ""
+    // console.info("---appleCredential---", JSON.stringify(appleCredential, null, 2))
+    // console.info("---userNomeCognome---", userNomeCognome)
+    // console.info("---profilePic---", profilePic)
+    // console.info("---realUserStatus---", realUserStatus)
+    // realUserStatus === 2 new user 
+    // realUserStatus === 1 login
+    // return { type: "error", message: "login con Apple annullato" }
+    if (identityToken) {
+      const provider = new firebase.auth.OAuthProvider("apple.com");
+      const credential = provider.credential({
+        idToken: identityToken,
+        rawNonce: nonce,
+      });
+      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      let userId = await auth.signInWithCredential(credential);
+      let { user } = userId;
+      let isRegistered = await db.collection('utentiApp').doc(user.uid).get();
+      if (isRegistered.exists) {
+        // the user is already registered
+        let data = isRegistered.data();
+        let toBecompleted = data.toBecompleted;
+        if (toBecompleted) {
+          return { type: "login_apple", userid: user.uid, toBecompleted, nomecognome: userNomeCognome !== undefined ? userNomeCognome : "", email };
+        } else {
+          return { type: "login_apple", userid: user.uid };
+        }
+      } else {
+        if (realUserStatus === 2) {
+          await auth.currentUser.updateProfile({
+            displayName: userNomeCognome !== undefined ? userNomeCognome : "",
+            photoURL: profilePic
+          });
+        }
+        let userToDB = {
+          userId: user.uid,
+          email: email,
+          phone: '',
+          pwd: '',
+          loyalitypoints: 150, // when we register a new user we give him 150 points :D
+          notificationToken: '',
+          notificationsEnabled: false,
+          displayName: userNomeCognome !== undefined ? userNomeCognome : "",
+          toBecompleted: true,
+          photoURL: profilePic
+        }
+        await db.collection('utentiApp').doc(user.uid).set(userToDB);
+        return {
+          type: "register_apple",
+          userid: user.uid,
+          nomecognome: userNomeCognome !== undefined ? userNomeCognome : "",
+          email: email,
+        };
+      }
+    } else {
+      console.log("errore A.....", identityToken)
+      return { type: "error", message: "login con Apple ERRORE" }
+    }
+  } catch ({ message }) {
+    console.log("login A annullato", message)
+    return { type: "error", message: "login con Apple annullato" }
   }
 }
 

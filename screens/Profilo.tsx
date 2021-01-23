@@ -53,7 +53,7 @@ const Profilo = ({
 }: ProfiloProps) => {
 
   //const [isOn, setIson] = React.useState(false);
-  const { user, setUser } = React.useContext(AuthUserContext);
+  const { user } = React.useContext(AuthUserContext);
 
   const [name, setName] = React.useState(undefined);
   const [email, setEmail] = React.useState(undefined);
@@ -181,20 +181,18 @@ const Profilo = ({
   }
 
   const RenderHeader = () => {
-    if (name && photoUrl)
-      return (
-        <View style={styles.mainHeader}>
-          <View style={styles.mainHeaderRow}>
-            <BackIcon width={20} height={20} style={{ position: "absolute", left: 25 }} onPress={() => { navigation.goBack() }} color={Colors.light.nero} />
-            <View style={{
-            }}>
-              <Image source={{ uri: photoUrl }} style={styles.headerImage} />
-              <BaseText weight={800} size={22} styles={styles.headerName}>{`Ciao ${name.substring(0, 8)}!`}</BaseText>
-            </View>
+    // console.log("--user", { photoUrl, name })
+    return (
+      <View style={styles.mainHeader}>
+        <View style={styles.mainHeaderRow}>
+          <BackIcon width={20} height={20} style={{ position: "absolute", left: 25 }} onPress={() => { navigation.goBack() }} color={Colors.light.nero} />
+          <View>
+            {photoUrl && <Image source={{ uri: photoUrl }} style={styles.headerImage} />}
+            <BaseText weight={800} size={22} styles={styles.headerName}>{`${name ? "Ciao " + name.substring(0, 8) + "!" : ""}`}</BaseText>
           </View>
         </View>
-      )
-    return <></>
+      </View>
+    )
   }
 
   const Item = ({ data, index }) => {
@@ -243,7 +241,7 @@ const Profilo = ({
       getPhone(user.uid);
     }
 
-  }, []);
+  }, [user]);
 
   return (
     <View style={styles.container}>

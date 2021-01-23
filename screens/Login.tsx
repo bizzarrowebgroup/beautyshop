@@ -7,7 +7,7 @@ import Form from '../components/Form/Form';
 import FormField from '../components/Form/FormField';
 import FormButton from '../components/Form/FormButton';
 // import IconButton from '../components/IconButton';
-import { loginWithEmail, logInWithFacebook, loginWithGoogle } from '../network/Firebase';
+import { loginWithApple, loginWithEmail, logInWithFacebook, loginWithGoogle } from '../network/Firebase';
 import FormErrorMessage from '../components/Form/FormErrorMessage';
 import Loader from '../components/Loader';
 import BaseText from '../components/StyledText';
@@ -135,12 +135,34 @@ const Login = ({ navigation }) => {
       console.log(error, "error")
     }
   }
-  // old
-  //if (loading) {
-  //  return (
-  //    <Loader color={Colors.light.bianco} size={"large"} animating={true} />
-  //  )
-  //}
+
+  async function handleAppleLogin() {
+    setLoadingA(true)
+    try {
+      await loginWithApple().then((id) => {
+        //console.log("id", id)
+        if (id !== undefined) {
+          if (id.type == 'login_apple' && !id.toBecompleted) {
+            navigation.goBack();
+            showToast("LOGIN CON APPLE", "Sei riuscito ad entrare con successo", "success", "bottom", 2000);
+          } else if (id.type == 'login_apple' && id.toBecompleted) {
+            navigation.navigate("CompleteSocial", { userid: id.userid, nomecognome: id.nomecognome, email: id.email })
+          } else if (id.type == "register_apple") {
+            navigation.navigate("CompleteSocial", { userid: id.userid, nomecognome: id.nomecognome, email: id.email })
+          } else if (id.type == 'error') {
+            showToast("LOGIN CON APPLE", id.message, "error", "bottom", 4000);
+          }
+        } else {
+          showToast("LOGIN CON APPLE", "errore nel login", "error", "bottom", 4000);
+        }
+        setLoadingA(false)
+      });
+    } catch (error) {
+      setLoadingA(false)
+      setLoginError(error.message);
+      console.log(error, "error")
+    }
+  }
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="white" barStyle="dark-content" />
@@ -151,7 +173,7 @@ const Login = ({ navigation }) => {
           { opacity: VideOpacity }
         ]}
       >
-        <Video
+        {/* <Video
           isLooping
           isMuted
           positionMillis={500}
@@ -166,7 +188,7 @@ const Login = ({ navigation }) => {
           //source={{ uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
           source={{ uri: 'https://ingass.space/images/bohdd.mp4' }}
           style={{ flex: 1, backgroundColor: Colors.light.nero }}
-        />
+        /> */}
       </Animated.View>
       {/*<View style={styles.overlay}>*/}
       {/*<View style={{ marginTop: 140, paddingHorizontal: 25 }}>*/}
@@ -185,13 +207,13 @@ const Login = ({ navigation }) => {
           }} />
           <BaseText styles={{ textAlign: "center" }} size={24} lineHeight={30} weight={700} letterSpacing={0.7} color={Colors.light.bianco}>{"Entra a far parte\ndel mondo del beauty"}</BaseText>
           <BaseText styles={{ textAlign: "center" }} size={12} lineHeight={22} letterSpacing={0.77} color={Colors.light.grigio}>{"Prenota facilmente ovunque ti trovi"}</BaseText>
-          {/*<TouchableOpacity onPress={() => { }} style={[styles.btn, { backgroundColor: Colors.light.nero }]}>
+          <TouchableOpacity onPress={() => handleAppleLogin()} style={[styles.btn, { backgroundColor: Colors.light.nero }]}>
             {!loadingApple && (<View style={styles.btnInside}>
               <IconFooterSocial type="apple" width={24} height={24} color={Colors.light.bianco} style={{ alignSelf: "center", marginRight: 20 }} />
               <BaseText size={13} weight={700} letterSpacing={0.77} color={Colors.light.bianco}>{"Accedi con Apple"} </BaseText>
             </View>)}
             {loadingApple && (<ActivityIndicator size="large" color={Colors.light.bianco} style={{ alignSelf: "center", flex: 1 }} />)}
-          </TouchableOpacity>*/}
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => handleGoogleLogin()} style={[styles.btn, { backgroundColor: Colors.light.bianco }]}>
             {!loadingGoogle && (
               <View style={styles.btnInside}>
@@ -234,18 +256,18 @@ const Login = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.nero,
+    backgroundColor: Colors.light.ARANCIO,
   },
   background: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: Colors.light.nero,
+    backgroundColor: Colors.light.ARANCIO,
   },
   backgroundViewWrapper: {
     ...StyleSheet.absoluteFillObject
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: 'rgba(0,0,0,0)', // 0.3
     alignItems: "center",
     justifyContent: "center"
   },

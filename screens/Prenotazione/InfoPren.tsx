@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { StatusBar } from 'expo-status-bar';
 import BaseText from "../../components/StyledText";
 import Colors from "../../constants/Colors";
+
 import moment from 'moment';
 // import { CommonActions } from "@react-navigation/native";
 // import { AppContext } from '../../context/Appcontext';
@@ -58,6 +59,18 @@ const InfoPren = ({ route, navigation }) => {
             realStatusColor = "#CA1E13";
             break;
     }
+
+    const shareIg = () => {
+        try {
+            // Share.shareSingle({
+            //     method: Share.InstagramStories.SHARE_BACKGROUND_IMAGE,
+            //     backgroundImage: "https://images.unsplash.com/photo-1554774853-719586f82d77?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80", // url of the file to share
+            //     social: Share.Social.INSTAGRAM_STORIES,
+            // })
+        } catch (error) {
+            console.log("--errr", error)
+        }
+    }
     return (
         <View style={styles.animationContainer}>
             <StatusBar style={"dark"} />
@@ -91,6 +104,9 @@ const InfoPren = ({ route, navigation }) => {
                     <BaseText>{"Orario"}</BaseText>
                     <BaseText weight={700}>{prenotazione.slot_time}</BaseText>
                 </View>
+                {/* <TouchableOpacity onPress={() => shareIg()} style={[styles.boxInfo, { backgroundColor: Colors.light.bianco }]}>
+                    <BaseText>{"Condividi su Instagram"}</BaseText>
+                </TouchableOpacity> */}
             </View>
             <View
                 style={{
