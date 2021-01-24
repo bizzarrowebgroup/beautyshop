@@ -104,20 +104,23 @@ function App() {
 
   // const [lang, setLang] = useState("it");
   useEffect(() => {
-    Instabug.setLocale(Instabug.locale.italian);
-    Instabug.setWelcomeMessageMode(Instabug.welcomeMessageMode.beta) // For beta testers
-    Surveys.setShouldShowWelcomeScreen(true);
+    console.log("__DEV__", __DEV__)
+    if (__DEV__ === false) {
+      Instabug.setLocale(Instabug.locale.italian);
+      Surveys.setShouldShowWelcomeScreen(true);
+      Instabug.setWelcomeMessageMode(Instabug.welcomeMessageMode.live) // For live users
+      // Instabug.setWelcomeMessageMode(Instabug.welcomeMessageMode.beta) // For beta testers
+      // Instabug.setWelcomeMessageMode(Instabug.welcomeMessageMode.disabled) // Disable welcome message
 
-    // Instabug.setWelcomeMessageMode(Instabug.welcomeMessageMode.live) // For live users
-    // Instabug.setWelcomeMessageMode(Instabug.welcomeMessageMode.disabled) // Disable welcome message
+      // Instabug.isRunningLive((isLive) => {
+      // if (isLive) {
+      Instabug.startWithToken('a76401d7b38130efe962e84ad540da48', [Instabug.invocationEvent.shake]);
+      // } else {
+      // Instabug.startWithToken('aa8227dafbd16f944712ffd9aae2af7d', [Instabug.invocationEvent.shake]);
+      // }
+      // });
 
-    Instabug.isRunningLive((isLive) => {
-      if (isLive) {
-        Instabug.startWithToken('a76401d7b38130efe962e84ad540da48', [Instabug.invocationEvent.shake]);
-      } else {
-        Instabug.startWithToken('aa8227dafbd16f944712ffd9aae2af7d', [Instabug.invocationEvent.shake]);
-      }
-    });
+    }
   })
 
   const showToast = (header, message, type = 'error', pos = 'top', duration = 1500) => {
@@ -154,8 +157,8 @@ function App() {
   return (
     <SafeAreaProvider>
       <AuthUserProvider>
-        <AppOfflineNotice />
         <AppContext.Provider value={context}>
+          <AppOfflineNotice />
           <Navigation colorScheme={colorScheme} />
           <Toast
             ref={errorToast}

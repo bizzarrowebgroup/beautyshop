@@ -53,7 +53,7 @@ const Profilo = ({
 }: ProfiloProps) => {
 
   //const [isOn, setIson] = React.useState(false);
-  const { user } = React.useContext(AuthUserContext);
+  const { user, setUser } = React.useContext(AuthUserContext);
 
   const [name, setName] = React.useState(undefined);
   const [email, setEmail] = React.useState(undefined);
@@ -74,6 +74,7 @@ const Profilo = ({
       setPhone(data.phone);
     });
   }
+  
   const sections = [
     {
       title: "",
@@ -175,6 +176,7 @@ const Profilo = ({
     console.log("presed")
     try {
       await logout();
+      setUser(undefined);
       navigation.goBack();
     } catch (error) {
       console.log(error);

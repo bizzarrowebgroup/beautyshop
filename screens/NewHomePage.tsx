@@ -139,7 +139,7 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
     setCurrentUser,
     prenotazione
   } = useContext(AppContext);
-  const { user, setUser } = useContext(AuthUserContext);
+  const { user } = useContext(AuthUserContext);
   //let profileRef = null;
   const profileRefanimation = React.useRef(undefined);
   const [isLoading, setIsLoading] = useState(false);
@@ -152,11 +152,11 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
   const [refreshing, setRefreshing] = useState(false);
   const [prenotazioni, setPrenotazioni] = useState(undefined);
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    loading();
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
+  // const onRefresh = React.useCallback(() => {
+  //   setRefreshing(true);
+  //   loading();
+  //   wait(2000).then(() => setRefreshing(false));
+  // }, []);
   const getUserId = async () => {
     //get a unique key
     //console.log("---getUserId[called]---")
@@ -254,11 +254,8 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
     }
   }
   React.useEffect(() => {
-    // setTimeout(() => {
-    //     setModal(!modalShow);
-    // }, 5000);
     loading()
-  }, [user, userDocId]);
+  }, [user]);
 
   // function sortFunction(a, b) {
   //   var dateA = new Date(a.slot_date).getTime();
@@ -300,18 +297,12 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
         getUserId();
         //getFavorites();
       }
-      if (prenotazione) {
-        // console.log("--home pren--", JSON.stringify(prenotazion, null, 2))
-        // setPrenotazioni(prenotazione)
-      }
+      checkPrenotazioni()
     });
     if (prenotazione) {
       console.log("--home pren--", JSON.stringify(prenotazione, null, 2))
-      // setPrenotazioni(prenotazione)
     }
     checkPrenotazioni()
-    //UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
-    //if (profileRefanimation) profileRefanimation.current.play();
   }, []);
 
   const checkNewPrenotazioni = async (observer) => {
@@ -336,6 +327,8 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
             }
           });
         });
+    } else {
+      setPrenotazioni(undefined);
     }
   }
   useEffect(() => {
@@ -345,8 +338,7 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
       // Clean up the subscription
       if (observer !== undefined) observer();
     };
-
-  }, [])
+  }, [user])
 
   const renderCards = (item, index) => {
     let { title, stars, via, desc, mainPhoto, economy, id } = item;
@@ -806,22 +798,23 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
                 <BaseText weight={700} styles={{ marginHorizontal: 20, marginVertical: 10 }} size={15}>{"Ultime prenotazioni"}</BaseText>
                 <ScrollView horizontal contentContainerStyle={{ marginHorizontal: 20, paddingRight: 30 }} showsHorizontalScrollIndicator={false}>
                   {prenotazioni.map((item) => {
+                    let color = [Colors.light.ARANCIO, Colors.light.ARANCIO]
                     // 0 DEFAULT CONFERMATA
-                    let color = ['#CB860B', '#daaa54'];
-                    switch (item.state) {
-                      case 1:
-                        // ACCETTATA
-                        color = ['#00C537', '#32d05e'];
-                        break;
-                      case 2:
-                        // FINITA
-                        color = [Colors.light.ARANCIO, '#FC9975'];
-                        break;
-                      case 3:
-                        // ANNULATA
-                        color = ['#CA1E13', '#d96159'];
-                        break;
-                    }
+                    // let color = ['#CB860B', '#daaa54'];
+                    // switch (item.state) {
+                    //   case 1:
+                    //     // ACCETTATA
+                    //     color = ['#00C537', '#32d05e'];
+                    //     break;
+                    //   case 2:
+                    //     // FINITA
+                    //     color = [Colors.light.ARANCIO, '#FC9975'];
+                    //     break;
+                    //   case 3:
+                    //     // ANNULATA
+                    //     color = ['#CA1E13', '#d96159'];
+                    //     break;
+                    // }
                     return (
                       <LinearGradient
                         colors={color}

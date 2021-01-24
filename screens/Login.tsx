@@ -7,12 +7,13 @@ import Form from '../components/Form/Form';
 import FormField from '../components/Form/FormField';
 import FormButton from '../components/Form/FormButton';
 // import IconButton from '../components/IconButton';
-import { loginWithApple, loginWithEmail, logInWithFacebook, loginWithGoogle } from '../network/Firebase';
+import { auth, loginWithApple, loginWithEmail, logInWithFacebook, loginWithGoogle } from '../network/Firebase';
 import FormErrorMessage from '../components/Form/FormErrorMessage';
 import Loader from '../components/Loader';
 import BaseText from '../components/StyledText';
 import IconFooterSocial from '../components/svg/IconFooterSocial';
 import { AppContext } from '../context/Appcontext';
+import { AuthUserContext } from '../navigation/AuthUserProvider';
 // import useStatusBar from '../hooks/useStatusBar';
 
 const validationSchema = Yup.object().shape({
@@ -27,6 +28,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const Login = ({ navigation }) => {
+  const { setUser } = useContext(AuthUserContext);
   const { showToast } = useContext(AppContext);
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [rightIcon, setRightIcon] = useState('eye');
@@ -73,7 +75,7 @@ const Login = ({ navigation }) => {
       //  setLoading(false);
       //});
       await logInWithFacebook().then((id) => {
-        console.log("id", id)
+        // console.log("id", id)
         if (id !== undefined) {
 
           // check se è login social
@@ -81,7 +83,8 @@ const Login = ({ navigation }) => {
             // check se è registrazione social
             // id.userid
             // se registrazione mando l'utente alla complete screen 
-            console.log("---LOGIN OK---", id)
+            // console.log("---LOGIN OK---", id)
+            if (auth.currentUser) setUser(auth.currentUser)
             navigation.goBack();
             showToast("LOGIN CON FACEBOOK", "Sei riuscito ad entrare con successo", "success", "bottom", 2000);
           } else if (id.type == 'login_facebook' && id.toBecompleted) {
@@ -115,6 +118,7 @@ const Login = ({ navigation }) => {
         //console.log("id", id)
         if (id !== undefined) {
           if (id.type == 'login_google' && !id.toBecompleted) {
+            if (auth.currentUser) setUser(auth.currentUser)
             navigation.goBack();
             showToast("LOGIN CON GOOGLE", "Sei riuscito ad entrare con successo", "success", "bottom", 2000);
           } else if (id.type == 'login_google' && id.toBecompleted) {
@@ -143,6 +147,7 @@ const Login = ({ navigation }) => {
         //console.log("id", id)
         if (id !== undefined) {
           if (id.type == 'login_apple' && !id.toBecompleted) {
+            if (auth.currentUser) setUser(auth.currentUser)
             navigation.goBack();
             showToast("LOGIN CON APPLE", "Sei riuscito ad entrare con successo", "success", "bottom", 2000);
           } else if (id.type == 'login_apple' && id.toBecompleted) {
