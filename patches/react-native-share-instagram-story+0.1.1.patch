@@ -1,0 +1,147 @@
+diff --git a/node_modules/react-native-share-instagram-story/android/src/main/java/com/reactnativeshareinstagramstory/ShareInstagramStoryModule.java b/node_modules/react-native-share-instagram-story/android/src/main/java/com/reactnativeshareinstagramstory/ShareInstagramStoryModule.java
+index 9a69642..0428c0f 100644
+--- a/node_modules/react-native-share-instagram-story/android/src/main/java/com/reactnativeshareinstagramstory/ShareInstagramStoryModule.java
++++ b/node_modules/react-native-share-instagram-story/android/src/main/java/com/reactnativeshareinstagramstory/ShareInstagramStoryModule.java
+@@ -1,6 +1,5 @@
+ package com.reactnativeshareinstagramstory;
+ 
+-
+ import com.facebook.react.bridge.NativeModule;
+ import com.facebook.react.bridge.ReactApplicationContext;
+ import com.facebook.react.bridge.ReactContext;
+@@ -18,7 +17,6 @@ import java.util.HashMap;
+ 
+ public class ShareInstagramStoryModule  extends ReactContextBaseJavaModule {
+ 
+-
+   public static final String NOT_INSTALLED = "Not installed";
+   public static final String INTERNAL_ERROR = "Data conversion failed";
+   public static final String NO_BASE64_IMAGE = "No base64 image";
+@@ -30,17 +28,17 @@ public class ShareInstagramStoryModule  extends ReactContextBaseJavaModule {
+   private static final String E_PICKER_CANCELLED = "E_PICKER_CANCELLED";
+   private static final String E_FAILED_TO_SHOW_PICKER = "E_FAILED_TO_SHOW_PICKER";
+   private static final String E_NO_IMAGE_DATA_FOUND = "E_NO_IMAGE_DATA_FOUND";
+- private Promise mPickerPromise;
+- public ShareInstagramStoryModule(ReactApplicationContext reactContext) {
+-    super(reactContext);
++  private Promise mPickerPromise;
++  public ShareInstagramStoryModule(ReactApplicationContext reactContext) {
++      super(reactContext);
+   }
+ 
+-     @Override
++  @Override
+   public String getName() {
+         return "ShareInstagramStory";
+-    }
++  }
+ 
+-    @Override
++  @Override
+   public Map<String, Object> getConstants() {
+     final Map<String, Object> constants = new HashMap<>();
+     constants.put(NOT_INSTALLED, NOT_INSTALLED);
+@@ -62,18 +60,16 @@ public class ShareInstagramStoryModule  extends ReactContextBaseJavaModule {
+     // Store the promise to resolve/reject when picker returns data
+     mPickerPromise = promise;
+ 
++    final Intent galleryIntent = new Intent("com.instagram.share.ADD_TO_STORY");
++    Uri backgroundAssetUri = Uri.parse(uri);
++    galleryIntent.putExtra("source_application", "com.appchoose.choose.android");
+ 
+-      final Intent galleryIntent = new Intent("com.instagram.share.ADD_TO_STORY");
+-Uri backgroundAssetUri = Uri.parse(uri);
+-galleryIntent.putExtra("source_application", "com.appchoose.choose.android");
+-
+-      galleryIntent.setDataAndType(backgroundAssetUri,"video/*");
+-galleryIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+-galleryIntent.putExtra("content_url", attributionLinkUrl);
+-      final Intent chooserIntent = Intent.createChooser(galleryIntent, "Pick an image");
+-
++    galleryIntent.setDataAndType(backgroundAssetUri,"video/*");
++    galleryIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
++    galleryIntent.putExtra("content_url", attributionLinkUrl);
++    final Intent chooserIntent = Intent.createChooser(galleryIntent, "Pick an image");
+ 
+- try {
++    try {
+       currentActivity.startActivityForResult(chooserIntent, 0);
+     } catch (Exception e) {
+       mPickerPromise.resolve(e.getMessage());
+diff --git a/node_modules/react-native-share-instagram-story/ios/ShareInstagramStory.m b/node_modules/react-native-share-instagram-story/ios/ShareInstagramStory.m
+index 86740b3..c474814 100644
+--- a/node_modules/react-native-share-instagram-story/ios/ShareInstagramStory.m
++++ b/node_modules/react-native-share-instagram-story/ios/ShareInstagramStory.m
+@@ -9,29 +9,38 @@ - (dispatch_queue_t)methodQueue
+   return dispatch_queue_create("com.appchoose.choose.ShareInstagram", DISPATCH_QUEUE_SERIAL);
+ }
+ 
+-RCT_EXPORT_METHOD(shareBackgroundVideo:(NSString *)attributionURL appID:(NSString *)appID url:(NSString *)url shareBackgroundVideoWithResolver:(RCTPromiseResolveBlock)resolve
+-                 rejecter:(RCTPromiseRejectBlock)reject)
++RCT_EXPORT_METHOD(
++   shareBackgroundVideo:(NSString *)attributionURL 
++   appID:(NSString *)appID 
++   url:(NSString *)url 
++   shareBackgroundVideoWithResolver:(RCTPromiseResolveBlock)resolve
++   rejecter:(RCTPromiseRejectBlock)reject
++)
+ {
+    @try{
+       dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+-    NSData *const backgroundVideoData = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+-
+-
+-   NSURL *urlScheme = [NSURL URLWithString:@"instagram-stories://share?source_application=com.appchoose.choose.android"];
+-
+-    if ([[UIApplication sharedApplication] canOpenURL:urlScheme]) {
+-        NSArray *pasteboardItems = @[@{@"com.instagram.sharedSticker.backgroundVideo" : backgroundVideoData,
+-                                       @"com.instagram.sharedSticker.contentURL" : attributionURL,
+-                                       @"com.instagram.sharedSticker.appID" : appID}];
+-        NSDictionary *pasteboardOptions = @{UIPasteboardOptionExpirationDate : [[NSDate date] dateByAddingTimeInterval:60 * 5]};
+-
+-        [[UIPasteboard generalPasteboard] setItems:pasteboardItems options:pasteboardOptions];
+-        [[UIApplication sharedApplication] openURL:urlScheme options:@{} completionHandler:nil];
+-         resolve(@"ok");
+-    } else {
+-       resolve(@"cannot open");
+-    }
+-    });
++      // NSData *const backgroundVideoData = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
++      NSData *const backgroundImage = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
++
++      // NSURL *urlScheme = [NSURL URLWithString:@"instagram-stories://share?source_application=com.appchoose.choose.android"];
++      NSURL *urlScheme = [NSURL URLWithString:@"instagram-stories://share?source_application=it.bizzarro.beautyshop"];
++
++      if ([[UIApplication sharedApplication] canOpenURL:urlScheme]) {
++         // NSArray *pasteboardItems = @[@{
++         //    @"com.instagram.sharedSticker.backgroundVideo" : backgroundVideoData,
++         //    @"com.instagram.sharedSticker.contentURL" : attributionURL,
++         //    @"com.instagram.sharedSticker.appID" : appID
++         // }];
++         NSArray *pasteboardItems = @[@{@"com.instagram.sharedSticker.backgroundImage" : backgroundImage}];
++         NSDictionary *pasteboardOptions = @{UIPasteboardOptionExpirationDate : [[NSDate date] dateByAddingTimeInterval:60 * 5]};
++
++         [[UIPasteboard generalPasteboard] setItems:pasteboardItems options:pasteboardOptions];
++         [[UIApplication sharedApplication] openURL:urlScheme options:@{} completionHandler:nil];
++            resolve(@"ok");
++      } else {
++         resolve(@"cannot open");
++      }
++   });
+ 
+  }
+   @catch(NSException *exception){
+diff --git a/node_modules/react-native-share-instagram-story/react-native-share-instagram-story.podspec b/node_modules/react-native-share-instagram-story/react-native-share-instagram-story.podspec
+index 97b95b5..d97e909 100644
+--- a/node_modules/react-native-share-instagram-story/react-native-share-instagram-story.podspec
++++ b/node_modules/react-native-share-instagram-story/react-native-share-instagram-story.podspec
+@@ -13,9 +13,7 @@ Pod::Spec.new do |s|
+   s.platforms    = { :ios => "10.0" }
+   s.source       = { :git => "https://github.com/chooseapp/react-native-share-instagram-story.git", :tag => "#{s.version}" }
+ 
+-
+   s.source_files = "ios/**/*.{h,m,mm}"
+ 
+-
+   s.dependency "React"
+ end
