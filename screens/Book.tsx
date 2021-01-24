@@ -5,9 +5,10 @@ import {
   TextInput,
   View,
   StyleSheet,
-  SafeAreaView,
   TouchableWithoutFeedback, ScrollView
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import Colors from '../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 interface BookProps {

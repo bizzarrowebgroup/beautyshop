@@ -1,6 +1,9 @@
-import { Profile } from "../models/Profile";
 import moment from "moment-timezone";
+import { Dimensions } from "react-native";
 import { UserProfile } from "../models/UserProfile";
+import { Profile } from "../models/Profile";
+
+export const { width, height } = Dimensions.get('window');
 
 export const getDateNow = (): string => {
     return new Date().toISOString();
@@ -35,6 +38,12 @@ export const sortUserProfilesAlphabetically = (userProfiles: UserProfile[]): Use
 };
 
 export const somma = (arr, prop, withExt = true) => {
-  const base = arr.reduce((a, b) => +a + +b[prop], 0).toFixed(2);
-  return withExt ? base + " €" : base;
+    const base = arr.reduce((a, b) => +a + +b[prop], 0).toFixed(2);
+    return withExt ? base + " €" : base;
 }
+
+export const wait = timeout => {
+    return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+    });
+};

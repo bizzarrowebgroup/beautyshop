@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
 import {
-  SafeAreaView,
   Keyboard,
   StyleSheet,
   KeyboardAvoidingView,
@@ -10,6 +9,7 @@ import {
   Alert,
   ActivityIndicator
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 //import { registerWithEmail } from '../network/Firebase';
 import Colors from '../constants/Colors';

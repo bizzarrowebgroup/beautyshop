@@ -1,19 +1,19 @@
 import * as React from 'react';
 import {
   Image,
-  Text,
+  // Text,
   View,
-  StatusBar,
+  // StatusBar,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
+  // ScrollView,
+  // SafeAreaView,
   SectionList,
-  Linking
+  // Linking
 } from 'react-native';
-import Header from '../components/Header';
+// import Header from '../components/Header';
 import Colors from '../constants/Colors';
-import { Ionicons } from '@expo/vector-icons';
+// import { Ionicons } from '@expo/vector-icons';
 import { logout, db } from '../network/Firebase';
 import { Feather as Icon } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -25,7 +25,7 @@ import BackIcon from '../components/svg/BackIcon';
 import DeviceInfo from 'react-native-device-info';
 
 // import Constants from "expo-constants";
-import { backgroundImage } from './Commerciante/HeaderImage';
+// import { backgroundImage } from './Commerciante/HeaderImage';
 
 interface ProfiloProps {
   example?: "test" | "amen";
@@ -180,10 +180,10 @@ const Profilo = ({
   ];
 
   async function handleSignOut() {
-    console.log("presed")
+    // console.log("presed")
     try {
       await logout();
-      setUser(undefined);
+      setUser(null);
       navigation.goBack();
     } catch (error) {
       console.log(error);

@@ -30,33 +30,14 @@ const EditProfile = ({ navigation }) => {
   const onPressEditRowsInfo = (type) => {
     switch (type) {
       case 0:
-
         break;
       case 1:
         navigation.navigate("EditEmail");
         break;
       case 2:
-
         break;
     }
-    //navigation.navigate("")
   }
-  /**
-    * 
-    "cookie": false,
-    "displayName": "Jonathan Derewith Canevese",
-    "email": "Test@live.it",
-    "loyalitypoints": 150,
-    "newsletter": false,
-    "notificationToken": "",
-    "notificationsEnabled": false,
-    "phone": "25104",
-    "photoURL": "https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=3850142288329920&height=200&width=200&ext=1608160891&hash=AeQ5tSz9VMTsM9ZUtjs",
-    "privacy": true,
-    "pwd": "",
-    "toBecompleted": false,
-    "userId": "A3chZohI5QY4uj4bVBp2JAqolWH2",
-   */
   const { photoURL, phone, displayName, email } = currentUser;
   return (
     <View>

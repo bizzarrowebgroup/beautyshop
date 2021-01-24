@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useContext } from 'react';
-import { StatusBar, Animated, StyleSheet, TouchableOpacity, ScrollView, View, Image, SafeAreaView, ActivityIndicator } from 'react-native';
+import { StatusBar, Animated, StyleSheet, TouchableOpacity, ScrollView, View, Image, ActivityIndicator } from 'react-native';
 import * as Yup from 'yup';
 import Colors from '../constants/Colors';
 import { Video } from 'expo-av';
@@ -15,6 +15,7 @@ import IconFooterSocial from '../components/svg/IconFooterSocial';
 import { AppContext } from '../context/Appcontext';
 import { AuthUserContext } from '../navigation/AuthUserProvider';
 // import useStatusBar from '../hooks/useStatusBar';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()

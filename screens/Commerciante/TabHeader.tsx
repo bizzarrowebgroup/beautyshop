@@ -11,7 +11,7 @@ import Animated, {
   set,
   useCode,
 } from "react-native-reanimated";
-import MaskedView from "@react-native-community/masked-view";
+// import MaskedView from "@react-native-community/masked-view";
 import { withTransition } from "react-native-redash";
 
 import Tabs from "./Tabs";
@@ -118,7 +118,7 @@ export default ({ transition, y, tabs, scrollView }: TabHeaderProps) => {
         </View>
         {Platform.OS === "ios" && (
           // see https://github.com/react-native-community/react-native-masked-view/issues/22
-          <MaskedView style={StyleSheet.absoluteFill} maskElement={maskElement}>
+          // <MaskedView style={StyleSheet.absoluteFill} maskElement={maskElement}>
             <Animated.View
               style={{
                 ...StyleSheet.absoluteFillObject,
@@ -137,7 +137,7 @@ export default ({ transition, y, tabs, scrollView }: TabHeaderProps) => {
                 {...{ tabs, translateX }}
               />
             </Animated.View>
-          </MaskedView>
+          // </MaskedView>
         )}
       </Animated.View>
     );

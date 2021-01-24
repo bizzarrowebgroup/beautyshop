@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import moment from 'moment';
-import { Ionicons } from '@expo/vector-icons';
-import CalendarPicker from 'react-native-calendar-picker';
+// import { Ionicons } from '@expo/vector-icons';
+// import CalendarPicker from 'react-native-calendar-picker';
 // CONTENTX
 import { AuthUserContext } from '../navigation/AuthUserProvider';
 // COMPONENTS
@@ -13,310 +13,159 @@ import Colors from '../constants/Colors';
 import NoFavorites from '../components/svg/NoFavorites';
 import BaseText from '../components/StyledText';
 import { db, dbVal } from '../network/Firebase';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-interface PrenotazioniProps {
-  navigation?: any;
-}
 
-const Prenotazioni = (props: PrenotazioniProps) => {
+const Prenotazioni = ({ navigation }) => {
   const [selectedType, setselectedType] = React.useState(true);
   const [selectedStartDate, setStartDate] = React.useState(null);
   const { user, setUser } = React.useContext(AuthUserContext);
   const [prenotazioniFatte, setPrenotazioniFatte] = React.useState(undefined);
 
-  const onDateChange = (date) => {
-    setStartDate(date);
-  }
-  React.useEffect(() => {
-    //moment.updateLocale('it', localization);
-    //loadScreen()
-  }, []);
-  React.useEffect(() => {
+  useEffect(() => {
     loadScreen()
   }, []);
 
   const loadScreen = async () => {
     if (user) {
-      let prenotazioni = await checkPrenotazioni(user);
-      //console.log("--PREN OTTENUTE", prenotazioni);
-      let finalPrenotazioni = await editPrenotazioni(prenotazioni)
-      //console.log("--FINALI OTTENUTE", finalPrenotazioni);
-      //  "commercianteId": "HHCFptUM91FqhMq2INjE",
-      //"id": undefined,
-      //"notes": "Prova note ",
-      //"serviceId": "TkCtPKg8qdSTLAIp9JrO",
-      //"slot_date": "Sat Oct 24 2020 12:00:00 GMT+0200",
-      //"slot_end_time": "09:30",
-      //"slot_time": "09:00",
-      //"state": 0,
-      //"userId": "cZwX2TifjefsQInUkPq89O3wmiP2",
-      //data: moment().add(3, 'day').format("LLLL"),
-      //      oraInizio: moment().add(3, 'day').format("LT"),
-      //      oraFine: moment().add(3, 'day').add(30, 'm').format("LT"),
-      //      servizio: "Lavaggio + Taglio + Piega",
-      //      oper: "Marika",
-      //      salon: "Salone Le Noir",
-      //      inRitardo: false
-      //          data,
-      //          oraInizio,
-      //          oraFine,
-      //          servizio,
-      //          oper,
-      //          salon,
-      //          inRitardo
-      setPrenotazioniFatte(finalPrenotazioni);
-    }
-  }
-
-  const editPrenotazioni = async (prenotazioni) => {
-    return new Promise(async (resolve, reject) => {
-      if (prenotazioni) {
-        await prenotazioni.forEach(async (prenotazione) => {
-          let dbServizi = await db.collection('servizicommercianti').where(dbVal.FieldPath.documentId(), "==", prenotazione.serviceId).get();
-          dbServizi.forEach(servizio => {
-            let dataServizio = servizio.data();
-            //console.log("--dataServizio--", dataServizio)
-            //console.log("--prenotazione--", prenotazione)
-            prenotazione.serviceTitle = dataServizio.titolo;
-            //console.log("--prenotazione--", prenotazione)
-            //Object.defineProperty(prenotazione, "serviceTitle", {
-            //  value: dataServizio.titolo,
-            //  writable: true,
-            //  enumerable: true,
-            //  configurable: true
-            //});
-          });
-        });
-        console.log("EDITED PREN", prenotazioni)
-        resolve(prenotazioni);
-      } else {
-        resolve(undefined)
-      }
-    })
-  }
-
-  const checkPrenotazioni = async (user) => {
-    return new Promise(async (resolve, reject) => {
-      let dbPren = await db.collection('prenotazioni').get();
+      let dbPren = await db.collection('prenotazioni').orderBy('pren_date', 'desc').get();
       if (!dbPren.empty) {
         let finalpreno = [];
         dbPren.forEach(item => {
           let data = item.data();
-          if (data.userId == user.uid) {
-            finalpreno.push({ id: item.id, ...data });
-          }
+          finalpreno.push({ id: item.id, ...data });
         })
-        resolve(finalpreno)
-      } else {
-        console.log("non ci sono PRENOTAZIONI, proseguo con undefined");
-        resolve(undefined)
+        finalpreno = finalpreno.filter(i => i.userId === user.uid)
+        if (finalpreno && finalpreno.length > 0) {
+          console.log("---finalpreno---", finalpreno.length);
+          setPrenotazioniFatte(finalpreno)
+        }
       }
-    })
+    }
+  }
+
+  const checkNewPrenotazioni = async (observer) => {
+    if (user) {
+      return observer = db.collection('prenotazioni').where('userId', '==', user.uid)
+        .onSnapshot(querySnapshot => {
+          querySnapshot.docChanges().forEach(change => {
+            if (change.type === 'modified') {
+              loadScreen()
+            }
+            if (change.type === 'removed') {
+              loadScreen()
+            }
+          });
+        });
+    } else {
+      setPrenotazioniFatte(undefined);
+    }
+  }
+
+  useEffect(() => {
+    let observer = undefined;
+    checkNewPrenotazioni(observer);
+    return () => {
+      if (observer !== undefined) observer();
+    };
+  }, [user])
+
+  const renderItem = ({ item }) => {
+    // DEFAULT CONFERMATA
+    let color = '#CB860B', textColor = "black", statusLabel = "Confermata"
+    switch (item.state) {
+      case 1:
+        // ACCETTATA
+        color = '#00C537'
+        statusLabel = "Accettata"
+        break;
+      case 2:
+        // FINITA
+        color = Colors.light.ARANCIO
+        statusLabel = "Finita"
+        break;
+      case 3:
+        // ANNULATA
+        color = '#CA1E13'
+        statusLabel = "Annulata"
+        break;
+    }
+    return (
+      <TouchableOpacity
+        style={{
+          borderRadius: 8,
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          backgroundColor: "#f6f6f6",
+          shadowColor: "black",
+          shadowOffset: {
+            width: 0,
+            height: 1,
+          },
+          shadowRadius: 1.4,
+          shadowOpacity: .3,
+          marginVertical: 10
+        }}
+        key={item.id}
+        onPress={() => { navigation.navigate("InfoPren", { prenotazione: item }) }}>
+        <View style={{ backgroundColor: "transparent", flexDirection: "row", alignContent: "center", alignItems: "center", justifyContent: "flex-start", }}>
+          <BaseText weight={500} color={Colors.light.nero} styles={{ textTransform: "capitalize" }}>{moment(item.slot_date).format("dddd DD MMMM")} | </BaseText>
+          <BaseText weight={500} color={Colors.light.nero}>{item.slot_time}  - </BaseText>
+          <BaseText weight={500} color={Colors.light.nero}>{item.slot_end_time}</BaseText>
+        </View>
+        <BaseText weight={600} color={Colors.light.nero} styles={{ marginVertical: 5 }}>{item.title}</BaseText>
+        <View style={{ flexDirection: "row", justifyContent: 'space-between', alignItems: "center", alignContent: "center", marginTop: 10 }}>
+          <BaseText weight={400} color={Colors.light.nero}>{item.totale + " €"}</BaseText>
+          <View style={{
+            borderColor: color,
+            borderWidth: 1.5,
+            borderRadius: 10,
+            width: 120,
+            height: 25,
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center"
+          }}>
+            <BaseText color={color} size={10} weight={700}>{statusLabel}</BaseText>
+          </View>
+        </View>
+      </TouchableOpacity>
+    )
   }
   console.log("prenotazioniFatte---", prenotazioniFatte)
   return (
-    <View style={styles.container}>
-      <Header hasBack={false} title="I miei Appuntamenti" onPress={() => props.navigation.goBack()} />
-      {user && (
-        <View style={{ borderTopLeftRadius: 40, borderTopRightRadius: 40, top: -50, backgroundColor: Colors.light.bianco }}>
-          {prenotazioniFatte !== undefined ? prenotazioniFatte.length <= 0 : false && (
-            <View style={[styles.switchBox, styles.shadow]}>
-              <TouchableWithoutFeedback onPress={() => setselectedType(!selectedType)}>
-                <View style={{
-                  marginLeft: 10,
-                  width: "50%",
-                  backgroundColor: selectedType ? Colors.light.ARANCIO : Colors.light.GRIGIO,
-                  height: 40,
-                  alignItems: "center",
-                  justifyContent: 'center',
-                  borderTopLeftRadius: 20,
-                  borderBottomLeftRadius: 20,
-                }}>
-                  <BaseText color={selectedType ? Colors.light.GRIGIO : Colors.light.ARANCIO}>{"Nuove"}</BaseText>
-                </View>
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback onPress={() => setselectedType(!selectedType)}>
-                <View style={{
-                  marginRight: 10,
-                  width: "50%",
-                  backgroundColor: selectedType ? Colors.light.GRIGIO : Colors.light.ARANCIO,
-                  height: 40,
-                  alignItems: "center",
-                  justifyContent: 'center',
-                  borderTopRightRadius: 20,
-                  borderBottomRightRadius: 20,
-                }}>
-                  <BaseText color={selectedType ? Colors.light.ARANCIO : Colors.light.GRIGIO}>{"Vecchie"}</BaseText>
-                </View>
-              </TouchableWithoutFeedback>
-            </View>)}
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingBottom: 100,
-              marginVertical: 20,
-              marginHorizontal: 20,
-            }}
-          >
-            {prenotazioniFatte !== undefined && prenotazioniFatte.map((
-              {
-                //  "commercianteId": "HHCFptUM91FqhMq2INjE",
-                //"id": undefined,
-                //"notes": "Prova note ",
-                //"serviceId": "TkCtPKg8qdSTLAIp9JrO",
-                //"slot_date": "Sat Oct 24 2020 12:00:00 GMT+0200",
-                //"slot_end_time": "09:30",
-                //"slot_time": "09:00",
-                //"state": 0,
-                //"userId": "cZwX2TifjefsQInUkPq89O3wmiP2",
-                slot_date,
-                slot_time,
-                slot_end_time,
-                serviceId,
-                serviceTitle,
-                oper,
-                commercianteId,
-                inRitardo
-              }, index) => {
-              console.log("..serviceTitle..", serviceTitle)
-              return (
-                <TouchableOpacity key={index} style={[
-                  {
-                    backgroundColor: "white",
-                    height: 160,
-                    marginBottom: 20,
-                    //marginVertical: 0,
-                    marginHorizontal: 20,
-                    borderRadius: 10,
-                  },
-                  styles.shadow
-                ]}>
-                  <View style={{
-                    backgroundColor: Colors.light.grigio,
-                    height: 50,
-                    alignContent: "center",
-                    alignItems: "flex-start",
-                    justifyContent: "center",
-                    borderTopLeftRadius: 10,
-                    borderTopRightRadius: 10,
-                    paddingLeft: 20,
-                    //paddingTop: 5,
-                  }}>
-                    <BaseText weight={600} color={Colors.light.nero} styles={{ textTransform: "uppercase" }}>{moment(slot_date).format("LLLL").slice(0, -6)}</BaseText>
-                    <BaseText weight={600} color={Colors.light.nero} styles={{ textTransform: "capitalize" }}>{slot_time + " - " + slot_end_time}</BaseText>
-                    {/*<View style={{
-                    position: "absolute",
-                    right: 15,
-                    bottom: 10,
-                    flexDirection: "row",
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    alignContent: 'center',
-                  }}>
-                    <TouchableOpacity>
-                      <Ionicons name="ios-brush" size={25} color={Colors.light.nero} style={{ marginRight: 20 }} />
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                      <Ionicons name="ios-power" size={25} color={Colors.light.nero} />
-                    </TouchableOpacity>
-                  </View>*/}
-                  </View>
-                  <View style={{
-                    flexDirection: "row",
-                  }}>
-                    {/*<View style={{
-                    width: 52,
-                    height: 52,
-                    backgroundColor: index % 2 ? "#656FDF" : "#A9C6E7",
-                    //backgroundColor: index % 2 ? Colors.light.arancioDes : Colors.light.viola,
-                    borderRadius: 26,
-                    justifyContent: "center",
-                    marginLeft: 25,
-                    marginTop: 15
-                  }}>
-                    <Capelli width="15" height="24" style={{ alignSelf: "center" }} color="white" />
-                  </View>*/}
-                    <View style={{ marginLeft: 20, marginTop: 15 }}>
-                      <BaseText size={13}>{serviceTitle !== "" ? serviceTitle : serviceId}</BaseText>
-                      {/*<BaseText size={13}>{"con " + oper}</BaseText>*/}
-                      <BaseText size={10} weight={300}>{"Presso: " + commercianteId}</BaseText>
-                    </View>
-                  </View>
-                  <View style={{ height: .5, opacity: .3, backgroundColor: "black", width: "100%", alignSelf: "center", marginTop: 30 }} />
-                  <View style={{
-                    flexDirection: "row",
-                    position: "absolute",
-                    bottom: 5,
-                    right: 10
-                  }}>
-                    {/*<TouchableOpacity style={{
-                    flexDirection: "row",
-                    alignContent: "center",
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                    <BaseText size={9} styles={{ marginRight: 5 }}>{"Indicazioni"}</BaseText>
-                    <Ionicons name="ios-pin" size={20} color={Colors.light.viola} style={{ marginRight: 20 }} />
-                  </TouchableOpacity>*/}
-                    <View style={{
-                      flexDirection: "row",
-                      alignContent: "center",
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
-                      <BaseText size={9} styles={{ marginRight: 5 }}>{"Vedi i dettagli"}</BaseText>
-                      {/*<Ionicons name="md-return-right" size={20} color={Colors.light.viola} />*/}
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              )
-            }
-            )}
-            {prenotazioniFatte == undefined ? false : prenotazioniFatte.length <= 0 && (
-              <View style={{
-                marginTop: 100,
-                width: "100%",
-                height: 300,
-                paddingHorizontal: 20
-              }}>
-                <BaseText textAlign="center" weight={400} size={15}>{"Non ci sono nuove prenotazioni.\nQui puoi trovare tutte le prenotazioni che sono state confermate dai gestori ed eventuali comunicazioni.\n\nPer aggiungere una nuova prenotazione fai logo di BeautyShop dal menu."}</BaseText>
-                <NoFavorites style={{ bottom: 0 }} />
-              </View>
-            )}
-          </ScrollView>
+    <View style={{ backgroundColor: Colors.light.bianco, flex: 1 }}>
+      <Header hasBack={true} hasTitleHeight={true} title={`I tuoi appuntamenti`} onPress={() => navigation.goBack()} />
+      {/* <View style={{ backgroundColor: Colors.light.ARANCIO, height: 200, position: "absolute", top: 0, left: 0, right: 0 }} /> */}
+      <View style={styles.container}>
+        <View style={styles.contentRows}>
+          {prenotazioniFatte !== undefined && (
+            <FlatList
+              data={prenotazioniFatte}
+              renderItem={renderItem}
+              keyExtractor={item => item.id}
+              style={{ flex: 1, top: 30 }}
+              contentContainerStyle={{ marginHorizontal: 20, }}
+            />
+          )}
         </View>
-      )
-      }
-      {
-        !user && (
-          <ScrollView contentContainerStyle={{
-            marginVertical: 20,
-            marginHorizontal: 20,
-            alignContent: "center",
-            alignItems: "center",
-            justifyContent: "center"
-          }}>
-            <View style={{
-              marginTop: 100,
-              width: "100%",
-              height: 300
-            }}>
-              <BaseText textAlign="center" weight={400} size={15}>{"Non ci sono nuove prenotazioni.\nQui puoi trovare tutte le prenotazioni che sono state confermate dai gestori ed eventuali comunicazioni.\n\nPer aggiungere una nuova prenotazione fai logo di BeautyShop dal menu."}</BaseText>
-              <NoFavorites style={{ bottom: 0 }} />
-            </View>
-          </ScrollView>
-        )
-      }
-    </View >
+      </View>
+    </View>
   );
 };
 
-export default Prenotazioni;
-
 const styles = StyleSheet.create({
   container: {
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    top: -40,
+    backgroundColor: Colors.light.bianco,
     flex: 1,
-    backgroundColor: Colors.light.bianco
+  },
+  contentRows: {
+    // paddingHorizontal: 20,
+    // paddingVertical: 20,
+    flex: 1
   },
   switchBox: {
     flexDirection: "row",
@@ -343,6 +192,8 @@ const styles = StyleSheet.create({
     elevation: 1,
   }
 });
+
+export default Prenotazioni;
 
 {/*
             <View style={{

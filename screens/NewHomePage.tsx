@@ -3,7 +3,6 @@ import {
   TouchableWithoutFeedback,
   Image,
   ImageBackground,
-  // Dimensions,
   Modal,
   ScrollView,
   TouchableOpacity,
@@ -12,58 +11,35 @@ import {
   StyleSheet,
   TextInput,
   StatusBar,
-  // Text,
-  // UIManager,
   LogBox,
   Animated,
-  SafeAreaView
 } from 'react-native';
 import moment from 'moment';
-// import MaskedView from '@react-native-community/masked-view';
-// import Constants from 'expo-constants';
-// import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Carousel from 'react-native-snap-carousel';
 LogBox.ignoreLogs([
   'VirtualizedLists should never be nested'
 ]);
-import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-//import SafeAreaView from 'react-native-safe-area-view';
+import { SafeAreaView, SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppContext } from '../context/Appcontext';
 import { AuthUserContext } from '../navigation/AuthUserProvider';
 
 import { Ionicons } from '@expo/vector-icons';
-// import Desk from '../components/svg/Desk';
-//import Intro2 from '../components/svg/Intro2';
-//import Intro3 from '../components/svg/Intro3';
-//import Intro4 from '../components/svg/Intro4';
-//import RightIcon from '../components/svg/RightIcon';
 
 import { View } from '../components/Themed';
 import Colors from '../constants/Colors';
 
 import { StackScreenProps } from '@react-navigation/stack';
-// import useColorScheme from '../hooks/useColorScheme';
 import { RootStackParamList } from '../types';
 import BaseText from '../components/StyledText';
 import { db, dbVal } from '../network/Firebase';
 import Loader from '../components/Loader';
 import { Vibration } from '../constants';
-// import LottieView from 'lottie-react-native';
-// import { LinearGradient } from 'expo-linear-gradient';
-// import HeartIcon from '../components/svg/HeartIcon';
 import PinIcon from '../components/svg/PinIcon';
 import BottomIcon from '../components/svg/BottomIcon';
 import Layout from '../constants/Layout';
 
-//const { width, height } = Dimensions.get('window');
-
-const wait = timeout => {
-  return new Promise(resolve => {
-    setTimeout(resolve, timeout);
-  });
-};
 const ENTRIES = [
   {
     illustration: 'https://i.postimg.cc/65NHzk9d/New-Project.png',
@@ -91,6 +67,7 @@ const ENTRIES = [
     linkUrl: undefined
   },
 ];
+
 const ENTRIES1 = [
   {
     title: "Capelli",
@@ -132,15 +109,14 @@ const ENTRIES1 = [
 
 export default function HomePage({ route, navigation }: StackScreenProps<RootStackParamList, 'Shop'>) {
   const {
-    servizi,
+    // servizi,
     commercianti,
     foto,
-    currentUser,
+    // currentUser,
     setCurrentUser,
     prenotazione
   } = useContext(AppContext);
   const { user } = useContext(AuthUserContext);
-  //let profileRef = null;
   const profileRefanimation = React.useRef(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setCategory] = useState(0);
@@ -151,96 +127,37 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
   const [searchModal, setSearchModal] = React.useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [prenotazioni, setPrenotazioni] = useState(undefined);
-
   // const onRefresh = React.useCallback(() => {
   //   setRefreshing(true);
   //   loading();
   //   wait(2000).then(() => setRefreshing(false));
   // }, []);
   const getUserId = async () => {
-    //get a unique key
-    //console.log("---getUserId[called]---")
     if (user !== null) {
-      //console.log("---getUserId[user-present]---")
       var databaseRef = await db.collection('utentiApp').where("userId", "==", user.uid).get();
       if (!databaseRef.empty) {
-        //console.log("---getUserId[databaseRef-notEmpty]---")
         databaseRef.forEach(doc => {
-          //console.log("---getUserId[databaseRef-forEach]---", doc.data());
-          //console.log("---getUserId[docID]---", doc.id);
           setUserDocId(doc.id);
           setUserData(doc.data())
         });
       };
     }
   }
-  //const getFavorites = async () => {
-  //  try {
-  //    //console.log("sono dentro getFavorites")
-  //    setIsLoading(true);
-  //    var databaseRefReal = db.collection('utentiApp').doc(userDocId);
-  //    const doc = await databaseRefReal.get();
-  //    let favoritesToSearch = [];
-  //    if (doc.exists) {
-  //      let favorites = doc.data()?.favorites;
-  //      if (favorites && favorites.length > 0) {
-  //        favoritesToSearch.push(favorites);
-  //      } else {
-  //        //setIsLoading(false);
-  //      }
-  //    } else {
-  //      setIsLoading(false);
-  //      setFavorites(undefined);
-  //      return;
-  //    }
-  //    const favoritesDb = db.collection('commercianti');
-  //    const snapshot = await favoritesDb.get();
-  //    let finalFavorites = [];
-  //    favoritesToSearch.forEach((favDoc) => {
-  //      let sfavDoc = favDoc;
-  //      sfavDoc.forEach(item => {
-  //        let itemId = item.id;
-  //        snapshot.forEach(snapDoc => {
-  //          const snapDocData = snapDoc.data();
-  //          const snapDocID = snapDoc.id;
-  //          if (itemId === snapDocID) {
-  //            finalFavorites.push(snapDocID)
-  //          }
-  //        });
-  //      });
-  //    });
-  //    if (finalFavorites.length > 0) {
-  //      setFavorites(finalFavorites);
-  //    } else {
-  //      setFavorites(undefined);
-  //    }
-  //    console.log("---finalFavorites---", finalFavorites);
-  //    setIsLoading(false);
-  //  } catch (error) {
-  //    setIsLoading(false);
-  //    setFavorites(undefined);
-  //    console.log("---[getFavorites]ERROR---", error)
-  //  }
-  //}
   const loading = async () => {
     await getUserId();
     let parrucchieri = [];
     if (commercianti && foto) {
-      //console.log("---commercianti---",commercianti)
-      //console.log("---foto---",foto)
       const comFin = commercianti.map(com => ({
         ...com,
         mainPhoto: foto.find(fot => fot.commercianti === com.id && fot.isMain == true),
         photos:
           foto.map(item => {
-            // .find(fot => fot.commercianti === com.id)
             if (item.commercianti == com.id) {
               return item;
             }
           })
 
       }))
-      //console.log(comFin, "comFin");
       comFin.map((item) => {
         // SE PARRUCCHIERE
         //if (item.tipo == 0) {
@@ -250,26 +167,14 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
       setPar(parrucchieri);
     }
     if (user !== null && userDocId !== null) {
-      //getFavorites();
     }
   }
   React.useEffect(() => {
     loading()
   }, [user]);
 
-  // function sortFunction(a, b) {
-  //   var dateA = new Date(a.slot_date).getTime();
-  //   var dateB = new Date(b.slot_date).getTime();
-  //   // return dateA > dateB ? 1 : -1;
-  //   if (dateA < dateB) return -1;
-  //   if (dateA > dateB) return 1;
-  //   return 0;
-  // };
-
   const checkPrenotazioni = async () => {
-    // console.log("--user--", JSON.stringify(user, null, 2))
     if (user) {
-      // setPrenotazioni(undefined)
       let dbPren = await db.collection('prenotazioni').orderBy('pren_date', 'desc').get();
       if (!dbPren.empty) {
         let finalpreno = [];
@@ -279,11 +184,8 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
         })
         finalpreno = finalpreno.filter(i => i.userId === user.uid)
         if (finalpreno && finalpreno.length > 0) {
-          console.log("---finalpreno---", finalpreno.length);
+          // console.log("---finalpreno---", finalpreno.length);
           while (finalpreno.length > 3) { finalpreno.pop() }
-          // finalpreno.sort((a, b) => a.slot_date - b.slot_date);
-          // finalpreno.sort(sortFunction)
-
           setPrenotazioni(finalpreno)
         }
       } else {
@@ -295,7 +197,6 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
     navigation.addListener('focus', () => {
       if (user !== undefined && userDocId !== null) {
         getUserId();
-        //getFavorites();
       }
       checkPrenotazioni()
     });
@@ -309,20 +210,11 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
     if (user) {
       return observer = db.collection('prenotazioni').where('userId', '==', user.uid)
         .onSnapshot(querySnapshot => {
-          // setPrenotazioni(undefined);
           querySnapshot.docChanges().forEach(change => {
-            // if (change.type === 'added') {
-            //   console.log('NUOVA PRENOTAZIONE: ', change.doc.data());
-            //   // setPrenotazioni(prenotazioni => [...prenotazioni, change.doc.data()]);
-
-            // }
             if (change.type === 'modified') {
-              // console.log('PRENOTAZIONE MODIFICATA: ', change.doc.data());
-              // setPrenotazioni(prenotazioni => [...prenotazioni], ...change.doc.data());
               checkPrenotazioni()
             }
             if (change.type === 'removed') {
-              // console.log('PRENOTAZIONE RIMOSSA: ', change.doc.data());
               checkPrenotazioni()
             }
           });
@@ -360,66 +252,66 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
     if (desc.length > 25) {
       desc = desc.slice(0, 25) + " ...";
     }
-    let isFavorite = false;
+    // let isFavorite = false;
     //if (favoritesFB !== undefined) {
     //  isFavorite = favoritesFB.includes(id);
     //}
-    const setFavorite = async () => {
-      if (user !== null && userDocId !== null) {
-        //console.log("---hoPremuto---", id)
-        try {
-          var databaseRefReal = await db.collection('utentiApp').doc(userDocId);
-          await db.runTransaction(async (t) => {
-            const doc = await t.get(databaseRefReal);
-            console.log("---favoritesOnDB---", doc.data()?.favorites)
-            let favorites = doc.data().favorites;
-            // DOC: se ho preferiti entro per capire come rimuoverlo
-            if (favorites && favorites !== undefined) {
-              favorites.forEach((element) => {
-                if (element.id === id) {
-                  // DOC SE HO GIA LO STESSO PREFERITO PREMUTO LO RIMUOVO
-                  var deletedList = favorites.filter(x => {
-                    return x.id != id;
-                  })
-                  console.log("---deletedList[FAVORITES]---", deletedList);
-                  if (deletedList.length <= 0) {
-                    // rimuovo la lista completa
-                    //isFavorite = false;
-                    t.update(databaseRefReal, { favorites: dbVal.FieldValue.delete() });
-                  } else {
-                    // rimuovo il commerciante
-                    //isFavorite = false;
-                    t.update(databaseRefReal, { favorites: deletedList });
-                  }
-                } else {
-                  // aggiungo il commerciante
-                  let newFavorites = [...favorites, { id }];
-                  var list = newFavorites.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
-                  //isFavorite = true;
-                  t.update(databaseRefReal, {
-                    favorites: list
-                  });
-                }
-              });
-            } else {
-              // aggiungo il commerciante per la prima volta
-              //isFavorite = true;
-              t.update(databaseRefReal, {
-                favorites: [
-                  { id }
-                ]
-              });
-            }
-          });
-          //getFavorites();
-        } catch (error) {
-          console.log("---setFavorite[Error]", error);
-        }
-      } else {
-        navigation.navigate("Auth");
-        //console.warn("non ho un utente per aggiugnere questo commerciante ai preferiti");
-      }
-    }
+    // const setFavorite = async () => {
+    //   if (user !== null && userDocId !== null) {
+    //     //console.log("---hoPremuto---", id)
+    //     try {
+    //       var databaseRefReal = await db.collection('utentiApp').doc(userDocId);
+    //       await db.runTransaction(async (t) => {
+    //         const doc = await t.get(databaseRefReal);
+    //         console.log("---favoritesOnDB---", doc.data()?.favorites)
+    //         let favorites = doc.data().favorites;
+    //         // DOC: se ho preferiti entro per capire come rimuoverlo
+    //         if (favorites && favorites !== undefined) {
+    //           favorites.forEach((element) => {
+    //             if (element.id === id) {
+    //               // DOC SE HO GIA LO STESSO PREFERITO PREMUTO LO RIMUOVO
+    //               var deletedList = favorites.filter(x => {
+    //                 return x.id != id;
+    //               })
+    //               console.log("---deletedList[FAVORITES]---", deletedList);
+    //               if (deletedList.length <= 0) {
+    //                 // rimuovo la lista completa
+    //                 //isFavorite = false;
+    //                 t.update(databaseRefReal, { favorites: dbVal.FieldValue.delete() });
+    //               } else {
+    //                 // rimuovo il commerciante
+    //                 //isFavorite = false;
+    //                 t.update(databaseRefReal, { favorites: deletedList });
+    //               }
+    //             } else {
+    //               // aggiungo il commerciante
+    //               let newFavorites = [...favorites, { id }];
+    //               var list = newFavorites.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
+    //               //isFavorite = true;
+    //               t.update(databaseRefReal, {
+    //                 favorites: list
+    //               });
+    //             }
+    //           });
+    //         } else {
+    //           // aggiungo il commerciante per la prima volta
+    //           //isFavorite = true;
+    //           t.update(databaseRefReal, {
+    //             favorites: [
+    //               { id }
+    //             ]
+    //           });
+    //         }
+    //       });
+    //       //getFavorites();
+    //     } catch (error) {
+    //       console.log("---setFavorite[Error]", error);
+    //     }
+    //   } else {
+    //     navigation.navigate("Auth");
+    //     //console.warn("non ho un utente per aggiugnere questo commerciante ai preferiti");
+    //   }
+    // }
     return (
       <TouchableOpacity
         key={index}
@@ -428,7 +320,6 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
           navigation.navigate("Shop", { id: id });
         }}>
         <View style={{
-          //width: Layout.window.width,
           paddingLeft: 20,
           paddingRight: 20,
           backgroundColor: "white"
@@ -447,24 +338,6 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
             }}
             source={mainPhoto ? { uri: mainPhoto.url } : { uri: "https://images.unsplash.com/photo-1582582450303-48cc2cfa2c43?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80" }}
           >
-            {/*{user !== null && (
-              <TouchableOpacity onPress={setFavorite} style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                //backgroundColor: "rgba(255, 255, 255, .7)",
-                height: 40,
-                width: 48,
-                borderBottomLeftRadius: 5,
-                alignContent: "center",
-                justifyContent: "center",
-                alignItems: "center"
-                //zIndex: 10
-              }}>
-                <BottomIcon type={"ios-heart-empty"} color={Colors.light.bianco} size={25} />
-              </TouchableOpacity>
-            )}*/}
-            {/*<Ionicons name={isFavorite ? "ios-heart" : "ios-heart-empty"} size={20} color={Colors.light.bianco} />*/}
           </ImageBackground>
           <View style={{
             backgroundColor: "transparent",
@@ -484,11 +357,7 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
                 alignContent: "center",
                 backgroundColor: "transparent"
               }}>
-                <Ionicons name="ios-star" size={20} color={Colors.light.viola} />
-                {/*<Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
-                  <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
-                  <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />
-                  <Ionicons name="ios-star" size={17} color={Colors.light.giallo} />*/}
+                <Ionicons name="ios-star" size={20} color={Colors.light.ARANCIO} />
                 <BaseText size={10} weight={700} styles={{ marginLeft: 5, marginTop: 5 }}>{stars}</BaseText>
               </View>
             )}
@@ -508,16 +377,11 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
     )
   }
 
-  //useEffect(() => {
-  //  navigation.navigate('IntroScreen');
-  //}, [])
-
-  const cateogryPressed = (index) => {
-    setCategory(index);
-  }
+  useEffect(() => {
+    if (__DEV__ === false) navigation.navigate('IntroScreen');
+  }, [])
 
   const presseProfile = () => {
-    //console.log("--userData--", userData)
     if (user && userData) {
       const { toBecompleted, userId, displayName, email, phoneNumber } = userData;
       if (toBecompleted === true) {
@@ -529,43 +393,6 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
     } else navigation.navigate('Auth')
   }
 
-  //const renderTitle = () => {
-  //  return (
-  //    <MaskedView
-  //      style={{ height: 50, marginTop: 60, marginVertical: 20 }}
-  //      maskElement={
-  //        <View
-  //          style={{
-  //            backgroundColor: 'transparent',
-  //            flex: 1,
-  //            justifyContent: 'center',
-  //            alignItems: 'center'
-  //          }}
-  //        >
-  //          <BaseText
-  //            weight={700}
-  //            size={30}
-  //          >
-  //            {"BeautyShop"}
-  //          </BaseText>
-  //        </View>
-  //      }
-  //    >
-  //      <LinearGradient
-  //        style={{ flex: 1 }}
-  //        colors={["#FB6E3B", "#FB6E3B", "#FF9B76", "#FF9B76"]}
-  //        //colors={[Colors.light.ARANCIO, Colors.light.ARANCIO, Colors.light.ARANCIO, Colors.light.ARANCIO]}
-  //        //colors={[Colors.light.text, Colors.light.text, Colors.light.nero, Colors.light.nero]}
-  //        start={{ x: 0, y: 0 }}
-  //        end={{ x: 0, y: 1 }}
-  //        locations={[.3, .4, .8, .9]}
-  //      //locations={[.1, 0.5, 0.8, 0]}
-  //      >
-  //      </LinearGradient>
-  //    </MaskedView>
-  //  )
-  //}
-
   const renderItem1 = ({ item, index }) => {
     const { title, bg, model } = item;
     return (
@@ -575,8 +402,6 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
           width: 90,
           height: 90,
           marginRight: 10,
-          //borderWidth: 1,
-          //borderColor: "black",
           borderRadius: 8,
           overflow: "hidden"
         }}
@@ -609,9 +434,6 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
           height: 200,
           paddingHorizontal: Layout.wp(2),
           paddingBottom: 18,
-          //borderWidth: 1,
-          //borderColor: "black",
-          //borderRadius: 8
         }}
       //onPress={() => { alert(`You've clicked '${index}'`); }}
       >
@@ -632,7 +454,6 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
         <View style={[{
           flex: 1,
           //marginBottom: true ? 0 : -1, // Prevent a random Android rendering issue
-          //backgroundColor: "white",
           borderRadius: 8
         }]}>
           <Image
@@ -643,16 +464,6 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
               borderRadius: 8,
             }}
           />
-          {/*
-            <View style={[{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: 8,
-              backgroundColor: "white"
-            }]} />
-          */}
         </View>
       </TouchableOpacity>
     );
@@ -743,7 +554,6 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
     <SafeAreaProvider>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.container} forceInset={{ top: 'always' }}>
-        {/*{renderTitle()}*/}
         <AnimatedHeader animatedValue={offset} />
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -798,29 +608,29 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
                 <BaseText weight={700} styles={{ marginHorizontal: 20, marginVertical: 10 }} size={15}>{"Ultime prenotazioni"}</BaseText>
                 <ScrollView horizontal contentContainerStyle={{ marginHorizontal: 20, paddingRight: 30 }} showsHorizontalScrollIndicator={false}>
                   {prenotazioni.map((item) => {
-                    let color = [Colors.light.ARANCIO, Colors.light.ARANCIO]
                     // 0 DEFAULT CONFERMATA
-                    // let color = ['#CB860B', '#daaa54'];
-                    // switch (item.state) {
-                    //   case 1:
-                    //     // ACCETTATA
-                    //     color = ['#00C537', '#32d05e'];
-                    //     break;
-                    //   case 2:
-                    //     // FINITA
-                    //     color = [Colors.light.ARANCIO, '#FC9975'];
-                    //     break;
-                    //   case 3:
-                    //     // ANNULATA
-                    //     color = ['#CA1E13', '#d96159'];
-                    //     break;
-                    // }
+                    let color = ['#CB860B', '#daaa54'];
+                    switch (item.state) {
+                      case 1:
+                        // ACCETTATA
+                        color = ['#00C537', '#32d05e'];
+                        break;
+                      case 2:
+                        // FINITA
+                        color = [Colors.light.ARANCIO, '#FC9975'];
+                        break;
+                      case 3:
+                        // ANNULATA
+                        color = ['#CA1E13', '#d96159'];
+                        break;
+                    }
                     return (
                       <LinearGradient
                         colors={color}
                         start={{ x: 0, y: 0 }}
                         style={{ marginRight: 20, borderRadius: 5, paddingVertical: 15, paddingHorizontal: 20, }}
-                        key={item.id}>
+                        key={item.id}
+                      >
                         <TouchableOpacity
                           key={item.id}
                           // style={{ backgroundColor: Colors.light.ARANCIO }}
@@ -888,8 +698,6 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
                         autoFocus
                         placeholder={"Cosa vuoi fare oggi?"}
                         placeholderTextColor={Colors.light.nero}
-                        //onFocus={() => setSearchModal(true)}
-                        //onBlur={() => setSearchModal(false)}
                         style={{
                           width: "90%",
                           height: "50%",

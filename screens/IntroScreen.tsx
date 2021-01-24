@@ -8,9 +8,10 @@ import {
   PixelRatio,
   StatusBar,
   ScrollView,
-  SafeAreaView,
   TouchableOpacity
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import BaseText from '../components/StyledText';
 // SVG
 import Desk from '../components/svg/Desk';

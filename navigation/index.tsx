@@ -38,7 +38,7 @@ import SplashScreen from '../screens/SplashScreen';
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
     <NavigationContainer
-      linking={LinkingConfiguration}
+      // linking={LinkingConfiguration}
       //theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
       theme={DefaultTheme}
     >
@@ -102,6 +102,7 @@ function RootNavigator() {
           //...TransitionPresets.ModalPresentationIOS,
           //gestureEnabled: true,
           headerShown: false,
+          gestureDirection: "horizontal"
         }}
       />
       <Stack.Screen name="Prenotazione" component={Prenotazione}
@@ -200,6 +201,7 @@ function RootNavigator() {
           //...TransitionPresets.ModalPresentationIOS,
           //gestureEnabled: true,
           headerShown: false,
+          gestureDirection: "horizontal"
           //cardOverlayEnabled: false,
         }}
       />

@@ -158,7 +158,7 @@ function App() {
     <SafeAreaProvider>
       <AuthUserProvider>
         <AppContext.Provider value={context}>
-          <AppOfflineNotice />
+          {/* <AppOfflineNotice /> */}
           <Navigation colorScheme={colorScheme} />
           <Toast
             ref={errorToast}

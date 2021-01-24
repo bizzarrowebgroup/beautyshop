@@ -10,9 +10,9 @@ LogBox.ignoreLogs([
 
 //const { width } = Dimensions.get('window');
 import StarsReview from '../components/StarsReview';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
-  SafeAreaView,
   StyleSheet,
   //Animated,
   //ScrollView,
