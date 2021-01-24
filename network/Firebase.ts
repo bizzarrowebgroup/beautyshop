@@ -206,8 +206,7 @@ export const registerFromNotFound = async (user, email, phone) => {
 export const logInWithFacebook = async () => {
   try {
     await Facebook.initializeAsync({
-      //appId: "3483388645055624",
-      appId: Updates.manifest.facebookAppId.toString(),
+      appId: "3483388645055624",
       autoLogAppEvents: true,
       version: 'v9.0',
     });
