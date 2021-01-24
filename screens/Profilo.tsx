@@ -22,6 +22,7 @@ import { AuthUserContext } from '../navigation/AuthUserProvider';
 import BaseText from '../components/StyledText';
 import * as WebBrowser from 'expo-web-browser';
 import BackIcon from '../components/svg/BackIcon';
+import DeviceInfo from 'react-native-device-info';
 
 // import Constants from "expo-constants";
 import { backgroundImage } from './Commerciante/HeaderImage';
@@ -74,7 +75,14 @@ const Profilo = ({
       setPhone(data.phone);
     });
   }
-  
+  // console.log("---getBundleId---", DeviceInfo.getBundleId())
+  // DeviceInfo.getIpAddress().then((ip) => {
+  //   console.log("---ip---", ip)
+  // });
+  // DeviceInfo.getPhoneNumber().then((phoneNumber) => {
+  //   // Android: null return: no permission, empty string: unprogrammed or empty SIM1, e.g. "+15555215558": normal return value
+  //   console.log("---phoneNumber---", phoneNumber)
+  // });
   const sections = [
     {
       title: "",
@@ -163,8 +171,7 @@ const Profilo = ({
           logout: true
         },
         {
-          // title: `Versione App ${Updates.manifest.version} (${Constants.platform.ios.buildNumber || 0})`,
-          title: `Versione App ------`,
+          title: `Versione App ${DeviceInfo.getVersion()} (${DeviceInfo.getBuildNumber() || 0})`,
           special: true,
           version: true,
         }
