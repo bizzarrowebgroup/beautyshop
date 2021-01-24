@@ -64,8 +64,9 @@ const InfoPren = ({ route, navigation }) => {
 
     const shareIg = async () => {
         try {
-            const Commerciante = encodeURI("Ho prenotato con BeautyShop da\n" + prenotazione.title);
-            const pngUrl = `https://textoverimage.moesif.com/image?image_url=https%3A%2F%2Fcdn-media.italiani.it%2Fsite-venezia%2F2018%2F09%2Fpiazza-7-e1537803764617-1000x600.jpg&overlay_color=fb6e3b5e&text_color=ffffffff&text_size=64&margin=10&y_align=middle&x_align=center&text=${Commerciante}`;
+            const Commerciante = encodeURI("Ho prenotato " + prenotazione.title + " su BS");
+            console.log("---Commerciante---", Commerciante)
+            const pngUrl = `https://dummyimage.com/1080x1920/fb6e3b/000.png`;
             await ShareInstagramStory.shareBackgroundVideo(
                 'https://bizzarro.org/beautyshop/',
                 "it.bizzarro.beautshop",
