@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LogBox, View } from 'react-native';
 LogBox.ignoreLogs(['Deprecation warning', 'VirtualizedList', 'Non-serializable']);
@@ -30,6 +30,7 @@ import Colors from "./constants/Colors";
 //   enableInExpoDevelopment: true,
 //   debug: true,
 // });
+import Instabug, { Surveys } from 'instabug-reactnative';
 
 function App() {
   const isLoadingComplete = useCachedResources();
@@ -102,6 +103,22 @@ function App() {
   }
 
   // const [lang, setLang] = useState("it");
+  useEffect(() => {
+    Instabug.setLocale(Instabug.locale.italian);
+    Instabug.setWelcomeMessageMode(Instabug.welcomeMessageMode.beta) // For beta testers
+    Surveys.setShouldShowWelcomeScreen(true);
+
+    // Instabug.setWelcomeMessageMode(Instabug.welcomeMessageMode.live) // For live users
+    // Instabug.setWelcomeMessageMode(Instabug.welcomeMessageMode.disabled) // Disable welcome message
+
+    Instabug.isRunningLive((isLive) => {
+      if (isLive) {
+        Instabug.startWithToken('a76401d7b38130efe962e84ad540da48', [Instabug.invocationEvent.shake]);
+      } else {
+        Instabug.startWithToken('aa8227dafbd16f944712ffd9aae2af7d', [Instabug.invocationEvent.shake]);
+      }
+    });
+  })
 
   const showToast = (header, message, type = 'error', pos = 'top', duration = 1500) => {
     errorToast.current.show({

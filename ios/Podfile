@@ -7,6 +7,14 @@ platform :ios, '11.0'
 target 'beautyshop' do
   use_unimodules!
   config = use_native_modules!
-
+  pod 'instabug-reactnative', :path => '../node_modules/instabug-reactnative'
   use_react_native!(:path => config["reactNativePath"])
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+     if target.name == "React"
+        target.remove_from_project
+     end
+  end
 end

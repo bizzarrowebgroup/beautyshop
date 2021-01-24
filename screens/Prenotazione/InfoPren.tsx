@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { StatusBar } from 'expo-status-bar';
 import BaseText from "../../components/StyledText";
 import Colors from "../../constants/Colors";
+import ShareInstagramStory from 'react-native-share-instagram-story';
 
 import moment from 'moment';
 // import { CommonActions } from "@react-navigation/native";
@@ -60,13 +61,16 @@ const InfoPren = ({ route, navigation }) => {
             break;
     }
 
-    const shareIg = () => {
+
+    const shareIg = async () => {
         try {
-            // Share.shareSingle({
-            //     method: Share.InstagramStories.SHARE_BACKGROUND_IMAGE,
-            //     backgroundImage: "https://images.unsplash.com/photo-1554774853-719586f82d77?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80", // url of the file to share
-            //     social: Share.Social.INSTAGRAM_STORIES,
-            // })
+            const Commerciante = encodeURI("Ho prenotato con BeautyShop da\n" + prenotazione.title);
+            const pngUrl = `https://textoverimage.moesif.com/image?image_url=https%3A%2F%2Fcdn-media.italiani.it%2Fsite-venezia%2F2018%2F09%2Fpiazza-7-e1537803764617-1000x600.jpg&overlay_color=fb6e3b5e&text_color=ffffffff&text_size=64&margin=10&y_align=middle&x_align=center&text=${Commerciante}`;
+            await ShareInstagramStory.shareBackgroundVideo(
+                'https://bizzarro.org/beautyshop/',
+                "it.bizzarro.beautshop",
+                pngUrl
+            );
         } catch (error) {
             console.log("--errr", error)
         }
@@ -104,9 +108,12 @@ const InfoPren = ({ route, navigation }) => {
                     <BaseText>{"Orario"}</BaseText>
                     <BaseText weight={700}>{prenotazione.slot_time}</BaseText>
                 </View>
-                {/* <TouchableOpacity onPress={() => shareIg()} style={[styles.boxInfo, { backgroundColor: Colors.light.bianco }]}>
-                    <BaseText>{"Condividi su Instagram"}</BaseText>
-                </TouchableOpacity> */}
+                <TouchableOpacity onPress={() => shareIg()} style={[styles.boxInfo, { backgroundColor: Colors.light.bianco, }]}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", alignContent: "center" }}>
+                        <BaseText weight={600}>{"Condividi su Instagram"}</BaseText>
+                        <Image source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/1024px-Instagram_logo_2016.svg.png" }} style={{ height: 40, width: 40 }} />
+                    </View>
+                </TouchableOpacity>
             </View>
             <View
                 style={{

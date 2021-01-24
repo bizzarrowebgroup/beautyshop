@@ -6,6 +6,9 @@ import android.net.Uri;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.rnfs.RNFSPackage;
+import com.jobeso.RNStorySharePackage;
+import com.instabug.reactlibrary.RNInstabugReactnativePackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -77,6 +80,13 @@ public class MainApplication extends Application implements ReactApplication {
 
   @Override
   public void onCreate() {
+    new RNInstabugReactnativePackage
+             .Builder("a76401d7b38130efe962e84ad540da48", MainApplication.this)
+             .setInvocationEvent("shake")
+             .setPrimaryColor("#1D82DC")
+             .setFloatingEdge("left")
+             .setFloatingButtonOffsetFromTop(250)
+             .build();
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
 
