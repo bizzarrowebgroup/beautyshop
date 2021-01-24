@@ -156,6 +156,7 @@ function RootNavigator() {
           //...TransitionPresets.ModalPresentationIOS,
           //gestureEnabled: true,
           headerShown: false,
+          gestureDirection: "horizontal",
           //cardOverlayEnabled: false,
         }}
       />
@@ -186,6 +187,7 @@ function RootNavigator() {
           //...TransitionPresets.ModalPresentationIOS,
           //gestureEnabled: true,
           headerShown: false,
+          gestureDirection: "horizontal"
           //cardOverlayEnabled: false,
         }}
       />

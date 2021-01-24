@@ -13,6 +13,8 @@ import {
   StatusBar,
   LogBox,
   Animated,
+  Easing,
+  ActivityIndicator,
 } from 'react-native';
 import moment from 'moment';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -127,6 +129,43 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
   const [searchModal, setSearchModal] = React.useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [prenotazioni, setPrenotazioni] = useState(undefined);
+  const [searchText, setSearchText] = useState("");
+  const [loadingSearch, setLoadingSearch] = useState(false);
+  const [dataSource, setDataSource] = useState([]);
+
+  const firstSearch = async () => {
+    setLoadingSearch(true);
+    var sT = searchText.toString();
+    if (sT == "") {
+      setLoadingSearch(false);
+    } else {
+      const snapshot = await db.collection("commercianti")
+        .orderBy("title", "asc")
+        .startAt(sT)
+        // .endAt(sT)
+        .get();
+      // const secondCheck = await db.collection("commercianti")
+      //   .orderBy("title", "asc")
+      //   .startAt(sT)
+      //   .get();
+      if (snapshot) {
+        const tempDoc = snapshot.docs.map((doc) => {
+          return { id: doc.id, ...doc.data() }
+        })
+        setDataSource(tempDoc);
+      }
+      // else if (secondCheck) {
+      //   const tempDoc2 = secondCheck.docs.map((doc) => {
+      //     return { id: doc.id, ...doc.data() }
+      //   })
+      //   setDataSource(tempDoc2);
+      // } 
+      else {
+        setLoadingSearch(false);
+      }
+    }
+    setLoadingSearch(false);
+  }
   // const onRefresh = React.useCallback(() => {
   //   setRefreshing(true);
   //   loading();
@@ -469,6 +508,66 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
     );
   }
 
+  const _renderItemSearchSeparator = () => {
+    return (
+      <View style={{ backgroundColor: "#A5A5A5", width: "100%", height: 1 }} />
+    )
+  }
+
+  const _renderItemSearchHeader = () => {
+    return (
+      <View style={{ marginTop: 10 }}>
+        <BaseText color={"#898A8D"} weight={700}>{"Saloni"}</BaseText>
+      </View>
+    )
+  }
+
+  const _renderItemSearch = ({ item, index }) => {
+    let { title, stars, via, desc, mainPhoto, economy, id } = item;
+    let economyColor = "rgba(133, 194, 170, 0.4)", economyTitle = "€", economyTColor = "#008D56";
+    if (economy) {
+      switch (economy) {
+        case 1:
+          economyColor = "rgba(244, 195, 108, 0.4)";
+          economyTitle = "€€";
+          economyTColor = "#CB860B";
+          break;
+        case 2:
+          economyColor = "rgba(244, 195, 108, 0.4)";
+          economyTitle = "€€€";
+          economyTColor = "#CB860B";
+          break;
+      }
+    }
+    return (
+      <TouchableOpacity style={{
+        backgroundColor: "rgba(0,0,0,0)",
+        paddingVertical: 15,
+      }} onPress={() => {
+        Vibration.impactTouch("Light");
+        setDataSource([]);
+        setSearchModal(false);
+        navigation.navigate("Shop", { id });
+      }}>
+        <BaseText>{title}</BaseText>
+        {stars > 0 && (
+          <View style={{
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            alignContent: "center",
+            backgroundColor: "transparent"
+          }}>
+            <Ionicons name="ios-star" size={20} color={Colors.light.ARANCIO} />
+            <BaseText size={10} weight={700} styles={{ marginLeft: 5, marginRight: 10, marginTop: 5 }}>{stars}</BaseText>
+            <BaseText weight={300} color={Colors.light.nero} styles={{ marginTop: 5 }} size={8}>{via}</BaseText>
+            <BaseText weight={700} color={Colors.light.nero} styles={{ marginLeft: 5, marginTop: 5 }} size={8}>·  {economyTitle}</BaseText>
+          </View>
+        )}
+      </TouchableOpacity>
+    )
+  }
+
   if (isLoading) {
     return (
       <Loader color={Colors.light.bianco} size={"large"} animating={true} />
@@ -476,41 +575,44 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
   }
 
   const offset = React.useRef(new Animated.Value(0)).current;
+  const rotateValue = React.useRef(new Animated.Value(0)).current;
 
   const HEADER_HEIGHT = 200;
 
-  const AnimatedHeader = ({ animatedValue }) => {
+  // const StartImageRotate = () => {
+  //   rotateValue.setValue(0);
+  //   Animated.timing(rotateValue, {
+  //     toValue: 1,
+  //     duration: 1000,
+  //     easing: Easing.linear,
+  //     useNativeDriver: true,
+  //   }).start();
+  // }
+  const AnimatedHeader = () => {
     const insets = useSafeAreaInsets();
 
-    const headerHeight = animatedValue.interpolate({
-      inputRange: [0, HEADER_HEIGHT + insets.top],
-      outputRange: [HEADER_HEIGHT + insets.top, insets.top + 50],
-      extrapolate: 'clamp'
-    });
-
-    const paddingHeight = animatedValue.interpolate({
-      inputRange: [0, HEADER_HEIGHT + insets.top],
-      outputRange: [insets.top, insets.top],
-      extrapolate: 'clamp'
-    });
-
-    const isShadow = animatedValue.interpolate({
+    const isShadow = offset.interpolate({
       inputRange: [0, HEADER_HEIGHT + insets.top],
       outputRange: [0, .5],
       extrapolate: 'clamp'
     });
 
-    const opacity = animatedValue.interpolate({
+    const opacity = offset.interpolate({
       inputRange: [0, HEADER_HEIGHT + insets.top],
-      outputRange: [0, 50],
+      outputRange: [50, 0],
       extrapolate: 'clamp'
+    });
+
+    const rotateInterpolate = rotateValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '360deg']
     });
 
     return (
       <Animated.View style={{
         paddingHorizontal: 20,
         backgroundColor: "white",
-        paddingTop: paddingHeight,
+        paddingTop: insets.top,
         paddingBottom: 20,
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 1 },
@@ -523,10 +625,11 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
         left: 0,
         right: 0,
         zIndex: 10,
-        //height: headerHeight,
       }}>
-        <Animated.View style={{ alignSelf: "center", marginBottom: 5, height: opacity }}>
-          <Image source={require("../assets/images/logoBS.png")} style={{ width: 50, height: 50, resizeMode: "contain" }} />
+        <Animated.View style={{ alignSelf: "center", marginBottom: 5, height: opacity, transform: [{ rotate: rotateInterpolate }] }}>
+          {/* <TouchableOpacity onPress={() => StartImageRotate()}> */}
+            <Image source={require("../assets/images/logoBS.png")} style={{ width: 50, height: 50, resizeMode: "contain" }} />
+          {/* </TouchableOpacity> */}
         </Animated.View>
         <View style={{
           flexDirection: "row",
@@ -543,7 +646,7 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
             </View>
           </TouchableWithoutFeedback>
           <TouchableOpacity>
-            <PinIcon type="normal" size={25} color={Colors.light.nero} />
+            <PinIcon type="normal" size={25} color={Colors.light.nero} style={{ opacity: 1 }} />
           </TouchableOpacity>
         </View>
       </Animated.View>
@@ -554,17 +657,19 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
     <SafeAreaProvider>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.container} forceInset={{ top: 'always' }}>
-        <AnimatedHeader animatedValue={offset} />
+        <AnimatedHeader />
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingTop: 80,
+            paddingTop: 80 + 50,
           }}
-          scrollEventThrottle={16}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: offset } } }],
-            { useNativeDriver: false }
-          )}
+          scrollEventThrottle={8}
+          onScroll={
+            Animated.event(
+              [{ nativeEvent: { contentOffset: { y: offset } } }],
+              { useNativeDriver: false }
+            )
+          }
         >
           <View style={{ backgroundColor: "transparent" }}>
             <FlatList
@@ -670,47 +775,83 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
             animationType="fade"
             transparent
             visible={searchModal}
-            onRequestClose={() => setSearchModal(false)}
+            onRequestClose={() => {
+              setSearchModal(false)
+              setDataSource([]);
+            }}
           >
             <View style={styles.closeOverlay} />
             <Modal
               animationType="slide"
               transparent
               visible={searchModal}
-              onRequestClose={() => setSearchModal(false)}
+              onRequestClose={() => {
+                setDataSource([]);
+                setSearchModal(false)
+              }}
             >
-              <TouchableWithoutFeedback onPress={() => setSearchModal(false)}>
-                <View style={styles.dialogModalWrapper}>
-                  <View style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignContent: "center",
-                    alignItems: "center",
-                    marginHorizontal: 20,
-                    backgroundColor: "transparent",
-                    marginTop: 20
-                  }}>
-                    <TouchableOpacity onPress={() => setSearchModal(false)} style={{ paddingHorizontal: 10, paddingVertical: 5 }}>
-                      <Ionicons name="ios-arrow-back" size={30} color={Colors.light.nero} />
-                    </TouchableOpacity>
-                    <View style={[styles.searchBar]}>
-                      <TextInput
-                        autoFocus
-                        placeholder={"Cosa vuoi fare oggi?"}
-                        placeholderTextColor={Colors.light.nero}
-                        style={{
-                          width: "90%",
-                          height: "50%",
-                          textAlign: "left",
-                          fontFamily: "Gilroy_SemiBold",
-                          fontSize: 16,
-                          letterSpacing: .4
-                        }}
-                      />
-                    </View>
+              {/* <TouchableWithoutFeedback onPress={() => setSearchModal(false)}> */}
+              <View style={styles.dialogModalWrapper}>
+                <View style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignContent: "center",
+                  alignItems: "center",
+                  marginHorizontal: 20,
+                  backgroundColor: "transparent",
+                  marginTop: 20
+                }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSearchModal(false)
+                      setDataSource([]);
+                    }}
+                    style={{ paddingHorizontal: 10, paddingVertical: 5 }}
+                  >
+                    <Ionicons name="ios-arrow-back" size={30} color={Colors.light.nero} />
+                  </TouchableOpacity>
+                  <View style={[styles.searchBar]}>
+                    <TextInput
+                      autoFocus
+                      onChangeText={(text) => setSearchText(text)}
+                      onSubmitEditing={() => firstSearch()}
+                      placeholder={"Cosa vuoi fare oggi?"}
+                      placeholderTextColor={Colors.light.nero}
+                      style={{
+                        width: "90%",
+                        height: "50%",
+                        textAlign: "left",
+                        fontFamily: "Gilroy_SemiBold",
+                        fontSize: 16,
+                        letterSpacing: .4
+                      }}
+                    />
                   </View>
                 </View>
-              </TouchableWithoutFeedback>
+                <View style={{ flex: 1, backgroundColor: "white" }}>
+                  {
+                    loadingSearch &&
+                    <View style={{
+                      flex: 1
+                    }}>
+                      <ActivityIndicator
+                        size="large"
+                        color="#3498db"
+                      />
+                    </View>
+                  }
+                  {!loadingSearch && dataSource.length > 0 && (
+                    <FlatList
+                      data={dataSource}
+                      renderItem={_renderItemSearch}
+                      ListHeaderComponent={_renderItemSearchHeader}
+                      ItemSeparatorComponent={_renderItemSearchSeparator}
+                      contentContainerStyle={{ marginHorizontal: 20 }}
+                    />
+                  )}
+                </View>
+              </View>
+              {/* </TouchableWithoutFeedback> */}
             </Modal>
           </Modal>
         </React.Fragment>
@@ -744,12 +885,13 @@ const styles = StyleSheet.create({
   },
   dialogModalWrapper: {
     top: Layout.window.height / 20,
-    height: Layout.window.height - 30,
+    flex: 1,
+    // height: Layout.window.height - 30,
     backgroundColor: "white",
     borderRadius: 40,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    // flexDirection: 'row',
+    // justifyContent: 'flex-start',
+    // alignItems: 'flex-start',
     zIndex: 999,
   },
   modalh1: {
