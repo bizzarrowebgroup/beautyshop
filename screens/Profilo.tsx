@@ -226,7 +226,6 @@ const Profilo = ({
               openApp && openApp !== "" && openApp === true ? () => Replies.show() :
                 openFeature && openFeature !== "" && openFeature === true ? () => FeatureRequests.show() :
                   undefined;
-      console.log("-..--navigateToScreen", navigateToScreen)
       let itemBorder = special ? {} : {
         borderBottomColor: "#EEEEEE",
         borderBottomWidth: 1,

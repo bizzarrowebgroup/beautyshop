@@ -27,7 +27,7 @@
       "supportsTablet": false,
       "usesAppleSignIn": true,
       "bundleIdentifier": "it.bizzarro.beautyshop",
-      "buildNumber": "15",
+      "buildNumber": "22",
       "userInterfaceStyle": "light",
       "config": {
         "googleSignIn": {
