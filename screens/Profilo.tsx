@@ -10,7 +10,8 @@ import {
   // SafeAreaView,
   SectionList,
   // Linking
-} from 'react-native';
+} from 'react-native'
+import { FeatureRequests, Replies } from 'instabug-reactnative';
 // import Header from '../components/Header';
 import Colors from '../constants/Colors';
 // import { Ionicons } from '@expo/vector-icons';
@@ -117,34 +118,36 @@ const Profilo = ({
         },
       ]
     },
-    {
-      title: "Promozioni",
-      data: [
-        {
-          title: "Invita i tuoi amici",
-          subtitle: "Ottieni uno sconto di €5 sul tuo prossimo\nappuntamento di bellezza.",
-          icon: true,
-          navigateTo: ""
-        },
-      ]
-    },
+    // {
+    //   title: "Promozioni",
+    //   data: [
+    //     {
+    //       title: "Invita i tuoi amici",
+    //       subtitle: "Ottieni uno sconto di €5 sul tuo prossimo\nappuntamento di bellezza.",
+    //       icon: true,
+    //       navigateTo: ""
+    //     },
+    //   ]
+    // },
     {
       title: "Assistenza",
       data: [
         {
           title: "Cos'è BeautyShop",
           icon: false,
-          openWeb: "https://bizzarro.org/contact"
+          openWeb: "https://bizzarro.org/beautyshop/"
         },
         {
           title: "Ricevi assistenza",
           icon: false,
-          openWeb: "https://bizzarro.org/contact"
+          openApp: true
+          // openWeb: "https://bizzarro.org/contact"
         },
         {
           title: "Inviaci il tuo feedback",
           icon: false,
-          openWeb: "https://bizzarro.org/contact"
+          openFeature: true
+          // openWeb: "https://bizzarro.org/contact"
         },
       ]
     },
@@ -154,12 +157,14 @@ const Profilo = ({
         {
           title: "Termini del servizio",
           icon: true,
-          navigateTo: ""
+          openWeb: "https://bizzarro.org/beautyshop/terms.html"
+          // navigateTo: ""
         },
         {
           title: "Informazioni per la privacy",
           icon: true,
-          navigateTo: ""
+          openWeb: "https://bizzarro.org/beautyshop/privacy.html"
+          // navigateTo: ""
         },
       ]
     },
@@ -206,7 +211,7 @@ const Profilo = ({
   }
 
   const Item = ({ data, index }) => {
-    const { realheader, title, subtitle, icon, navigateTo, special, version, logout, openWeb } = data;
+    const { realheader, title, subtitle, icon, navigateTo, special, version, logout, openWeb, openApp, openFeature } = data;
     var header = realheader ? true : false;
     if (header) {
       return (
@@ -214,7 +219,14 @@ const Profilo = ({
       )
     } else {
 
-      const navigateToScreen = logout ? handleSignOut : navigateTo && navigateTo !== "" ? () => navigation.navigate(navigateTo) : openWeb && openWeb !== "" ? () => WebBrowser.openBrowserAsync(openWeb) : undefined;
+      const navigateToScreen =
+        logout ? handleSignOut :
+          navigateTo && navigateTo !== "" ? () => navigation.navigate(navigateTo) :
+            openWeb && openWeb !== "" ? () => WebBrowser.openBrowserAsync(openWeb) :
+              openApp && openApp !== "" && openApp === true ? () => Replies.show() :
+                openFeature && openFeature !== "" && openFeature === true ? () => FeatureRequests.show() :
+                  undefined;
+      console.log("-..--navigateToScreen", navigateToScreen)
       let itemBorder = special ? {} : {
         borderBottomColor: "#EEEEEE",
         borderBottomWidth: 1,
