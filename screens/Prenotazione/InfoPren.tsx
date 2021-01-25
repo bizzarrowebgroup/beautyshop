@@ -65,9 +65,9 @@ const InfoPren = ({ route, navigation }) => {
     const shareIg = async () => {
         try {
             const Commerciante = encodeURI(prenotazione.title);
-            console.log("---Commerciante---", Commerciante)
+            // console.log("---Commerciante---", Commerciante)
             const pngUrl = `https://bs-images.herokuapp.com/ig/${Commerciante}`;
-            console.log("---pngURL----", pngUrl)
+            // console.log("---pngURL----", pngUrl)
             await ShareInstagramStory.shareBackgroundVideo(
                 'https://bizzarro.org/beautyshop/',
                 "it.bizzarro.beautshop",
