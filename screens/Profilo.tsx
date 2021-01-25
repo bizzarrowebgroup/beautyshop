@@ -11,7 +11,7 @@ import {
   SectionList,
   // Linking
 } from 'react-native'
-import { FeatureRequests, Replies } from 'instabug-reactnative';
+import InstaBug, { FeatureRequests, Replies } from 'instabug-reactnative';
 // import Header from '../components/Header';
 import Colors from '../constants/Colors';
 // import { Ionicons } from '@expo/vector-icons';
@@ -223,7 +223,14 @@ const Profilo = ({
         logout ? handleSignOut :
           navigateTo && navigateTo !== "" ? () => navigation.navigate(navigateTo) :
             openWeb && openWeb !== "" ? () => WebBrowser.openBrowserAsync(openWeb) :
-              openApp && openApp !== "" && openApp === true ? () => Replies.show() :
+              openApp && openApp !== "" && openApp === true ? () => Replies.hasChats(previousChats => {
+                if (previousChats) {
+                  // Has chats
+                  Replies.show()
+                } else {
+                  InstaBug.show()
+                }
+              }) :
                 openFeature && openFeature !== "" && openFeature === true ? () => FeatureRequests.show() :
                   undefined;
       let itemBorder = special ? {} : {

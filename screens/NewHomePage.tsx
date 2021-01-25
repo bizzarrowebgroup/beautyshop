@@ -665,7 +665,7 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
           </TouchableOpacity>
           <TouchableWithoutFeedback onPress={() => setSearchModal(true)}>
             <View style={styles.searchBar}>
-              <BaseText size={12} letterSpacing={.3} weight={600}>{"Cosa vuoi fare oggi?"}</BaseText>
+              <BaseText size={12} letterSpacing={.3} weight={600}>{"Dove vuoi andare oggi?"}</BaseText>
             </View>
           </TouchableWithoutFeedback>
           <TouchableOpacity>
@@ -838,7 +838,7 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
                       autoFocus
                       onChangeText={(text) => setSearchText(text)}
                       onSubmitEditing={() => firstSearch()}
-                      placeholder={"Cosa vuoi fare oggi?"}
+                      placeholder={"Dove vuoi andare oggi?"}
                       placeholderTextColor={Colors.light.nero}
                       style={{
                         width: "90%",
