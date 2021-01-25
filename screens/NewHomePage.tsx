@@ -26,7 +26,7 @@ import { SafeAreaView, SafeAreaProvider, useSafeAreaInsets } from 'react-native-
 
 import { AppContext } from '../context/Appcontext';
 import { AuthUserContext } from '../navigation/AuthUserProvider';
-
+import * as SecureStore from 'expo-secure-store';
 import { Ionicons } from '@expo/vector-icons';
 
 import { View } from '../components/Themed';
@@ -415,9 +415,32 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
       </TouchableOpacity>
     )
   }
+  const setToken = (token) => {
+    return SecureStore.setItemAsync('secure_token', token);
+  };
 
+  const getToken = () => {
+    return SecureStore.getItemAsync('secure_token');
+  };
+
+  const getStoredValue = async () => {
+    try {
+      getToken().then(token => {
+        // console.log("---token----", token)
+        if (token === null) {
+          setToken('true');
+          // if (__DEV__ === false) 
+          navigation.navigate('IntroScreen');
+        } else if (token === "true") {
+          // console.log("--everythingOk")
+        }
+      });
+    } catch (ex) {
+      console.log("---exIntro----", ex)
+    }
+  }
   useEffect(() => {
-    if (__DEV__ === false) navigation.navigate('IntroScreen');
+    getStoredValue()
   }, [])
 
   const presseProfile = () => {
@@ -628,7 +651,7 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
       }}>
         <Animated.View style={{ alignSelf: "center", marginBottom: 5, height: opacity, transform: [{ rotate: rotateInterpolate }] }}>
           {/* <TouchableOpacity onPress={() => StartImageRotate()}> */}
-            <Image source={require("../assets/images/logoBS.png")} style={{ width: 50, height: 50, resizeMode: "contain" }} />
+          <Image source={require("../assets/images/logoBS.png")} style={{ width: 50, height: 50, resizeMode: "contain" }} />
           {/* </TouchableOpacity> */}
         </Animated.View>
         <View style={{

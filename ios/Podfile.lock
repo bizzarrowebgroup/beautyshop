@@ -62,6 +62,8 @@ PODS:
   - EXPermissions (9.3.0):
     - UMCore
     - UMPermissionsInterface
+  - EXSecureStore (9.2.0):
+    - UMCore
   - EXSplashScreen (0.8.1):
     - React-Core
     - UMCore
@@ -404,6 +406,7 @@ DEPENDENCIES:
   - EXLocation (from `../node_modules/expo-location/ios`)
   - EXNotifications (from `../node_modules/expo-notifications/ios`)
   - EXPermissions (from `../node_modules/expo-permissions/ios`)
+  - EXSecureStore (from `../node_modules/expo-secure-store/ios`)
   - EXSplashScreen (from `../node_modules/expo-app-loading/node_modules/expo-splash-screen/ios`)
   - EXSQLite (from `../node_modules/expo-sqlite/ios`)
   - EXUpdates (from `../node_modules/expo-updates/ios`)
@@ -514,6 +517,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-notifications/ios"
   EXPermissions:
     :path: "../node_modules/expo-permissions/ios"
+  EXSecureStore:
+    :path: "../node_modules/expo-secure-store/ios"
   EXSplashScreen:
     :path: "../node_modules/expo-app-loading/node_modules/expo-splash-screen/ios"
   EXSQLite:
@@ -645,6 +650,7 @@ SPEC CHECKSUMS:
   EXLocation: 90232c6f2773b04a3c146bfda9f181035722c10a
   EXNotifications: 0a1152ef2bd0f1cdd72a46bb256523a6ce5fa6e5
   EXPermissions: 30cbe5b72bd209b65c00884180ad058a60bb413d
+  EXSecureStore: 579cbccd9cd093e6f4336aba073b059008bd78e0
   EXSplashScreen: 8c7c1112ce7611a853486af4737fe2298eda7657
   EXSQLite: d0d8677c13e60d5db2812387f059c697be27d3fb
   EXUpdates: 74b39409f68eca207075d87b0077bdf37865a8bf
