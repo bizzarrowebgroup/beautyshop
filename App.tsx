@@ -107,7 +107,7 @@ function App() {
     Instabug.setLocale(Instabug.locale.italian);
     Surveys.setShouldShowWelcomeScreen(true);
     Instabug.setWelcomeMessageMode(Instabug.welcomeMessageMode.live) // For live users
-    Instabug.startWithToken('a76401d7b38130efe962e84ad540da48', [__DEV__ === false ? Instabug.invocationEvent.none : Instabug.invocationEvent.shake]);
+    Instabug.startWithToken('a76401d7b38130efe962e84ad540da48', [__DEV__? Instabug.invocationEvent.none : Instabug.invocationEvent.shake]);
   })
 
   const showToast = (header, message, type = 'error', pos = 'top', duration = 1500) => {
