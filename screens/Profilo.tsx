@@ -24,6 +24,7 @@ import BaseText from '../components/StyledText';
 import * as WebBrowser from 'expo-web-browser';
 import BackIcon from '../components/svg/BackIcon';
 import DeviceInfo from 'react-native-device-info';
+import * as SecureStore from 'expo-secure-store';
 
 // import Constants from "expo-constants";
 // import { backgroundImage } from './Commerciante/HeaderImage';
@@ -166,6 +167,11 @@ const Profilo = ({
           openWeb: "https://bizzarro.org/beautyshop/privacy.html"
           // navigateTo: ""
         },
+        {
+          title: "Reset Intro",
+          icon: false,
+          doSomething: true
+        }
       ]
     },
     {
@@ -211,7 +217,7 @@ const Profilo = ({
   }
 
   const Item = ({ data, index }) => {
-    const { realheader, title, subtitle, icon, navigateTo, special, version, logout, openWeb, openApp, openFeature } = data;
+    const { realheader, title, subtitle, icon, navigateTo, special, version, logout, openWeb, openApp, openFeature, doSomething } = data;
     var header = realheader ? true : false;
     if (header) {
       return (
@@ -221,18 +227,19 @@ const Profilo = ({
 
       const navigateToScreen =
         logout ? handleSignOut :
-          navigateTo && navigateTo !== "" ? () => navigation.navigate(navigateTo) :
-            openWeb && openWeb !== "" ? () => WebBrowser.openBrowserAsync(openWeb) :
-              openApp && openApp !== "" && openApp === true ? () => Replies.hasChats(previousChats => {
-                if (previousChats) {
-                  // Has chats
-                  Replies.show()
-                } else {
-                  InstaBug.show()
-                }
-              }) :
-                openFeature && openFeature !== "" && openFeature === true ? () => FeatureRequests.show() :
-                  undefined;
+          doSomething && doSomething !== "" && doSomething === true ? () => SecureStore.setItemAsync('secure_token', "") :
+            navigateTo && navigateTo !== "" ? () => navigation.navigate(navigateTo) :
+              openWeb && openWeb !== "" ? () => WebBrowser.openBrowserAsync(openWeb) :
+                openApp && openApp !== "" && openApp === true ? () => Replies.hasChats(previousChats => {
+                  if (previousChats) {
+                    // Has chats
+                    Replies.show()
+                  } else {
+                    InstaBug.show()
+                  }
+                }) :
+                  openFeature && openFeature !== "" && openFeature === true ? () => FeatureRequests.show() :
+                    undefined;
       let itemBorder = special ? {} : {
         borderBottomColor: "#EEEEEE",
         borderBottomWidth: 1,
