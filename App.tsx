@@ -9,6 +9,7 @@ import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
 // import Loader from './components/Loader';
 import AppLoading from 'expo-app-loading';
+import * as Notifications from 'expo-notifications';
 
 import 'moment';
 import 'moment/locale/it';
@@ -31,6 +32,14 @@ import Colors from "./constants/Colors";
 //   debug: true,
 // });
 import Instabug, { Surveys } from 'instabug-reactnative';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 function App() {
   const isLoadingComplete = useCachedResources();

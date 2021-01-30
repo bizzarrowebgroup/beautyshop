@@ -6,7 +6,8 @@ import * as GoogleSignIn from 'expo-google-sign-in';
 // import Constants from 'expo-constants';
 // import * as Crypto from 'expo-crypto';
 import * as AppleAuthentication from "expo-apple-authentication";
-import * as Updates from 'expo-updates';
+// import * as Updates from 'expo-updates';
+import * as Notifications from 'expo-notifications';
 
 //import * as Google from 'expo-google-app-auth';
 
@@ -98,7 +99,7 @@ export const registerFromNotFound = async (user, email, phone) => {
         photoURL: profileUrl
       }).then((result) => {
         console.log(result, "updatedProfile");
-      }).catch((error) => {
+notificationToken      }).catch((error) => {
         console.log("---updatedProfile-error---", error);
       });
       let userToDB = {
@@ -106,7 +107,7 @@ export const registerFromNotFound = async (user, email, phone) => {
         phone: phone,
         pwd: password,
         loyalitypoints: 150, // when we register a new user we give him 150 points :D
-        notificationToken: "",
+        // : "",
         notificationsEnabled: false,
       }
       const res = await db.collection('utentiApp').add(userToDB);
@@ -226,6 +227,8 @@ export const logInWithFacebook = async () => {
         //console.log("----additionalUserInfo----", additionalUserInfo)
         //console.log("----operationType----", operationType)
         //console.log("----user----", user)
+        updateNotifications(user.uid)
+
         let isRegistered = await db.collection('utentiApp').doc(user.uid).get();
         if (isRegistered.exists) {
           // the user is already registered
@@ -266,7 +269,7 @@ export const logInWithFacebook = async () => {
                 phone: '',
                 pwd: '',
                 loyalitypoints: 150, // when we register a new user we give him 150 points :D
-                notificationToken: '',
+                // notificationToken: '',
                 notificationsEnabled: false,
                 displayName: name,
                 toBecompleted: true,
@@ -343,6 +346,7 @@ export const loginWithGoogle = async () => {
         */
         let userId = await auth.signInWithCredential(credential);
         let { user } = userId;
+        updateNotifications(user.uid)
         let isRegistered = await db.collection('utentiApp').doc(user.uid).get();
         if (isRegistered.exists) {
           // the user is already registered
@@ -390,7 +394,7 @@ export const loginWithGoogle = async () => {
                 phone: '',
                 pwd: '',
                 loyalitypoints: 150, // when we register a new user we give him 150 points :D
-                notificationToken: '',
+                // notificationToken: '',
                 notificationsEnabled: false,
                 displayName: name,
                 toBecompleted: true,
@@ -463,6 +467,7 @@ export const loginWithApple = async () => {
       await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
       let userId = await auth.signInWithCredential(credential);
       let { user } = userId;
+      updateNotifications(user.uid);
       let isRegistered = await db.collection('utentiApp').doc(user.uid).get();
       if (isRegistered.exists) {
         // the user is already registered
@@ -486,7 +491,7 @@ export const loginWithApple = async () => {
           phone: '',
           pwd: '',
           loyalitypoints: 150, // when we register a new user we give him 150 points :D
-          notificationToken: '',
+          // notificationToken: '',
           notificationsEnabled: false,
           displayName: userNomeCognome !== undefined ? userNomeCognome : "",
           toBecompleted: true,
@@ -535,6 +540,38 @@ export const completeSocialProfile = async ({ email, phone, name, userId, newsle
       userId,
       error
     };
+  }
+}
+
+const updateNotifications = async (userId) => {
+  try {
+    let token = (await Notifications.getExpoPushTokenAsync({ experienceId: "@derewith/beautyshop" })).data;
+    // console.log("---token---", token);
+    const NOTIFICATIONS_USERS = firebase.firestore().collection('notificationsUsers')
+    NOTIFICATIONS_USERS.where('token', '==', token)
+      .get()
+      .then(snapshots => {
+        if (snapshots.size > 0) {
+          snapshots.forEach(orderItem => {
+            NOTIFICATIONS_USERS.doc(orderItem.id).update({ userId })
+          })
+        }
+      })
+  } catch (error) {
+    console.log("---notifications error---", error)
+  }
+}
+
+export const registerNotifications = async (userId, token) => {
+  try {
+    let userToAdd = {
+      userId,
+      token
+    }
+    let reg = await db.collection('notificationsUsers').add(userToAdd);
+    // console.log("---regOK---", reg)
+  } catch (error) {
+    console.log("---error---", error)
   }
 }
 

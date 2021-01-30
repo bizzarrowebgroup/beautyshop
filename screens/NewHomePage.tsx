@@ -38,10 +38,10 @@ import BaseText from '../components/StyledText';
 import { db, dbVal } from '../network/Firebase';
 import Loader from '../components/Loader';
 import { Vibration } from '../constants';
-import PinIcon from '../components/svg/PinIcon';
+// import PinIcon from '../components/svg/PinIcon';
 import BottomIcon from '../components/svg/BottomIcon';
 import Layout from '../constants/Layout';
-
+import InstaBug from 'instabug-reactnative'
 const ENTRIES = [
   {
     illustration: 'https://i.postimg.cc/65NHzk9d/New-Project.png',
@@ -425,9 +425,10 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
 
   const getStoredValue = async () => {
     try {
+      // setToken("");
       getToken().then(token => {
-        // console.log("---token----", token)
-        if (token === null) {
+        console.log("---token----", token)
+        if (token === null || token === "") {
           setToken('true');
           // if (__DEV__ === false) 
           navigation.navigate('IntroScreen');
@@ -439,6 +440,7 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
       console.log("---exIntro----", ex)
     }
   }
+
   useEffect(() => {
     getStoredValue()
   }, [])
@@ -668,8 +670,9 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
               <BaseText size={12} letterSpacing={.3} weight={600}>{"Dove vuoi andare oggi?"}</BaseText>
             </View>
           </TouchableWithoutFeedback>
-          <TouchableOpacity>
-            <PinIcon type="normal" size={25} color={Colors.light.nero} style={{ opacity: 1 }} />
+          <TouchableOpacity onPress={() => InstaBug.show()}>
+            <Ionicons name="ios-bug" size={25} color="black" />
+            {/* <PinIcon type="normal" size={25} color={Colors.light.nero} style={{ opacity: 1 }} /> */}
           </TouchableOpacity>
         </View>
       </Animated.View>

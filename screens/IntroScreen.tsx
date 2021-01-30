@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
   StyleSheet,
   View,
@@ -8,21 +8,98 @@ import {
   PixelRatio,
   StatusBar,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  Platform,
+  Linking,
+  Alert
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import * as Notifications from 'expo-notifications';
+// - const token = (await Notifications.getExpoPushTokenAsync()).data;
+// + const token = (await Notifications.getDevicePushTokenAsync()).data:
 import BaseText from '../components/StyledText';
+import Constants from 'expo-constants';
+
 // SVG
 import Desk from '../components/svg/Desk';
 import Intro2 from '../components/svg/Intro2';
 import Intro3 from '../components/svg/Intro3';
 import Intro4 from '../components/svg/Intro4';
 import Colors from '../constants/Colors';
+import Navigation from '../navigation';
+import { registerNotifications } from '../network/Firebase';
+
+async function schedulePushNotification() {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "You've got mail! 📬",
+      body: 'Here is the notification body',
+      data: { data: 'goes here' },
+    },
+    trigger: { seconds: 2 },
+  });
+}
+
+async function registerForPushNotificationsAsync(navigation) {
+  let token;
+  if (Constants.isDevice) {
+    // const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    // let finalStatus = existingStatus;
+    // if (existingStatus !== 'granted') {
+    //   const { status } = await Notifications.requestPermissionsAsync();
+    //   finalStatus = status;
+    // }
+    // if (finalStatus !== 'granted') {
+    //   alert('Failed to get push token for push notification!');
+    //   return;
+    // }
+    // token = (await Notifications.getExpoPushTokenAsync()).data;
+    // console.log(token);
+    const settings = await Notifications.getPermissionsAsync();
+    let isEnabled = settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL;
+    if (!isEnabled) {
+      Alert.alert(
+        'BeautyShop',
+        'Abbiamo bisogno di usare le notifiche',
+        [
+          {
+            text: 'Non le voglio',
+            onPress: () => navigation.navigate("Homepage"),
+            style: 'cancel',
+          },
+          { text: 'Apri impostazioni', onPress: () => Linking.openSettings() },
+        ],
+        { cancelable: false }
+      );
+    } else {
+      // console.log("---isEnabled---", isEnabled)
+      // console.log("---settings---", settings)
+      token = (await Notifications.getExpoPushTokenAsync({ experienceId: "@derewith/beautyshop" })).data;
+      // console.log("---token GOT---", token);
+    }
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  return token;
+}
 
 export default function IntroScreen({ navigation }) {
   const [sliderState, setSliderState] = useState({ currentPage: 0 });
   const { width, height } = Dimensions.get('window');
+
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   const setSliderPage = (event: any) => {
     const { currentPage } = sliderState;
@@ -41,8 +118,29 @@ export default function IntroScreen({ navigation }) {
     let pagination = (pageIndex > 0 ? pageIndex + 1 : 1) * width;
     //console.log("--pagination--", pagination)
     if (scrollerPage) scrollerPage.current.scrollTo({ x: pagination, y: 0, animated: true })
-    if (pageIndex === 3) navigation.navigate("Homepage")
+    if (pageIndex === 3) {
+      registerForPushNotificationsAsync(navigation).then(token => {
+        setExpoPushToken(token);
+        registerNotifications('', token);
+      });
+      // console.log("---expoPushToken---", expoPushToken)
+      navigation.navigate("Homepage");
+    }
   }
+
+  // useEffect(() => {
+  // notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+  //   setNotification(notification);
+  // });
+  // responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+  //   console.log(response);
+  // });
+  // return () => {
+  //   Notifications.removeNotificationSubscription(notificationListener);
+  //   Notifications.removeNotificationSubscription(responseListener);
+  // };
+  // }, []);
+
   const { currentPage: pageIndex } = sliderState;
   //console.log("PAVI SIZES", {
   //  height,
