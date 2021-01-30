@@ -44,26 +44,21 @@ async function registerForPushNotificationsAsync(navigation) {
   let token;
   if (Constants.isDevice) {
     // const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    // let finalStatus = existingStatus;
-    // if (existingStatus !== 'granted') {
-    //   const { status } = await Notifications.requestPermissionsAsync();
-    //   finalStatus = status;
-    // }
-    // if (finalStatus !== 'granted') {
-    //   alert('Failed to get push token for push notification!');
-    //   return;
-    // }
     // token = (await Notifications.getExpoPushTokenAsync()).data;
     // console.log(token);
     const settings = await Notifications.getPermissionsAsync();
-    let isEnabled = settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL;
-    if (!isEnabled) {
+    let finalStatus = settings.status;
+    if (finalStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
       Alert.alert(
         'BeautyShop',
         'Abbiamo bisogno di usare le notifiche',
         [
           {
-            text: 'Non le voglio',
+            text: 'Non voglio le notifiche',
             onPress: () => navigation.navigate("Homepage"),
             style: 'cancel',
           },
@@ -72,11 +67,9 @@ async function registerForPushNotificationsAsync(navigation) {
         { cancelable: false }
       );
     } else {
-      // console.log("---isEnabled---", isEnabled)
-      // console.log("---settings---", settings)
       token = (await Notifications.getExpoPushTokenAsync({ experienceId: "@derewith/beautyshop" })).data;
-      // console.log("---token GOT---", token);
     }
+    // let isEnabled = settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL;
   } else {
     alert('Must use physical device for Push Notifications');
   }
