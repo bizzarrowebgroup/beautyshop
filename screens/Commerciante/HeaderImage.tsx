@@ -30,9 +30,10 @@ const styles = StyleSheet.create({
 
 interface HeaderImageProps {
   y: Animated.Value<number>;
+  image: string;
 }
 
-export default ({ y }: HeaderImageProps) => {
+export default ({ y,image }: HeaderImageProps) => {
   const height = interpolate(y, {
     inputRange: [-100, 0],
     outputRange: [HEADER_IMAGE_HEIGHT + 100, HEADER_IMAGE_HEIGHT],
@@ -53,7 +54,7 @@ export default ({ y }: HeaderImageProps) => {
       <Animated.View style={[styles.imageHover, { top, height, opacity }]}>
       </Animated.View>
       <Animated.Image
-        source={{ uri: "https://images.unsplash.com/photo-1582582450303-48cc2cfa2c43?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80" }}
+        source={{ uri:image ? image : "https://images.unsplash.com/photo-1582582450303-48cc2cfa2c43?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80" }}
         style={[styles.image, { top, height }]}
       />
     </>

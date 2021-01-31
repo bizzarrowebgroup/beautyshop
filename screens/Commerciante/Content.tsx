@@ -195,7 +195,7 @@ export default ({ y, onMeasurement, data, servizi, carrello, setCarrello }: Cont
               nativeEvent: {
                 layout: { y: anchor },
               },
-            }) => onMeasurement(index, { title, anchor: anchor - 142 })}
+            }) => onMeasurement(index, { title, anchor: anchor - 342 })}
           >
             <BaseText weight={600} styles={[styles.title1, { paddingLeft: 16, paddingTop: 10, }]}>{title}</BaseText>
             {menuItems.map(({ titolo, desc, cost, id, durata }, j) => {

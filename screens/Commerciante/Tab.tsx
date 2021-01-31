@@ -25,7 +25,7 @@ interface TabProps {
 
 export default ({ title, color, onMeasurement, onPress }: TabProps) => {
   return (
-    <TouchableWithoutFeedback {...{ onPress }}>
+    <TouchableWithoutFeedback  onPress={onPress}>
       <View
         onLayout={
           onMeasurement

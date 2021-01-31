@@ -96,9 +96,7 @@ export default ({ route, navigation }) => {
         let finalpreno = [];
         dbPren.forEach(item => {
           let data = item.data();
-          //if (data.slot_date) {
-          //  console.log(moment(data.slot_date).isoWeekday(), "momentDateFromDB");
-          //}
+          if (data.state === 2 || data.state === 3) return;
           finalpreno.push({ id: data.id, ...data });
         })
         resolve(finalpreno)
@@ -172,43 +170,43 @@ export default ({ route, navigation }) => {
       if (prenotazioni !== undefined) {
         let finalBlockedPrenotazioni = [];
         // BLOCK PRENOTAZIONI BY SERVICEID WRONG WRONG WRONG
-        //prenotazioni.forEach(d => {
-        //  if (d.serviceId === serviceId) {
-        //    let realMonth = moment(realDate).month();
-        //    let slotMonth = moment(d.slot_date).month();
-        //    let realDay = moment(realDate).format('DD');
-        //    let slotDay = moment(d.slot_date).format('DD');
-        //    // old moment(d.slot_date).isoWeekday() == today
-        //    if (realMonth === slotMonth && realDay === slotDay) {
+        prenotazioni.forEach(d => {
+         if (d.commercianteId === commercianteId) {
+           let realMonth = moment(realDate).month();
+           let slotMonth = moment(d.slot_date).month();
+           let realDay = moment(realDate).format('DD');
+           let slotDay = moment(d.slot_date).format('DD');
+           // old moment(d.slot_date).isoWeekday() == today
+           if (realMonth === slotMonth && realDay === slotDay) {
 
-        //      //console.log("--STO BLOCCANDO QUESTO GIORNO--", slotDay)
-        //      let open = d.slot_time.split(":");
-        //      let openHours = open[0] ? open[0] : 0;
-        //      let openMinutes = open[1] ? open[1] : 0;
+             //console.log("--STO BLOCCANDO QUESTO GIORNO--", slotDay)
+             let open = d.slot_time.split(":");
+             let openHours = open[0] ? open[0] : 0;
+             let openMinutes = open[1] ? open[1] : 0;
 
-        //      let close = d.slot_end_time.split(":");
-        //      let closeHours = close[0] ? close[0] : 0;
-        //      let closeMinutes = close[1] ? close[1] : 0;
+             let close = d.slot_end_time.split(":");
+             let closeHours = close[0] ? close[0] : 0;
+             let closeMinutes = close[1] ? close[1] : 0;
 
-        //      // let realDataOpen = moment(d.slot_date).hours(openHours).minutes(openMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
-        //      // let realDataClose = moment(d.slot_date).hours(closeHours).minutes(closeMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
-        //      let realDataOpen = moment(d.slot_date).hours(openHours).minutes(openMinutes).second(0).millisecond(0)
-        //      let realDataClose = moment(d.slot_date).hours(closeHours).minutes(closeMinutes).second(0).millisecond(0)
-        //      finalBlockedPrenotazioni.push({ open: realDataOpen, close: realDataClose });
-        //      //let minore = moment().format('x') < moment(realDataOpen).format('x');
-        //      //let maggiore = moment().format('x') >= moment(realDataClose).format('x');
-        //      //if (minore || maggiore) return true;
-        //      //else return false;
-        //      //} else {
-        //      //  return false;
-        //      //}
-        //      //} else {
-        //      //  return false;
-        //      //}
-        //      //});
-        //    }
-        //  }
-        //});
+             // let realDataOpen = moment(d.slot_date).hours(openHours).minutes(openMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+             // let realDataClose = moment(d.slot_date).hours(closeHours).minutes(closeMinutes).second(0).millisecond(0).utc().utcOffset("-02:00", true);
+             let realDataOpen = moment(d.slot_date).hours(openHours).minutes(openMinutes).second(0).millisecond(0)
+             let realDataClose = moment(d.slot_date).hours(closeHours).minutes(closeMinutes).second(0).millisecond(0)
+             finalBlockedPrenotazioni.push({ open: realDataOpen, close: realDataClose });
+             //let minore = moment().format('x') < moment(realDataOpen).format('x');
+             //let maggiore = moment().format('x') >= moment(realDataClose).format('x');
+             //if (minore || maggiore) return true;
+             //else return false;
+             //} else {
+             //  return false;
+             //}
+             //} else {
+             //  return false;
+             //}
+             //});
+           }
+         }
+        });
         if (finalBlockedPrenotazioni.length > 0 && blocksSlots.length > 0) {
           //console.log("---finalBlockedPrenotazioni---", finalBlockedPrenotazioni)
           //console.log("---blocksSlots---", blocksSlots)

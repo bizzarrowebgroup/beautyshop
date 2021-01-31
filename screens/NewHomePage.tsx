@@ -44,6 +44,11 @@ import Layout from '../constants/Layout';
 import InstaBug from 'instabug-reactnative'
 const ENTRIES = [
   {
+    illustration: 'https://firebasestorage.googleapis.com/v0/b/beautyshop-afe23.appspot.com/o/amico.png?alt=media&token=ec6ff44b-5183-4686-88b3-b1dc5485d45d',
+    navigationAction: undefined,
+    linkUrl: undefined
+  },
+  {
     illustration: 'https://i.postimg.cc/65NHzk9d/New-Project.png',
     navigationAction: undefined,
     linkUrl: undefined
@@ -55,11 +60,6 @@ const ENTRIES = [
   },
   {
     illustration: 'https://firebasestorage.googleapis.com/v0/b/beautyshop-afe23.appspot.com/o/Buonefeste.png?alt=media&token=35d56d63-cb1c-413e-970b-399463578daa',
-    navigationAction: undefined,
-    linkUrl: undefined
-  },
-  {
-    illustration: 'https://firebasestorage.googleapis.com/v0/b/beautyshop-afe23.appspot.com/o/amico.png?alt=media&token=ec6ff44b-5183-4686-88b3-b1dc5485d45d',
     navigationAction: undefined,
     linkUrl: undefined
   },
@@ -356,7 +356,7 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
         key={index}
         onPress={() => {
           Vibration.impactTouch("Light");
-          navigation.navigate("Shop", { id: id });
+          navigation.navigate("Shop", { id, foto: mainPhoto.url });
         }}>
         <View style={{
           paddingLeft: 20,
@@ -387,7 +387,7 @@ export default function HomePage({ route, navigation }: StackScreenProps<RootSta
           }}>
             <BaseText size={14} weight={700} color={Colors.light.nero} styles={{
               letterSpacing: 0.5,
-            }}>{title ? title.toLowerCase() : ""}</BaseText>
+            }}>{title ? title : ""}</BaseText>
             {stars > 0 && (
               <View style={{
                 flexDirection: "row",

@@ -27,16 +27,16 @@ const SplashScreen = ({ navigation, route }) => {
         })
     }
     return (
-        <View style={{ flex: 1, backgroundColor: Colors.light.ARANCIO }}>
+        <View style={{ flex: 1, backgroundColor: "white" }}>
             <LottieView
-                resizeMode='cover'
+                resizeMode="contain"
                 source={require('../assets/animations/intro.json')}
                 autoPlay
                 loop={false}
-                duration={3000}
+                // duration={3000}
                 onAnimationFinish={() => navigation.navigate('Homepage')}
                 enableMergePathsAndroidForKitKatAndAbove
-                style={{ backgroundColor: Colors.light.ARANCIO }}
+                style={{ backgroundColor: "white" }}
             />
         </View>
     );

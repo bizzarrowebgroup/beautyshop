@@ -252,6 +252,7 @@ export default ({ route, navigation }) => {
 
   React.useEffect(() => {
     loadPage(route.params?.id);
+    console.log("---FOTOURL---", route.params?.foto)
   }, [route.params?.id]);
 
   React.useEffect(() => {
@@ -289,7 +290,7 @@ export default ({ route, navigation }) => {
   };
 
   const goToPrenotazione = () => {
-    if(user !== null) {
+    if (user !== null) {
       navigation.navigate("Prenotazione", { carrello, commerciante, title: data.title });
     } else {
       navigation.navigate("Auth");
@@ -297,11 +298,11 @@ export default ({ route, navigation }) => {
   }
   return (
     <View style={styles.container}>
-      <HeaderImage {...{ y }} />
+      <HeaderImage {...{ y, image: route.params?.foto }} />
       <Animated.ScrollView
         ref={scrollView}
         style={StyleSheet.absoluteFill}
-        scrollEventThrottle={1}
+        scrollEventThrottle={8}
         showsVerticalScrollIndicator={false}
         {...{ onScroll }}
       >
@@ -360,8 +361,8 @@ export default ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
       )}
-      {/*{tabs !== undefined && <Header {...{ y, tabs, scrollView, title: data.title }} />}*/}
-      <Header {...{ y, tabs, scrollView, title: data.title }} />
+      {tabs !== undefined && <Header {...{ y, tabs, scrollView, title: data.title }} />}
+      {/* <Header {...{ y, tabs, scrollView, title: data.title }} /> */}
     </View>
   );
 };

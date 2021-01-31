@@ -25,15 +25,15 @@ const styles = StyleSheet.create({
     //left: 0,
     //right: 0,
     //zIndex: 200,
-    height: MIN_HEADER_HEIGHT + 50,
-    //shadowColor: "#000",
-    //shadowOffset: {
-    //  width: 2,
-    //  height: 0,
-    //},
-    //shadowOpacity: .2,
-    //shadowRadius: 10,
-    //elevation: 1,
+    height: MIN_HEADER_HEIGHT + 100,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: .2,
+    shadowRadius: 5,
+    elevation: 5,
   },
   header: {
     flexDirection: "row",
@@ -137,7 +137,7 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
         >
           {title ? title : "NO/TITLE"}
         </Animated.Text>
-        <Animated.View style={{
+        {/* <Animated.View style={{
           height: ICON_SIZE + 10,
           width: ICON_SIZE + 10,
           borderRadius: ICON_SIZE + 10 / 2,
@@ -152,9 +152,11 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
           //}
         }}>
           <Icon name="heart" size={ICON_SIZE - 5} color="black" style={{ alignSelf: "center" }} />
-        </Animated.View>
+        </Animated.View> */}
       </View>
-      {/*{tabs && <TabHeader {...{ y, transition, tabs, scrollView }} />}*/}
+      <View style={{ paddingLeft: 20, paddingTop: 5 }}>
+        {tabs && <TabHeader {...{ y, transition, tabs, scrollView }} />}
+      </View>
     </Animated.View>
   );
 };

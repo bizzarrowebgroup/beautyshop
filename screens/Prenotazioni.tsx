@@ -72,17 +72,17 @@ const Prenotazioni = ({ navigation }) => {
 
   const renderItem = ({ item }) => {
     // DEFAULT CONFERMATA
-    let color = '#CB860B', textColor = "black", statusLabel = "Confermata"
+    let color = '#CB860B', textColor = "black", statusLabel = "Presa in carico"
     switch (item.state) {
       case 1:
         // ACCETTATA
         color = '#00C537'
-        statusLabel = "Accettata"
+        statusLabel = "Confermata"
         break;
       case 2:
         // FINITA
         color = Colors.light.ARANCIO
-        statusLabel = "Finita"
+        statusLabel = "Conclusa"
         break;
       case 3:
         // ANNULATA

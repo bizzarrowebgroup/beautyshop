@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, TouchableOpacity, ActivityIndicator, TextInput, Keyboard } from 'react-native'
+import { ScrollView, StyleSheet, View, TouchableOpacity, ActivityIndicator, TextInput, Keyboard } from 'react-native'
 import moment from 'moment';
 import { StatusBar } from "expo-status-bar";
 
@@ -11,6 +11,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { somma } from '../../constants/Utils';
 import { AuthUserContext } from '../../navigation/AuthUserProvider';
 import { db } from '../../network/Firebase';
+import Layout from '../../constants/Layout';
 
 const styles = StyleSheet.create({
   content: {
@@ -18,6 +19,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 40,
     top: -35,
     backgroundColor: Colors.light.bianco,
+    height: Layout.window.height
   },
   contentRows: {
     paddingHorizontal: 20,
@@ -79,7 +81,7 @@ const DettagliPrenotazione = ({ route, navigation }) => {
       setTitle(titoloNegozio);
       let serviceDuration = cart.reduce((a, b) => +a + +b["durata"], 0);
       setSlotEnd(moment(date).add(serviceDuration * 10, 'minutes').format("HH:mm"))
-      console.log("DATE---", date)
+      // console.log("DATE---", date)
       //console.log("cart---", JSON.stringify({ cart }))
     } else {
       navigation.goBack();
@@ -108,7 +110,7 @@ const DettagliPrenotazione = ({ route, navigation }) => {
         }
         // console.log("prenotazione", prenotazione)
         const res = await db.collection('prenotazioni').add(prenotazione);
-        console.log('Added prenotazione with ID: ', res.id);
+        // console.log('Added prenotazione with ID: ', res.id);
         navigation.navigate("PrenotazioneOk", { prenotazione, title, prenID: res.id })
         setLoadingPrenotazione(false)
       }
@@ -119,55 +121,59 @@ const DettagliPrenotazione = ({ route, navigation }) => {
     }
   }
   return (
-    <View style={{ backgroundColor: Colors.light.bianco, flex: 1 }}>
+    <>
       <StatusBar style="light" />
-      <Header hasBack={true} hasTitleHeight={true} title={title} onPress={() => navigation.goBack()} />
-      <View style={styles.content}>
-        <View style={styles.contentRows}>
-          <View style={styles.date}>
-            <BaseText size={14} weight={800}>{moment(date).format("dddd DD MMMM")}</BaseText>
-            <BaseText styles={{ paddingTop: 10, lineHeight: 20 }}>{`Il tuo appuntamento inizierà alle ${moment(date).format('HH:mm')}\ne terminerà alle ${slot_end_time}`}</BaseText>
-            <View style={{ height: 1, backgroundColor: "#ddd", width: "100%", marginVertical: 10 }} />
+      <ScrollView style={{ backgroundColor: Colors.light.ARANCIO, flex: 1 }}>
+        <View style={{ backgroundColor: Colors.light.ARANCIO, flex: 1 }}>
+          <Header hasBack={true} hasTitleHeight={true} title={title} onPress={() => navigation.goBack()} />
+          <View style={styles.content}>
+            <View style={styles.contentRows}>
+              <View style={styles.date}>
+                <BaseText size={14} weight={800}>{moment(date).format("dddd DD MMMM")}</BaseText>
+                <BaseText styles={{ paddingTop: 10, lineHeight: 20 }}>{`Il tuo appuntamento inizierà alle ${moment(date).format('HH:mm')}\ne terminerà alle ${slot_end_time}`}</BaseText>
+                <View style={{ height: 1, backgroundColor: "#ddd", width: "100%", marginVertical: 10 }} />
+              </View>
+              <BaseText size={14} weight={800}>{"Riepilogo"}</BaseText>
+              <FlatList
+                data={cart}
+                renderItem={renderItem}
+                keyExtractor={item => item.id}
+              />
+              <View style={{ height: 1, backgroundColor: "#ddd", width: "100%", marginVertical: 10 }} />
+              <View style={styles.item}>
+                <BaseText weight={800}>{"Totale"}</BaseText>
+                <BaseText>{somma(cart, "cost")}</BaseText>
+              </View>
+              <View style={{ height: 1, backgroundColor: "#ddd", width: "100%", marginVertical: 10 }} />
+            </View>
+            <View style={{ marginHorizontal: 20 }}>
+              <TextInput
+                value={notes}
+                onChangeText={(value) => { setNotes(value) }}
+                multiline
+                numberOfLines={4}
+                placeholder={"Note informative (Ex. Allergie , Esigenze, Speciali Richieste, etc.."}
+                placeholderStyle={{
+                  fontFamily: "Gilroy_Regular"
+                }}
+                placeholderTextColor={"black"}
+                onSubmitEditing={() => { Keyboard.dismiss() }}
+                style={{
+                  //lineHeight: 30,
+                  marginTop: 20,
+                  fontFamily: "Gilroy_Regular",
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  paddingVertical: 20,
+                  height: 300,
+                  paddingHorizontal: 10,
+                  borderColor: "#ddd"
+                }}
+              />
+            </View>
           </View>
-          <BaseText size={14} weight={800}>{"Riepilogo"}</BaseText>
-          <FlatList
-            data={cart}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-          />
-          <View style={{ height: 1, backgroundColor: "#ddd", width: "100%", marginVertical: 10 }} />
-          <View style={styles.item}>
-            <BaseText weight={800}>{"Totale"}</BaseText>
-            <BaseText>{somma(cart, "cost")}</BaseText>
-          </View>
-          <View style={{ height: 1, backgroundColor: "#ddd", width: "100%", marginVertical: 10 }} />
         </View>
-        <View style={{ marginHorizontal: 20 }}>
-          <TextInput
-            value={notes}
-            onChangeText={(value) => { setNotes(value) }}
-            multiline
-            numberOfLines={4}
-            placeholder={"Note informative (Ex. Allergie , Esigenze, Speciali Richieste, etc.."}
-            placeholderStyle={{
-              fontFamily: "Gilroy_Regular"
-            }}
-            placeholderTextColor={"black"}
-            onSubmitEditing={() => { Keyboard.dismiss() }}
-            style={{
-              //lineHeight: 30,
-              marginTop: 20,
-              fontFamily: "Gilroy_Regular",
-              borderRadius: 8,
-              borderWidth: 1,
-              paddingVertical: 20,
-              height: 100,
-              paddingHorizontal: 10,
-              borderColor: "#ddd"
-            }}
-          />
-        </View>
-      </View>
+      </ScrollView>
       <View
         style={{
           position: "absolute",
@@ -193,7 +199,7 @@ const DettagliPrenotazione = ({ route, navigation }) => {
           {!loadingPrenotazione && (<BaseText weight={900} size={14} color={Colors.light.bianco}>{"Prenota"}</BaseText>)}
         </TouchableOpacity>
       </View>
-    </View>
+    </>
   )
 }
 

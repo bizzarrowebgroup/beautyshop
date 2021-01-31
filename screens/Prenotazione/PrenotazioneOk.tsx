@@ -108,24 +108,24 @@ const PrenotazioneOk = ({ route, navigation }) => {
           <BaseText weight={500} color={"grey"} size={10} styles={{ textAlign: "left", marginVertical: 2 }}>{"Verrai avvisato con un'email o una notifica in tempo reale."}</BaseText>
         </View>
         <View style={[styles.boxInfo, { backgroundColor: Colors.light.bianco }]}>
+          <BaseText>{"Commerciante"}</BaseText>
+          <BaseText weight={700}>{title}</BaseText>
+        </View>
+        <View style={[styles.boxInfo, { backgroundColor: Colors.light.bianco }]}>
           <BaseText>{"Data"}</BaseText>
           <BaseText weight={700}>{moment(prenotazione.slot_date).format("dddd DD MMMM YYYY")}</BaseText>
         </View>
         <View style={[styles.boxInfo, { backgroundColor: Colors.light.bianco }]}>
-          <BaseText>{"Codice identificativo"}</BaseText>
-          <BaseText weight={700}>{prenID}</BaseText>
-        </View>
-        <View style={[styles.boxInfo, { backgroundColor: Colors.light.bianco }]}>
-          <BaseText>{"Commerciante"}</BaseText>
-          <BaseText weight={700}>{title}</BaseText>
+          <BaseText>{"Orario"}</BaseText>
+          <BaseText weight={700}>{`Dalle ${prenotazione.slot_time} alle ${prenotazione.slot_end_time}`}</BaseText>
         </View>
         <View style={[styles.boxInfo, { backgroundColor: Colors.light.bianco }]}>
           <BaseText>{"Totale"}</BaseText>
           <BaseText weight={700} color={Colors.light.ARANCIO}>{prenotazione.totale + " €"}</BaseText>
         </View>
         <View style={[styles.boxInfo, { backgroundColor: Colors.light.bianco }]}>
-          <BaseText>{"Orario"}</BaseText>
-          <BaseText weight={700}>{prenotazione.slot_time}</BaseText>
+          <BaseText>{"Codice identificativo"}</BaseText>
+          <BaseText weight={700}>{prenID}</BaseText>
         </View>
       </View>
       <View
@@ -152,7 +152,7 @@ const PrenotazioneOk = ({ route, navigation }) => {
           <BaseText weight={900} size={14} color={Colors.light.bianco}>{"Torna alla Home"}</BaseText>
         </TouchableOpacity>
       </View>
-    </View >
+    </View>
   )
 }
 

@@ -11,7 +11,7 @@ import Animated, {
   set,
   useCode,
 } from "react-native-reanimated";
-// import MaskedView from "@react-native-community/masked-view";
+import MaskedView from "@react-native-community/masked-view";
 import { withTransition } from "react-native-redash";
 
 import Tabs from "./Tabs";
@@ -22,9 +22,7 @@ const styles = StyleSheet.create({
   container: {
     zIndex: 100,
     backgroundColor: "white",
-    marginLeft: 8,
     height: 45,
-    marginBottom: 8,
     flexDirection: "row",
   },
 });
@@ -38,7 +36,7 @@ interface TabHeaderProps {
 
 export default ({ transition, y, tabs, scrollView }: TabHeaderProps) => {
   if (tabs && tabs.length > 1) {
-    console.log("tabs", tabs)
+    // console.log("tabs", tabs)
     //console.log("tabsMAP", tabs.map((_, i) => i))
     const index = new Value<number>(0);
     const [measurements, setMeasurements] = useState<number[]>(
@@ -58,7 +56,7 @@ export default ({ transition, y, tabs, scrollView }: TabHeaderProps) => {
           measurements
             .filter((_measurement, j) => j < i)
             .reduce((acc, m) => acc + m, 0) -
-          8 * i
+          9 * i
         );
       }),
     });
@@ -69,6 +67,7 @@ export default ({ transition, y, tabs, scrollView }: TabHeaderProps) => {
       flex: 1,
     };
     const maskElement = <Animated.View {...{ style }} />;
+    
     useCode(
       () =>
         block(
@@ -86,6 +85,7 @@ export default ({ transition, y, tabs, scrollView }: TabHeaderProps) => {
         ),
       [index, tabs, y]
     );
+
     return (
       <Animated.View style={[styles.container, { opacity }]}>
         <Animated.View
@@ -97,6 +97,7 @@ export default ({ transition, y, tabs, scrollView }: TabHeaderProps) => {
           <Tabs
             onMeasurement={(i, m) => {
               measurements[i] = m;
+              console.log("---mes",measurements)
               setMeasurements([...measurements]);
             }}
             {...{ tabs, translateX }}
@@ -118,7 +119,7 @@ export default ({ transition, y, tabs, scrollView }: TabHeaderProps) => {
         </View>
         {Platform.OS === "ios" && (
           // see https://github.com/react-native-community/react-native-masked-view/issues/22
-          // <MaskedView style={StyleSheet.absoluteFill} maskElement={maskElement}>
+          <MaskedView style={StyleSheet.absoluteFill} maskElement={maskElement}>
             <Animated.View
               style={{
                 ...StyleSheet.absoluteFillObject,
@@ -132,12 +133,13 @@ export default ({ transition, y, tabs, scrollView }: TabHeaderProps) => {
                     scrollView.current
                       .getNode()
                       .scrollTo({ y: tabs[i].anchor + 1 });
+                    
                   }
                 }}
                 {...{ tabs, translateX }}
               />
             </Animated.View>
-          // </MaskedView>
+          </MaskedView>
         )}
       </Animated.View>
     );
