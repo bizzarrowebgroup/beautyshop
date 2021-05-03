@@ -29,7 +29,7 @@ const SplashScreen = ({ navigation, route }) => {
     return (
         <View style={{ flex: 1, backgroundColor: "white" }}>
             <LottieView
-                resizeMode="contain"
+                resizeMode="cover"
                 source={require('../assets/animations/intro.json')}
                 autoPlay
                 loop={false}

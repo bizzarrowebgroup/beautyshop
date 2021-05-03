@@ -20,14 +20,14 @@
     "android": {
       "useNextNotificationsApi": true,
       "package": "it.bizzarro.beautshop",
-      "versionCode": 1,
+      "versionCode": 27,
       "userInterfaceStyle": "light"
     },
     "ios": {
       "supportsTablet": false,
       "usesAppleSignIn": true,
       "bundleIdentifier": "it.bizzarro.beautyshop",
-      "buildNumber": "23",
+      "buildNumber": "27",
       "userInterfaceStyle": "light",
       "config": {
         "googleSignIn": {

@@ -54,22 +54,15 @@ function App() {
 
   const checkServizi = async () => {
     const serviziFirebase = await db.collection('servizi').get();
-    // const messageRef = db.collection('rooms').doc('roomA').collection('messages').doc('message1');
-    // const currentUserId = auth.currentUser.uid;
-    // const serviziFirebase = db.ref(`notes/${currentUserId}`);
-    //.where('ownerId','==',uid)
-    //.doc(id)
+    
     if (serviziFirebase) {
       const tempDoc = serviziFirebase.docs.map((doc) => {
         return { id: doc.id, ...doc.data() }
       })
       tempDoc.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
 
-      // setFetching(false);
       setServizi(tempDoc);
-      // userId: currentUserId
     } else {
-      // setFetching(false);
     }
   }
   const checkCommercianti = async () => {
@@ -79,7 +72,6 @@ function App() {
         return { id: doc.id, ...doc.data() }
       })
       let FinlatempDoc = tempDoc.filter(i => i.status);
-      // console.log(JSON.stringify(FinlatempDoc, null, 2));
       setCommercianti(FinlatempDoc);
     } else {
     }
@@ -90,7 +82,6 @@ function App() {
       const tempDoc = fotoFirebase.docs.map((doc) => {
         return { id: doc.id, ...doc.data() }
       })
-      // tempDoc.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
       setFoto(tempDoc);
     } else {
     }
@@ -103,7 +94,6 @@ function App() {
         checkServizi(),
         checkFoto(),
       ]).then(() => {
-        // setFetching(false);
         console.log("doneDBGOT-firebase")
       })
     } catch (e) {
