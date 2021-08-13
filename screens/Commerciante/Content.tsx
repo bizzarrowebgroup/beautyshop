@@ -2,7 +2,10 @@
 import React from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { AntDesign as Icon } from "@expo/vector-icons";
-import Animated, { Extrapolate, interpolate } from "react-native-reanimated";
+import Animated, {
+  Extrapolate,
+  interpolateNode,
+} from "react-native-reanimated";
 
 import { HEADER_IMAGE_HEIGHT } from "./HeaderImage";
 import { MIN_HEADER_HEIGHT } from "./Header";
@@ -57,7 +60,7 @@ const { height } = Dimensions.get("window");
 const styles = StyleSheet.create({
   section: {
     padding: 16,
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   placeholder: {
     height: HEADER_IMAGE_HEIGHT,
@@ -71,7 +74,7 @@ const styles = StyleSheet.create({
     //fontFamily: "UberMoveMedium",
     fontSize: 18,
     marginBottom: 10,
-    color: Colors.light.ARANCIO
+    color: Colors.light.ARANCIO,
   },
   title2: {
     //fontFamily: "UberMoveMedium",
@@ -132,8 +135,15 @@ interface ContentProps {
   carrello?: any;
 }
 
-export default ({ y, onMeasurement, data, servizi, carrello, setCarrello }: ContentProps) => {
-  const opacity = interpolate(y, {
+export default ({
+  y,
+  onMeasurement,
+  data,
+  servizi,
+  carrello,
+  setCarrello,
+}: ContentProps) => {
+  const opacity = interpolateNode(y, {
     inputRange: [
       HEADER_IMAGE_HEIGHT - MIN_HEADER_HEIGHT - 100,
       HEADER_IMAGE_HEIGHT - MIN_HEADER_HEIGHT,
@@ -141,14 +151,7 @@ export default ({ y, onMeasurement, data, servizi, carrello, setCarrello }: Cont
     outputRange: [1, 0],
     extrapolate: Extrapolate.CLAMP,
   });
-  const {
-    economy,
-    stars,
-    via,
-    tipo,
-    id,
-    desc
-  } = data;
+  const { economy, stars, via, tipo, id, desc } = data;
   let economyTitle = "€";
   if (economy) {
     switch (economy) {
@@ -163,71 +166,145 @@ export default ({ y, onMeasurement, data, servizi, carrello, setCarrello }: Cont
   return (
     <>
       <View style={styles.placeholder} />
-      <Animated.View style={[styles.section, { opacity, display: "flex", flexDirection: "row", justifyContent: "space-between", alignContent: "center", alignItems: "center" }]}>
-        <BaseText styles={styles.text}>{economyTitle} • {`${data && data.tipo == 1 ? "Estetista" : "Parrucchiere"}`}</BaseText>
-        {stars > 0 && (<View style={styles.ratings}>
-          <Icon name="star" color="#f4c945" size={24} style={styles.icon} />
-          <BaseText styles={styles.text}>({stars})</BaseText>
-        </View>)}
+      <Animated.View
+        style={[
+          styles.section,
+          {
+            opacity,
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignContent: "center",
+            alignItems: "center",
+          },
+        ]}
+      >
+        <BaseText styles={styles.text}>
+          {economyTitle} •{" "}
+          {`${data && data.tipo == 1 ? "Estetista" : "Parrucchiere"}`}
+        </BaseText>
+        {stars > 0 && (
+          <View style={styles.ratings}>
+            <Icon name="star" color="#f4c945" size={24} style={styles.icon} />
+            <BaseText styles={styles.text}>({stars})</BaseText>
+          </View>
+        )}
         {/*<View style={styles.info}>
           <BaseText styles={styles.text}>Apre alle 11:00</BaseText>
         </View>*/}
       </Animated.View>
       <View style={styles.divider} />
       <View style={styles.section}>
-        <BaseText weight={600} styles={styles.title2}>{`Informazioni sul ${data && data.tipo == 1 ? "centro estetico" : "salone di bellezza"}`}</BaseText>
+        <BaseText weight={600} styles={styles.title2}>{`Informazioni sul ${
+          data && data.tipo == 1 ? "centro estetico" : "salone di bellezza"
+        }`}</BaseText>
         <View style={styles.info}>
-          <BaseText styles={styles.text}>{"Indicazioni e tanto altro"}</BaseText>
+          <BaseText styles={styles.text}>
+            {"Indicazioni e tanto altro"}
+          </BaseText>
           {/*<BaseText styles={styles.text}>{via ? via : ""}</BaseText>
           <BaseText styles={styles.link}>Indicazioni e tanto altro</BaseText>*/}
         </View>
       </View>
       <View style={styles.divider} />
-      {servizi && servizi.map(({ title, data: menuItems }, index) => {
-        return (
-          <View
-            style={{
-              marginTop: 10,
-              backgroundColor: "white"
-            }}
-            key={index}
-            onLayout={({
-              nativeEvent: {
-                layout: { y: anchor },
-              },
-            }) => onMeasurement(index, { title, anchor: anchor - 342 })}
-          >
-            <BaseText weight={600} styles={[styles.title1, { paddingLeft: 16, paddingTop: 10, }]}>{title}</BaseText>
-            {menuItems.map(({ titolo, desc, cost, id, durata }, j) => {
-              let isSelected = carrello !== undefined ? carrello.find(item => {
-                //console.log(item, "item");
-                //console.log(index, "index");
-                //console.log(item.index === index, "isEqual");
-                return (item.title === titolo && item.cost === cost && item.category === title)
-              }) : false;
-              return (
-                <TouchableOpacity
-                  style={[styles.item, { borderLeftWidth: 6, paddingLeft: 10, borderLeftColor: isSelected ? Colors.light.ARANCIO : "transparent", paddingTop: 10, }]}
-                  key={j}
-                  onPress={() => setCarrello({ category: title, title: titolo, cost, id, durata })}>
-                  <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignContent: "center", alignItems: "center" }}>
-                    <View style={{ width: "70%" }}>
-                      <BaseText weight={600} styles={styles.title}>{titolo}</BaseText>
-                      <BaseText styles={styles.description} numberOfLines={2}>
-                        {desc}
-                      </BaseText>
+      {servizi &&
+        servizi.map(({ title, data: menuItems }, index) => {
+          return (
+            <View
+              style={{
+                marginTop: 10,
+                backgroundColor: "white",
+              }}
+              key={index}
+              onLayout={({
+                nativeEvent: {
+                  layout: { y: anchor },
+                },
+              }) => onMeasurement(index, { title, anchor: anchor - 342 })}
+            >
+              <BaseText
+                weight={600}
+                styles={[styles.title1, { paddingLeft: 16, paddingTop: 10 }]}
+              >
+                {title}
+              </BaseText>
+              {menuItems.map(({ titolo, desc, cost, id, durata }, j) => {
+                let isSelected =
+                  carrello !== undefined
+                    ? carrello.find((item) => {
+                        //console.log(item, "item");
+                        //console.log(index, "index");
+                        //console.log(item.index === index, "isEqual");
+                        return (
+                          item.title === titolo &&
+                          item.cost === cost &&
+                          item.category === title
+                        );
+                      })
+                    : false;
+                return (
+                  <TouchableOpacity
+                    style={[
+                      styles.item,
+                      {
+                        borderLeftWidth: 6,
+                        paddingLeft: 10,
+                        borderLeftColor: isSelected
+                          ? Colors.light.ARANCIO
+                          : "transparent",
+                        paddingTop: 10,
+                      },
+                    ]}
+                    key={j}
+                    onPress={() =>
+                      setCarrello({
+                        category: title,
+                        title: titolo,
+                        cost,
+                        id,
+                        durata,
+                      })
+                    }
+                  >
+                    <View
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <View style={{ width: "70%" }}>
+                        <BaseText weight={600} styles={styles.title}>
+                          {titolo}
+                        </BaseText>
+                        <BaseText styles={styles.description} numberOfLines={2}>
+                          {desc}
+                        </BaseText>
+                      </View>
+                      <View style={{ paddingRight: 15 }}>
+                        <BaseText
+                          weight={isSelected ? 800 : 700}
+                          styles={[
+                            styles.price,
+                            {
+                              color: isSelected
+                                ? Colors.light.ARANCIO
+                                : Colors.light.nero,
+                            },
+                          ]}
+                        >
+                          {cost + " €"} {/*isSelected ? "x1" : ""*/}
+                        </BaseText>
+                      </View>
                     </View>
-                    <View style={{ paddingRight: 15 }}>
-                      <BaseText weight={isSelected ? 800 : 700} styles={[styles.price, { color: isSelected ? Colors.light.ARANCIO : Colors.light.nero }]}>{cost + " €"} {/*isSelected ? "x1" : ""*/}</BaseText>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              )
-            })}
-          </View>
-        )
-      }
-      )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          );
+        })}
       <View style={{ height: height / 2 }} />
     </>
   );

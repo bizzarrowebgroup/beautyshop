@@ -292,6 +292,7 @@ export default ({ route, navigation }) => {
       navigation.navigate("Auth");
     }
   }
+  
   return (
     <View style={styles.container}>
       <HeaderImage {...{ y, image: route.params?.foto }} />

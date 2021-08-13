@@ -1,9 +1,12 @@
-import React, { useMemo } from 'react';
-import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
-import { BottomSheetHandleProps } from '@gorhom/bottom-sheet';
-import Animated, { interpolate, Extrapolate } from 'react-native-reanimated';
-import { transformOrigin, toRad } from 'react-native-redash';
-import Colors from '../../constants/Colors';
+import React, { useMemo } from "react";
+import { StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { BottomSheetHandleProps } from "@gorhom/bottom-sheet";
+import Animated, {
+  interpolateNode,
+  Extrapolate,
+} from "react-native-reanimated";
+import { transformOrigin, toRad } from "react-native-redash";
+import Colors from "../../constants/Colors";
 
 interface HandleProps extends BottomSheetHandleProps {
   style?: StyleProp<ViewStyle>;
@@ -17,17 +20,17 @@ const Handle: React.FC<HandleProps> = ({ style, animatedPositionIndex }) => {
   //  outputRange: [0, 20],
   //  extrapolate: Extrapolate.CLAMP,
   //});
-  const indicatorTransformOriginY = interpolate(animatedPositionIndex, {
+  const indicatorTransformOriginY = interpolateNode(animatedPositionIndex, {
     inputRange: [0, 1, 2],
     outputRange: [-1, 0, 1],
     extrapolate: Extrapolate.CLAMP,
   });
-  const leftIndicatorRotate = interpolate(animatedPositionIndex, {
+  const leftIndicatorRotate = interpolateNode(animatedPositionIndex, {
     inputRange: [0, 1, 2],
     outputRange: [toRad(-30), 0, toRad(30)],
     extrapolate: Extrapolate.CLAMP,
   });
-  const rightIndicatorRotate = interpolate(animatedPositionIndex, {
+  const rightIndicatorRotate = interpolateNode(animatedPositionIndex, {
     inputRange: [0, 1, 2],
     outputRange: [toRad(30), 0, toRad(-30)],
     extrapolate: Extrapolate.CLAMP,
@@ -93,9 +96,9 @@ export default Handle;
 
 const styles = StyleSheet.create({
   header: {
-    alignContent: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 14,
     //shadowColor: 'black',
     //shadowOffset: {
@@ -107,10 +110,10 @@ const styles = StyleSheet.create({
     //elevation: 16,
   },
   indicator: {
-    position: 'absolute',
+    position: "absolute",
     width: 10,
     height: 4,
-    backgroundColor: 'black',
+    backgroundColor: "black",
   },
   leftIndicator: {
     borderTopStartRadius: 2,

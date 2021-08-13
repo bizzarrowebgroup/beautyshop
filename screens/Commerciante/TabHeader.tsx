@@ -6,7 +6,7 @@ import Animated, {
   block,
   cond,
   greaterOrEq,
-  interpolate,
+  interpolateNode,
   lessOrEq,
   set,
   useCode,
@@ -44,11 +44,11 @@ export default ({ transition, y, tabs, scrollView }: TabHeaderProps) => {
     );
     const opacity = transition;
     const indexTransition = withTransition(index);
-    const width = interpolate(indexTransition, {
+    const width = interpolateNode(indexTransition, {
       inputRange: tabs.map((_, i) => i),
       outputRange: measurements,
     });
-    const translateX = interpolate(indexTransition, {
+    const translateX = interpolateNode(indexTransition, {
       inputRange: tabs.map((_tab, i) => i),
       outputRange: measurements.map((_, i) => {
         return (

@@ -4,7 +4,7 @@ import Animated from "react-native-reanimated";
 import { useValue, withTimingTransition } from "react-native-redash";
 import { Feather as Icon } from "@expo/vector-icons";
 import { useSafeArea } from "react-native-safe-area-context";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
@@ -16,7 +16,16 @@ import Colors from "../../constants/Colors";
 const ICON_SIZE = 24;
 const PADDING = 16;
 export const MIN_HEADER_HEIGHT = 45;
-const { interpolate, Extrapolate, useCode, greaterThan, lessThan, set, block, Value } = Animated;
+const {
+  interpolateNode,
+  Extrapolate,
+  useCode,
+  greaterThan,
+  lessThan,
+  set,
+  block,
+  Value,
+} = Animated;
 
 const styles = StyleSheet.create({
   container: {
@@ -31,7 +40,7 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
-    shadowOpacity: .2,
+    shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 5,
   },
@@ -71,12 +80,12 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
   const transition = withTimingTransition(toggle, { duration: 100 });
   const shadow = withTimingTransition(toggleShadow, { duration: 100 });
   const { top: paddingTop } = insets;
-  const translateX = interpolate(y, {
+  const translateX = interpolateNode(y, {
     inputRange: [0, HEADER_IMAGE_HEIGHT],
     outputRange: [-ICON_SIZE - PADDING, 0],
     extrapolate: Extrapolate.CLAMP,
   });
-  const translateY = interpolate(y, {
+  const translateY = interpolateNode(y, {
     inputRange: [-HEADER_IMAGE_HEIGHT / 3.5, 0, HEADER_IMAGE_HEIGHT],
     outputRange: [
       HEADER_IMAGE_HEIGHT - MIN_HEADER_HEIGHT + 100,
@@ -87,17 +96,12 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
   });
   const opacity = transition;
   useCode(
-    () => block(
-      [
+    () =>
+      block([
         set(toggle, greaterThan(y, HEADER_IMAGE_HEIGHT)),
         set(toggleShadow, lessThan(y, HEADER_IMAGE_HEIGHT)),
-      ]
-    ),
-    [
-      toggle,
-      toggleShadow,
-      y,
-    ]
+      ]),
+    [toggle, toggleShadow, y]
   );
   return (
     <Animated.View style={[styles.container, { paddingTop: 0 }]}>
@@ -111,21 +115,28 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
       <View style={styles.header}>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <View>
-            <Animated.View style={{
-              height: ICON_SIZE + 10,
-              width: ICON_SIZE + 10,
-              borderRadius: ICON_SIZE + 10 / 2,
-              backgroundColor: "white",
-              justifyContent: "center",
-              //shadowColor: "black",
-              //shadowRadius: 5,
-              //shadowOpacity: shadow,
-              //shadowOffset: {
-              //  width: 1,
-              //  height: 0
-              //}
-            }}>
-              <Icon name="arrow-left" size={ICON_SIZE} color="black" style={{ alignSelf: "center" }} />
+            <Animated.View
+              style={{
+                height: ICON_SIZE + 10,
+                width: ICON_SIZE + 10,
+                borderRadius: ICON_SIZE + 10 / 2,
+                backgroundColor: "white",
+                justifyContent: "center",
+                shadowColor: "black",
+                shadowRadius: 5,
+                shadowOpacity: shadow,
+                shadowOffset: {
+                  width: 1,
+                  height: 0,
+                },
+              }}
+            >
+              <Icon
+                name="arrow-left"
+                size={ICON_SIZE}
+                color="black"
+                style={{ alignSelf: "center" }}
+              />
             </Animated.View>
           </View>
         </TouchableWithoutFeedback>
