@@ -644,7 +644,7 @@ export default function HomePage({
     try {
       // setToken("");
       getToken().then((token) => {
-        console.log("---token----", token);
+        // console.log("---token----", token);
         if (token === null || token === "") {
           setToken("true");
           // if (__DEV__ === false)
