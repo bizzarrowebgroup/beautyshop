@@ -97,7 +97,7 @@ export default ({ transition, y, tabs, scrollView }: TabHeaderProps) => {
           <Tabs
             onMeasurement={(i, m) => {
               measurements[i] = m;
-              console.log("---mes",measurements)
+              // console.log("---mes",measurements)
               setMeasurements([...measurements]);
             }}
             {...{ tabs, translateX }}

@@ -15,7 +15,7 @@ const EditEmail = ({ navigation }) => {
   } = useContext(AppContext);
   const [emailEditing, setEmail] = React.useState('');
   useEffect(() => {
-    console.log("--currentUser", currentUser)
+    // console.log("--currentUser", currentUser)
     if (currentUser == undefined || currentUser.length <= 0) {
       showToast(
         "ERRORE GENERICO",

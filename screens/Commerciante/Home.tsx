@@ -30,10 +30,6 @@ export default ({ route, navigation }) => {
 
   const [data, setData] = React.useState(undefined);
 
-  React.useEffect(() => {
-    console.log("SCHERMATA AVVIATA")
-  }, [])
-
   const { user, setUser } = React.useContext(AuthUserContext);
 
   // TABELLA ORARIO
@@ -252,7 +248,7 @@ export default ({ route, navigation }) => {
 
   React.useEffect(() => {
     loadPage(route.params?.id);
-    console.log("---FOTOURL---", route.params?.foto)
+    // console.log("---FOTOURL---", route.params?.foto)
   }, [route.params?.id]);
 
   React.useEffect(() => {

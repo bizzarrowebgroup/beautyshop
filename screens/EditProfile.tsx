@@ -14,7 +14,7 @@ const EditProfile = ({ navigation }) => {
     showToast
   } = useContext(AppContext);
   useEffect(() => {
-    console.log("--currentUser", currentUser)
+    // console.log("--currentUser", currentUser)
     if (currentUser == undefined || currentUser.length <= 0) {
       showToast(
         "ERRORE GENERICO",

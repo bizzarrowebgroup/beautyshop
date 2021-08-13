@@ -15,9 +15,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/**/*"
-    ],
+    "assetBundlePatterns": ["**/**/*"],
     "android": {
       "useNextNotificationsApi": true,
       "package": "it.bizzarro.beautshop",
@@ -32,7 +30,7 @@
       "userInterfaceStyle": "light",
       "config": {
         "googleSignIn": {
-          "reservedClientId": "com.googleusercontent.apps.470013044742-69pbts2tm4280vunsoekk4ebkf5l3t8s",
+          "reservedClientId": "com.googleusercontent.apps.470013044742-69pbts2tm4280vunsoekk4ebkf5l3t8s"
         }
       },
       "googleServicesFile": "./GoogleService-Info.plist"
@@ -46,13 +44,7 @@
     "experiments": {},
     "packagerOpts": {
       "config": "metro.config.js",
-      "sourceExts": [
-        "js",
-        "jsx",
-        "svg",
-        "ts",
-        "tsx"
-      ]
+      "sourceExts": ["js", "jsx", "svg", "ts", "tsx"]
     }
   }
 }

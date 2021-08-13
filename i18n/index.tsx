@@ -1,7 +1,7 @@
 import i18n from 'i18n-js';
 
-import en from '../translations/en.json';
-import it from '../translations/it.json';
+import en from './translations/en.json';
+import it from './translations/it.json';
 
 i18n.locale = 'it';
 i18n.fallbacks = true;

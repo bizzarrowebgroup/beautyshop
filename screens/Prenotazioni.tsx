@@ -132,7 +132,7 @@ const Prenotazioni = ({ navigation }) => {
       </TouchableOpacity>
     )
   }
-  console.log("prenotazioniFatte---", prenotazioniFatte)
+  // console.log("prenotazioniFatte---", prenotazioniFatte)
   return (
     <View style={{ backgroundColor: Colors.light.bianco, flex: 1 }}>
       <Header hasBack={true} hasTitleHeight={true} title={`I tuoi appuntamenti`} onPress={() => navigation.goBack()} />
