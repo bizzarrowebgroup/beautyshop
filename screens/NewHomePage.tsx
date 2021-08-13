@@ -78,41 +78,49 @@ const ENTRIES = [
 
 const ENTRIES1 = [
   {
+    id: "8X65vW6jq9uKIiP2xE0V",
     title: "Capelli",
     bg: "#FD6C38",
     model:
       "https://content.web-repository.com/s/48771825654323693/uploads/Images/500908947-model-compresso.png",
   },
   {
+    id: "2PHo3QiFnfwf4vSIhTXJ",
     title: "Uomo",
     bg: "#9D006D",
     model:
       "https://i.postimg.cc/1RTnDFZT/best-medium-length-hairstyles-men-slicked-back-undercut-luxe-digital-preview-rev-1.png",
   },
   {
-    title: "Unghie",
+    id: "TItHk6dCnjXt3X8PkrMo",
+    title: "Mani",
     bg: "#F9BD01",
     model: "https://i.postimg.cc/MZRMbTKp/ss-min-preview-rev-2.png",
   },
   {
-    title: "Depilazione",
+    id: "eCZcuSWnlVUhIPRKAstv",
+    title: "Barba",
     bg: "#FA5057",
     model:
       "https://i.postimg.cc/qq9NrPL0/icons-wax-sports-cap-navy-model-preview-rev-1.png",
   },
   {
+    id: "viso",
     title: "Viso",
     bg: "#5095FA",
   },
   {
+    id: "massaggi",
     title: "Massaggi",
     bg: "#FD6C38",
   },
   {
+    id: "wbHdoy9exAayRWitea5m",
     title: "Corpo",
     bg: "#9D006D",
   },
   {
+    id: "UI9CtIh11yslxyKTdYsy",
     title: "Piedi",
     bg: "#F9BD01",
   },
@@ -223,8 +231,8 @@ export default function HomePage({
       });
       setPar(parrucchieri);
     }
-    if (user !== null && userDocId !== null) {
-    }
+    // if (user !== null && userDocId !== null) {
+    // }
   };
 
   React.useEffect(() => {
@@ -684,9 +692,10 @@ export default function HomePage({
   };
 
   const renderItem1 = ({ item, index }) => {
-    const { title, bg, model } = item;
+    const { title, bg, model, id } = item;
     return (
       <TouchableOpacity
+        key={index + id}
         activeOpacity={1}
         style={{
           width: 90,
@@ -696,7 +705,10 @@ export default function HomePage({
           overflow: "hidden",
         }}
         onPress={() => {
-          alert(`Hai premuto la cat. n.'${index}'`);
+          navigation.navigate("Categories", {
+            categoryTitle: title,
+            categoryId: id,
+          });
         }}
       >
         <View
@@ -1009,6 +1021,7 @@ export default function HomePage({
             <FlatList
               data={ENTRIES1}
               renderItem={renderItem1}
+              keyExtractor={(item) => item.id}
               horizontal
               // pagingEnabled
               showsHorizontalScrollIndicator={false}
@@ -1169,7 +1182,7 @@ export default function HomePage({
                     paddingHorizontal: 20,
                   }}
                   horizontal
-                  data={parrucchieri}
+                  data={parrucchieri.filter((item) => item.isforeground)}
                   keyExtractor={(item) => item.id}
                   renderItem={({ item, index }) =>
                     renderHorizontalCards(item, index)
@@ -1200,7 +1213,7 @@ export default function HomePage({
                     paddingHorizontal: 20,
                   }}
                   horizontal
-                  data={parrucchieri}
+                  data={parrucchieri.filter((item) => item.ismostvoted)}
                   keyExtractor={(item) => item.id}
                   renderItem={({ item, index }) =>
                     renderHorizontalCards(item, index)
