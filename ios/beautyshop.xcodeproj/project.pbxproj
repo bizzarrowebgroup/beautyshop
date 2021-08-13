@@ -13,8 +13,9 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2C4620AB71C143DC9B166D78 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A79B078555974E5B8C86F2A2 /* GoogleService-Info.plist */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		9BED68BB231D5771B26B8851 /* libPods-beautyshop.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7619F400A5C2B51BF656C6 /* libPods-beautyshop.a */; };
+		626BD4D326C7129100E1FD15 /* new.swift in Sources */ = {isa = PBXBuildFile; fileRef = 626BD4D226C7129100E1FD15 /* new.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		C7E61ABFE5AD532CD1476F35 /* libPods-beautyshop.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 67EB48925F93E54EAE66E1B8 /* libPods-beautyshop.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,9 +27,11 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = beautyshop/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = beautyshop/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = beautyshop/main.m; sourceTree = "<group>"; };
-		1A1A36091D5A90C9D5F7CF09 /* Pods-beautyshop.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-beautyshop.debug.xcconfig"; path = "Target Support Files/Pods-beautyshop/Pods-beautyshop.debug.xcconfig"; sourceTree = "<group>"; };
-		1A7619F400A5C2B51BF656C6 /* libPods-beautyshop.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-beautyshop.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2B0FE5558ED16179295DB479 /* Pods-beautyshop.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-beautyshop.release.xcconfig"; path = "Target Support Files/Pods-beautyshop/Pods-beautyshop.release.xcconfig"; sourceTree = "<group>"; };
+		626BD4D126C7129100E1FD15 /* beautyshop-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "beautyshop-Bridging-Header.h"; sourceTree = "<group>"; };
+		626BD4D226C7129100E1FD15 /* new.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = new.swift; sourceTree = "<group>"; };
+		67EB48925F93E54EAE66E1B8 /* libPods-beautyshop.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-beautyshop.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B7A6A3CECA4C17918A364E8 /* Pods-beautyshop.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-beautyshop.debug.xcconfig"; path = "Target Support Files/Pods-beautyshop/Pods-beautyshop.debug.xcconfig"; sourceTree = "<group>"; };
+		7976D5FF310584983D5E9B8F /* Pods-beautyshop.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-beautyshop.release.xcconfig"; path = "Target Support Files/Pods-beautyshop/Pods-beautyshop.release.xcconfig"; sourceTree = "<group>"; };
 		968B4595C96E9B496F1CFC6B /* Instabug.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Instabug.framework; path = "../node_modules/instabug-reactnative/ios/Instabug.framework"; sourceTree = "<group>"; };
 		A79B078555974E5B8C86F2A2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "beautyshop/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = beautyshop/SplashScreen.storyboard; sourceTree = "<group>"; };
@@ -43,7 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9BED68BB231D5771B26B8851 /* libPods-beautyshop.a in Frameworks */,
+				C7E61ABFE5AD532CD1476F35 /* libPods-beautyshop.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +66,8 @@
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				A79B078555974E5B8C86F2A2 /* GoogleService-Info.plist */,
+				626BD4D226C7129100E1FD15 /* new.swift */,
+				626BD4D126C7129100E1FD15 /* beautyshop-Bridging-Header.h */,
 			);
 			name = beautyshop;
 			sourceTree = "<group>";
@@ -72,9 +77,9 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				1A7619F400A5C2B51BF656C6 /* libPods-beautyshop.a */,
 				968B4595C96E9B496F1CFC6B /* Instabug.framework */,
 				F390E1B5D4E3B33BAFF875A6 /* Instabug.framework */,
+				67EB48925F93E54EAE66E1B8 /* libPods-beautyshop.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -120,8 +125,8 @@
 		D65327D7A22EEC0BE12398D9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				1A1A36091D5A90C9D5F7CF09 /* Pods-beautyshop.debug.xcconfig */,
-				2B0FE5558ED16179295DB479 /* Pods-beautyshop.release.xcconfig */,
+				6B7A6A3CECA4C17918A364E8 /* Pods-beautyshop.debug.xcconfig */,
+				7976D5FF310584983D5E9B8F /* Pods-beautyshop.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -133,16 +138,16 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "beautyshop" */;
 			buildPhases = (
-				EF2EF4FACA285FDF6023FA3F /* [CP] Check Pods Manifest.lock */,
+				138ABC41269E6A01734F52CF /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				5FC3331E9E065394AB1D862D /* [CP] Copy Pods Resources */,
 				DCF8EC6DCE23FF731A1382EE /* Upload Sourcemap */,
 				EBDC8D4D550D8C1FF9E18413 /* Upload Sourcemap */,
-				2516E4180F1F57E322B975EA /* [CP] Embed Pods Frameworks */,
+				77847F7B171C786B3979FDAA /* [CP] Embed Pods Frameworks */,
+				2532EB44FF69E0241ED6F188 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -163,7 +168,7 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 5B5ZZZ3D44;
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1240;
 					};
 				};
 			};
@@ -215,25 +220,29 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n../node_modules/expo-updates/scripts/create-manifest-ios.sh\n";
 		};
-		2516E4180F1F57E322B975EA /* [CP] Embed Pods Frameworks */ = {
+		138ABC41269E6A01734F52CF /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-beautyshop/Pods-beautyshop-frameworks.sh",
-				"${PODS_ROOT}/../../node_modules/instabug-reactnative/ios/Instabug.framework",
+			inputFileListPaths = (
 			);
-			name = "[CP] Embed Pods Frameworks";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Instabug.framework",
+				"$(DERIVED_FILE_DIR)/Pods-beautyshop-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-beautyshop/Pods-beautyshop-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5FC3331E9E065394AB1D862D /* [CP] Copy Pods Resources */ = {
+		2532EB44FF69E0241ED6F188 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,6 +262,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-beautyshop/Pods-beautyshop-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		77847F7B171C786B3979FDAA /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-beautyshop/Pods-beautyshop-frameworks.sh",
+				"${PODS_ROOT}/../../node_modules/instabug-reactnative/ios/Instabug.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Instabug.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-beautyshop/Pods-beautyshop-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		DCF8EC6DCE23FF731A1382EE /* Upload Sourcemap */ = {
@@ -291,28 +318,6 @@
 			shellPath = /bin/sh;
 			shellScript = "bash \"../node_modules/instabug-reactnative/ios/upload_sourcemap.sh\"\n";
 		};
-		EF2EF4FACA285FDF6023FA3F /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-beautyshop-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -339,6 +344,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				626BD4D326C7129100E1FD15 /* new.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
@@ -361,7 +367,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1A1A36091D5A90C9D5F7CF09 /* Pods-beautyshop.debug.xcconfig */;
+			baseConfigurationReference = 6B7A6A3CECA4C17918A364E8 /* Pods-beautyshop.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -384,6 +390,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = it.bizzarro.beautyshop;
 				PRODUCT_NAME = beautyshop;
+				SWIFT_OBJC_BRIDGING_HEADER = "beautyshop-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -393,7 +400,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2B0FE5558ED16179295DB479 /* Pods-beautyshop.release.xcconfig */;
+			baseConfigurationReference = 7976D5FF310584983D5E9B8F /* Pods-beautyshop.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -411,6 +418,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = it.bizzarro.beautyshop;
 				PRODUCT_NAME = beautyshop;
+				SWIFT_OBJC_BRIDGING_HEADER = "beautyshop-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
